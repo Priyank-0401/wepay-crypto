@@ -506,3 +506,29 @@
 2025-03-21 09:51:53 - Sending success response
 2025-03-21 09:51:53 - Login process completed
 
+2025-03-21 11:07:23 - Login attempt started
+2025-03-21 11:07:23 - Received input: 
+2025-03-21 11:07:23 - Error: No data received or invalid JSON
+2025-03-21 11:07:23 - Login process completed
+
+2025-03-21 11:07:23 - Login attempt started
+2025-03-21 11:07:23 - Received input: {"email":"priyank@gmail.com","password":"hello"}
+2025-03-21 11:07:23 - Querying for email: priyank@gmail.com
+2025-03-21 11:07:23 - User found, verifying password
+2025-03-21 11:07:23 - Password verified successfully
+2025-03-21 11:07:23 - Sending success response
+2025-03-21 11:07:23 - Login process completed
+
+2025-03-21 11:11:14 - Login attempt started
+2025-03-21 11:11:14 - Received input: 
+2025-03-21 11:11:14 - Error: No data received or invalid JSON
+2025-03-21 11:11:14 - Login process completed
+
+2025-03-21 11:11:14 - Login attempt started
+2025-03-21 11:11:14 - Received input: {"email":"priyank@gmail.com","password":"hello"}
+2025-03-21 11:11:14 - Querying for email: priyank@gmail.com
+2025-03-21 11:11:14 - User found, verifying password
+2025-03-21 11:11:14 - Password verified successfully
+2025-03-21 11:11:14 - Sending success response
+2025-03-21 11:11:14 - Login process completed
+

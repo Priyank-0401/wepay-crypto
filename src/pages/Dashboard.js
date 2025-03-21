@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [blockNumber, setBlockNumber] = useState(0);
   const [totalGasUsed, setTotalGasUsed] = useState(0);
   const [pendingTransactions, setPendingTransactions] = useState(0);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
 
   useEffect(() => {
     // Check if user is logged in
@@ -42,97 +43,73 @@ const Dashboard = () => {
         console.log("Attempting to connect to Ganache blockchain...");
         setLoading(true);
         setError(null);
+        setConnectionAttempts(prev => prev + 1);
         
-        // Connect directly to Ganache - no MetaMask fallback attempt
+        // Connect directly to Ganache
         const ganacheUrl = 'http://127.0.0.1:7545';
         console.log(`Connecting to Ganache at ${ganacheUrl}`);
         
-        // Create Web3 instance with timeout to prevent hanging
-        // Modify your Web3 provider initialization
-const web3Instance = new Web3(new Web3.providers.HttpProvider(ganacheUrl, {
-  timeout: 30000, // Increase timeout to 30 seconds
-  reconnect: {
-    auto: true,
-    delay: 5000,
-    maxAttempts: 5, // More attempts
-  }
-}));
-
-// Add more detailed logging
-console.log("Web3 instance created, attempting to connect...");
-
-// Improve the connection check
-try {
-  const isListening = await web3Instance.eth.net.isListening();
-  console.log("Connection successful, blockchain is listening:", isListening);
-  setConnectionStatus(isListening ? 'Connected' : 'Failed to connect');
-  
-  if (!isListening) {
-    throw new Error("Blockchain is not listening");
-  }
-} catch (connErr) {
-  console.error("Connection error details:", connErr);
-  setError(`Connection failed: ${connErr.message || "Unknown error"}`);
-  setLoading(false);
-  return; // Exit early on connection failure
-}
+        // Create Web3 instance with better timeout settings
+        const web3Instance = new Web3(new Web3.providers.HttpProvider(ganacheUrl, {
+          timeout: 30000, // 30 second timeout
+          reconnect: {
+            auto: true,
+            delay: 3000,
+            maxAttempts: 5,
+          }
+        }));
         
+        // Store the web3 instance first so we can use it for conversions later
         setWeb3(web3Instance);
         
-        // Check if connected with timeout
-        let isConnected = false;
+        // Check if connected - simplify this check to avoid race conditions
         try {
-          // Add timeout to prevent hanging
-          const connectionPromise = web3Instance.eth.net.isListening();
-          isConnected = await Promise.race([
-            connectionPromise,
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error("Connection timeout")), 5000)
-            )
-          ]);
+          console.log("Checking if we can connect to blockchain...");
+          const isListening = await web3Instance.eth.net.isListening();
+          console.log("Web3 connected:", isListening);
+          setConnectionStatus(isListening ? 'Connected' : 'Disconnected');
+          
+          if (!isListening) {
+            throw new Error("Failed to connect to blockchain network");
+          }
         } catch (connErr) {
           console.error("Connection check failed:", connErr);
-          throw new Error("Failed to connect to Ganache. Is it running on port 7545?");
-        }
-        
-        console.log("Web3 connected:", isConnected);
-        setConnectionStatus(isConnected ? 'Connected' : 'Failed to connect');
-        
-        if (!isConnected) {
-          throw new Error("Failed to connect to Ganache. Please check if it's running on http://127.0.0.1:7545");
+          setError("Failed to connect to Ganache. Is it running on port 7545?");
+          setLoading(false);
+          return; // Exit early
         }
 
         // Get network information
-        let netId;
         try {
-          netId = await web3Instance.eth.net.getId();
+          const netId = await web3Instance.eth.net.getId();
           console.log("Network ID:", netId);
           setNetworkId(netId || 'Unknown');
+          
+          // Determine network name based on ID
+          let network = 'Unknown';
+          if (netId === 5777 || netId === 1337) {
+            network = 'Ganache Local';
+          } else if (netId === 1) {
+            network = 'Ethereum Mainnet';
+          } else if (netId === 11155111) {
+            network = 'Sepolia Testnet';
+          } else if (netId === 5) {
+            network = 'Goerli Testnet';
+          }
+          setNetworkName(network);
+          console.log("Network name:", network);
         } catch (netIdErr) {
           console.error("Failed to get network ID:", netIdErr);
           setNetworkId('Unknown');
+          setNetworkName('Unknown');
           // Continue anyway - this is not critical
         }
-        
-        // Determine network name based on ID
-        let network = 'Unknown';
-        if (netId === 5777 || netId === 1337) {
-          network = 'Ganache Local';
-        } else if (netId === 1) {
-          network = 'Ethereum Mainnet';
-        } else if (netId === 11155111) {
-          network = 'Sepolia Testnet';
-        } else if (netId === 5) {
-          network = 'Goerli Testnet';
-        }
-        setNetworkName(network);
-        console.log("Network name:", network);
 
         // Get current block number
         try {
           const currentBlock = await web3Instance.eth.getBlockNumber();
-          setBlockNumber(currentBlock);
           console.log("Current block:", currentBlock);
+          setBlockNumber(currentBlock);
         } catch (blockErr) {
           console.error("Failed to get block number:", blockErr);
           setBlockNumber(0);
@@ -144,14 +121,15 @@ try {
         try {
           accounts = await web3Instance.eth.getAccounts();
           console.log("Accounts found:", accounts);
+          
+          if (accounts.length === 0) {
+            throw new Error("No accounts found in Ganache");
+          }
         } catch (accountsError) {
           console.error("Error getting accounts:", accountsError);
-          accounts = [];
-          throw new Error("Could not get Ganache accounts. Please check your Ganache configuration.");
-        }
-        
-        if (accounts.length === 0) {
-          throw new Error("No accounts found in Ganache. Please check your Ganache configuration.");
+          setError("Could not get Ganache accounts. Please check your Ganache configuration.");
+          setLoading(false);
+          return; // Exit early
         }
         
         // Always use the first account from Ganache
@@ -177,8 +155,8 @@ try {
           const gasPriceGwei = web3Instance.utils.fromWei(gasPriceWei, 'gwei');
           console.log("Gas price:", gasPriceGwei, "Gwei");
           setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
-        } catch (e) {
-          console.error("Error getting gas price:", e);
+        } catch (gasError) {
+          console.error("Error getting gas price:", gasError);
           setGasPrice("20.00"); // Set a default value
           // Continue anyway - this is not critical
         }
@@ -201,13 +179,17 @@ try {
       }
     };
 
-    // Add a small delay before attempting to connect to ensure UI renders first
-    const connectionTimer = setTimeout(() => {
-      initWeb3();
-    }, 30);
+    // Execute connection logic
+    initWeb3();
     
-    // Clean up the timer if component unmounts
-    return () => clearTimeout(connectionTimer);
+    // Setup a cleanup function
+    return () => {
+      // Close any open connections if needed
+      if (web3 && web3.currentProvider && web3.currentProvider.disconnect) {
+        web3.currentProvider.disconnect();
+      }
+    };
+    // eslint-disable-next-line
   }, [navigate]);
 
   // Function to fetch transactions - in a real app, you would get real transactions from the blockchain
@@ -296,12 +278,30 @@ try {
   const calculateGasFee = (gas, gasPrice) => {
     if (!web3 || !gas || !gasPrice) return '0';
     try {
-      const gasFeeWei = web3.utils.toBN(gas).mul(web3.utils.toBN(gasPrice));
+      // Handle possible BigNumber conversion issues
+      let gasBN, gasPriceBN;
+      try {
+        gasBN = web3.utils.toBN(gas);
+        gasPriceBN = web3.utils.toBN(gasPrice);
+      } catch (bnError) {
+        console.error("Error converting to BN:", bnError);
+        // Fallback calculation
+        return (parseFloat(gas) * parseFloat(gasPrice) / 1e18).toFixed(6);
+      }
+      
+      const gasFeeWei = gasBN.mul(gasPriceBN);
       return parseFloat(web3.utils.fromWei(gasFeeWei, 'ether')).toFixed(6);
     } catch (e) {
       console.error("Error calculating gas fee:", e);
       return '0';
     }
+  };
+
+  // Handle retry connection
+  const handleRetryConnection = () => {
+    setLoading(true);
+    setError(null);
+    window.location.reload();
   };
 
   // ETH activity by category data
@@ -337,6 +337,10 @@ try {
             <span>Gas Price:</span>
             <span>{gasPrice} Gwei</span>
           </div>
+          <div className="debug-item">
+            <span>Connection Attempts:</span>
+            <span>{connectionAttempts}</span>
+          </div>
         </div>
       </div>
     );
@@ -351,6 +355,11 @@ try {
           <p>Connecting to Ganache blockchain...</p>
           <div className="spinner"></div>
           <p className="loading-tip">Make sure Ganache is running on http://127.0.0.1:7545</p>
+          {connectionAttempts > 1 && (
+            <button onClick={handleRetryConnection} className="retry-btn">
+              Retry Connection
+            </button>
+          )}
         </div>
       </div>
     );
@@ -369,230 +378,234 @@ try {
           <h3>Blockchain Connection Error</h3>
           <p>{error}</p>
           <p>Please make sure Ganache is running on http://127.0.0.1:7545</p>
-          <button onClick={() => window.location.reload()} className="retry-btn">
+          <button onClick={handleRetryConnection} className="retry-btn">
             Retry Connection
           </button>
         </div>
       )}
       
-      {/* Main dashboard content - still show even if there's an error */}
-      <div className="dashboard-grid">
-        <div className="wallet-card">
-          <h2>ETH Wallet</h2>
-          <div className="eth-balance">{ethBalance} ETH</div>
-          <div className="wallet-details">
-            <div className="wallet-address">
-              <span>Address:</span>
-              <span className="address-text">{shortenAddress(account)}</span>
-              <button className="copy-btn" onClick={() => navigator.clipboard.writeText(account)}>
-                Copy
-              </button>
-            </div>
-            <div className="wallet-network">
-              <span>Network:</span>
-              <span className="network-badge">{networkName}</span>
-            </div>
-          </div>
-          <div className="wallet-actions">
-            <button className="action-btn">Send ETH</button>
-            <button className="action-btn">Receive</button>
-            <button className="action-btn">Swap</button>
-          </div>
-        </div>
-        
-        <div className="stats-card">
-          <h2>Blockchain Activity</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-icon incoming"></div>
-              <div className="stat-data">
-                <div className="stat-value income">+0.95 ETH</div>
-                <div className="stat-label">Received</div>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon outgoing"></div>
-              <div className="stat-data">
-                <div className="stat-value expense">-0.07 ETH</div>
-                <div className="stat-label">Sent</div>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon gas"></div>
-              <div className="stat-data">
-                <div className="stat-value expense">{totalGasUsed} ETH</div>
-                <div className="stat-label">Gas Fees</div>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon transaction"></div>
-              <div className="stat-data">
-                <div className="stat-value">{transactions.length}</div>
-                <div className="stat-label">Transactions</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="gas-tracker-card">
-          <h2>Gas Tracker</h2>
-          <div className="gas-data">
-            <div className="gas-price-display">
-              <span className="gas-price-value">{gasPrice}</span>
-              <span className="gas-price-unit">Gwei</span>
-            </div>
-            <div className="gas-price-label">Current Gas Price</div>
-          </div>
-          <div className="gas-estimate">
-            <div className="gas-row">
-              <span>Regular Transfer:</span>
-              <span>{(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH</span>
-            </div>
-            <div className="gas-row">
-              <span>Token Transfer:</span>
-              <span>{(parseFloat(gasPrice) * 65000 / 1000000000).toFixed(6)} ETH</span>
-            </div>
-            <div className="gas-row">
-              <span>Smart Contract:</span>
-              <span>{(parseFloat(gasPrice) * 200000 / 1000000000).toFixed(6)} ETH</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="network-card">
-          <h2>Network Status</h2>
-          <div className="network-data">
-            <div className="network-row">
-              <span>Current Block:</span>
-              <span>{blockNumber}</span>
-            </div>
-            <div className="network-row">
-              <span>Network ID:</span>
-              <span>{networkId}</span>
-            </div>
-            <div className="network-row">
-              <span>Pending Transactions:</span>
-              <span>{pendingTransactions}</span>
-            </div>
-            <div className="network-row">
-              <span>Connection:</span>
-              <span className={connectionStatus === 'Connected' ? 'status-connected' : 'status-error'}>
-                {connectionStatus}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="transactions-section">
-        <div className="section-header">
-          <h2>Recent Transactions</h2>
-          <button className="view-all-btn">View All</button>
-        </div>
-        <div className="transaction-list">
-          {transactions.length > 0 ? (
-            transactions.map(transaction => (
-              <div key={transaction.id} className="transaction-item">
-                <div className="transaction-icon">
-                  <div className={`tx-icon ${transaction.from === account ? 'outgoing' : 'incoming'}`}></div>
+      {/* Main dashboard content - only show if no error */}
+      {!error && (
+        <div className="dashboard-content">
+          <div className="dashboard-grid">
+            <div className="wallet-card">
+              <h2>ETH Wallet</h2>
+              <div className="eth-balance">{ethBalance} ETH</div>
+              <div className="wallet-details">
+                <div className="wallet-address">
+                  <span>Address:</span>
+                  <span className="address-text">{shortenAddress(account)}</span>
+                  <button className="copy-btn" onClick={() => navigator.clipboard.writeText(account)}>
+                    Copy
+                  </button>
                 </div>
-                <div className="transaction-details">
-                  <div className="transaction-primary">
-                    <div className="transaction-type">{transaction.type}</div>
-                    <div className="transaction-amount">
-                      <span className={transaction.from === account ? 'expense' : 'income'}>
-                        {transaction.from === account ? '-' : '+'}
-                        {weiToEth(transaction.value)} ETH
-                      </span>
-                    </div>
-                  </div>
-                  <div className="transaction-secondary">
-                    <div className="transaction-addresses">
-                      {transaction.from === account 
-                        ? `To: ${shortenAddress(transaction.to)}` 
-                        : `From: ${shortenAddress(transaction.from)}`}
-                    </div>
-                    <div className="transaction-gas">
-                      Gas: {calculateGasFee(transaction.gas, transaction.gasPrice)} ETH
-                    </div>
-                  </div>
-                  <div className="transaction-meta">
-                    <div className="transaction-date">{transaction.date}</div>
-                    <div className="transaction-confirmations">
-                      {transaction.confirmations} confirmations
-                    </div>
-                    <div className="transaction-hash">
-                      Tx: {shortenAddress(transaction.id)}
-                    </div>
+                <div className="wallet-network">
+                  <span>Network:</span>
+                  <span className="network-badge">{networkName}</span>
+                </div>
+              </div>
+              <div className="wallet-actions">
+                <button className="action-btn">Send ETH</button>
+                <button className="action-btn">Receive</button>
+                <button className="action-btn">Swap</button>
+              </div>
+            </div>
+            
+            <div className="stats-card">
+              <h2>Blockchain Activity</h2>
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <div className="stat-icon incoming"></div>
+                  <div className="stat-data">
+                    <div className="stat-value income">+0.95 ETH</div>
+                    <div className="stat-label">Received</div>
                   </div>
                 </div>
-                <div className="transaction-status">
-                  <div className={`status-badge ${transaction.status}`}>
-                    {transaction.status}
+                <div className="stat-item">
+                  <div className="stat-icon outgoing"></div>
+                  <div className="stat-data">
+                    <div className="stat-value expense">-0.07 ETH</div>
+                    <div className="stat-label">Sent</div>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon gas"></div>
+                  <div className="stat-data">
+                    <div className="stat-value expense">{totalGasUsed} ETH</div>
+                    <div className="stat-label">Gas Fees</div>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon transaction"></div>
+                  <div className="stat-data">
+                    <div className="stat-value">{transactions.length}</div>
+                    <div className="stat-label">Transactions</div>
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="no-transactions">
-              <p>No transactions found for this address</p>
             </div>
-          )}
-        </div>
-      </div>
-      
-      <div className="analytics-section">
-        <div className="section-header">
-          <h2>ETH Activity Analysis</h2>
-        </div>
-        <div className="analytics-grid">
-          <div className="category-card">
-            <h3>Activity by Category</h3>
-            <div className="placeholder-chart">
-              <div className="chart-note">ETH Distribution Chart</div>
-            </div>
-            <div className="category-list">
-              {spendingByCategory.map((item, index) => (
-                <div key={index} className="category-item">
-                  <div className="category-color" style={{ backgroundColor: item.color }}></div>
-                  <div className="category-name">{item.category}</div>
-                  <div className="category-value">{item.amount} ETH</div>
+            
+            <div className="gas-tracker-card">
+              <h2>Gas Tracker</h2>
+              <div className="gas-data">
+                <div className="gas-price-display">
+                  <span className="gas-price-value">{gasPrice}</span>
+                  <span className="gas-price-unit">Gwei</span>
                 </div>
-              ))}
+                <div className="gas-price-label">Current Gas Price</div>
+              </div>
+              <div className="gas-estimate">
+                <div className="gas-row">
+                  <span>Regular Transfer:</span>
+                  <span>{(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH</span>
+                </div>
+                <div className="gas-row">
+                  <span>Token Transfer:</span>
+                  <span>{(parseFloat(gasPrice) * 65000 / 1000000000).toFixed(6)} ETH</span>
+                </div>
+                <div className="gas-row">
+                  <span>Smart Contract:</span>
+                  <span>{(parseFloat(gasPrice) * 200000 / 1000000000).toFixed(6)} ETH</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="network-card">
+              <h2>Network Status</h2>
+              <div className="network-data">
+                <div className="network-row">
+                  <span>Current Block:</span>
+                  <span>{blockNumber}</span>
+                </div>
+                <div className="network-row">
+                  <span>Network ID:</span>
+                  <span>{networkId}</span>
+                </div>
+                <div className="network-row">
+                  <span>Pending Transactions:</span>
+                  <span>{pendingTransactions}</span>
+                </div>
+                <div className="network-row">
+                  <span>Connection:</span>
+                  <span className={connectionStatus === 'Connected' ? 'status-connected' : 'status-error'}>
+                    {connectionStatus}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="token-card">
-            <h3>ERC-20 Tokens</h3>
-            <div className="token-list">
-              <div className="token-item">
-                <div className="token-icon">DAI</div>
-                <div className="token-details">
-                  <div className="token-name">Dai Stablecoin</div>
-                  <div className="token-balance">0 DAI</div>
-                </div>
-              </div>
-              <div className="token-item">
-                <div className="token-icon">USDC</div>
-                <div className="token-details">
-                  <div className="token-name">USD Coin</div>
-                  <div className="token-balance">0 USDC</div>
-                </div>
-              </div>
-              <div className="token-item">
-                <div className="token-icon">LINK</div>
-                <div className="token-details">
-                  <div className="token-name">Chainlink</div>
-                  <div className="token-balance">0 LINK</div>
-                </div>
-              </div>
+          <div className="transactions-section">
+            <div className="section-header">
+              <h2>Recent Transactions</h2>
+              <button className="view-all-btn">View All</button>
             </div>
-            <div className="token-actions">
-              <button className="token-action-btn">Add Token</button>
+            <div className="transaction-list">
+              {transactions.length > 0 ? (
+                transactions.map(transaction => (
+                  <div key={transaction.id} className="transaction-item">
+                    <div className="transaction-icon">
+                      <div className={`tx-icon ${transaction.from === account ? 'outgoing' : 'incoming'}`}></div>
+                    </div>
+                    <div className="transaction-details">
+                      <div className="transaction-primary">
+                        <div className="transaction-type">{transaction.type}</div>
+                        <div className="transaction-amount">
+                          <span className={transaction.from === account ? 'expense' : 'income'}>
+                            {transaction.from === account ? '-' : '+'}
+                            {weiToEth(transaction.value)} ETH
+                          </span>
+                        </div>
+                      </div>
+                      <div className="transaction-secondary">
+                        <div className="transaction-addresses">
+                          {transaction.from === account 
+                            ? `To: ${shortenAddress(transaction.to)}` 
+                            : `From: ${shortenAddress(transaction.from)}`}
+                        </div>
+                        <div className="transaction-gas">
+                          Gas: {calculateGasFee(transaction.gas, transaction.gasPrice)} ETH
+                        </div>
+                      </div>
+                      <div className="transaction-meta">
+                        <div className="transaction-date">{transaction.date}</div>
+                        <div className="transaction-confirmations">
+                          {transaction.confirmations} confirmations
+                        </div>
+                        <div className="transaction-hash">
+                          Tx: {shortenAddress(transaction.id)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="transaction-status">
+                      <div className={`status-badge ${transaction.status}`}>
+                        {transaction.status}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-transactions">
+                  <p>No transactions found for this address</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="analytics-section">
+            <div className="section-header">
+              <h2>ETH Activity Analysis</h2>
+            </div>
+            <div className="analytics-grid">
+              <div className="category-card">
+                <h3>Activity by Category</h3>
+                <div className="placeholder-chart">
+                  <div className="chart-note">ETH Distribution Chart</div>
+                </div>
+                <div className="category-list">
+                  {spendingByCategory.map((item, index) => (
+                    <div key={index} className="category-item">
+                      <div className="category-color" style={{ backgroundColor: item.color }}></div>
+                      <div className="category-name">{item.category}</div>
+                      <div className="category-value">{item.amount} ETH</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="token-card">
+                <h3>ERC-20 Tokens</h3>
+                <div className="token-list">
+                  <div className="token-item">
+                    <div className="token-icon">DAI</div>
+                    <div className="token-details">
+                      <div className="token-name">Dai Stablecoin</div>
+                      <div className="token-balance">0 DAI</div>
+                    </div>
+                  </div>
+                  <div className="token-item">
+                    <div className="token-icon">USDC</div>
+                    <div className="token-details">
+                      <div className="token-name">USD Coin</div>
+                      <div className="token-balance">0 USDC</div>
+                    </div>
+                  </div>
+                  <div className="token-item">
+                    <div className="token-icon">LINK</div>
+                    <div className="token-details">
+                      <div className="token-name">Chainlink</div>
+                      <div className="token-balance">0 LINK</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="token-actions">
+                  <button className="token-action-btn">Add Token</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
