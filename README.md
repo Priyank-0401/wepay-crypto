@@ -20,7 +20,7 @@ This platform is designed to support up to **1,000+ concurrent users**, with fut
 | Layer        | Technology Used       |
 |-------------|----------------------|
 | **Frontend**  | HTML, CSS, JavaScript |
-| **Blockchain** | Solidity, Ethereum (or any other compatible chain) |
+| **Blockchain** |  Ethereum  |
 | **Database** | PHPMyAdmin, MySQL |
 
 ## Installation & Setup
