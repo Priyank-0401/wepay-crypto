@@ -99,7 +99,7 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for m
 For any queries or support, feel free to reach out:  
 
 📧 Email: [priyankpahwa41@gmail.com](mailto:priyankpahwa41@gmail.com)  
-🔗 LinkedIn: [Priyank Pahwa]([https://linkedin.com/in/priyankpahwa41])  
+🔗 LinkedIn: [https://linkedin.com/in/priyankpahwa41]([https://linkedin.com/in/priyankpahwa41])  
 
 ---
 
