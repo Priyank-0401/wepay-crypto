@@ -1,70 +1,106 @@
-# Getting Started with Create React App
+# WePay – Blockchain Transaction Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![WePay Logo](https://your-logo-url.com) <!-- Replace with actual logo URL if available -->
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+**WePay** is a blockchain-powered payment platform designed to facilitate secure and tamper-proof financial transactions. Built with **Solidity**, **HTML**, **CSS**, and **JavaScript**, it enables **trustless, fraud-proof transactions** while ensuring high scalability and efficiency.  
 
-### `npm start`
+This platform is designed to support up to **1,000+ concurrent users**, with future expansions aiming at **global adoption** and **multi-currency transactions**.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+✅ **Smart Contracts** – Eliminates third-party interference and ensures fraud-proof transactions.  
+✅ **Secure Wallet Management** – Integrated wallet system for storing and transferring digital assets.  
+✅ **User-Friendly Interface** – HTML, CSS, and JavaScript-powered UI for seamless navigation and interaction.  
+✅ **Real-time Transaction Processing** – Ensures fast and reliable payment settlements on the blockchain.  
+✅ **Cross-Border Transactions (Upcoming)** – Aiming to facilitate low-cost, global transactions.  
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Layer        | Technology Used       |
+|-------------|----------------------|
+| **Frontend**  | HTML, CSS, JavaScript |
+| **Blockchain** | Solidity, Ethereum (or any other compatible chain) |
+| **Database** | PHPMyAdmin, MySQL |
 
-### `npm run build`
+## Installation & Setup
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Follow these steps to set up the **WePay** project locally:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Prerequisites
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Node.js (v18+ recommended)  
+- PHPMyAdmin and MySQL (for database management)  
+- MetaMask (for blockchain interactions)  
+- Ganache (for local Ethereum blockchain testing)  
+- Truffle/Hardhat (for smart contract development)
 
-### `npm run eject`
+### Steps
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Clone the repository**  
+   ```sh
+   git clone https://github.com/Priyank-0401/wepay-crypto.git
+   cd wepay-crypto
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Set up environment variables**  
+   Create a `.env` file and configure the following:
+   ```sh
+   PRIVATE_KEY=your_wallet_private_key
+   INFURA_API_KEY=your_infura_project_id
+   JWT_SECRET=your_secret_key
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Compile and deploy smart contracts**  
+   ```sh
+   npx hardhat compile
+   npx hardhat run scripts/deploy.js --network goerli
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. **Access the application**  
+   Open `index.html` in your browser.
 
-## Learn More
+## Smart Contract Details
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+| Feature          | Implementation |
+|-----------------|---------------|
+| **Transaction Security** | Uses cryptographic signatures for authentication |
+| **Gas Optimization** | Optimized Solidity functions to reduce fees |
+| **Scalability** | Designed for handling thousands of transactions per second |
+| **Multi-Currency Support** | Future implementation planned |
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Future Roadmap
 
-### Code Splitting
+🚀 **Scalability Enhancements** – Upgrade to support **1,000+ concurrent users**.  
+🌍 **Cross-Border Transactions** – Reduce fees and improve speed for global payments.  
+💰 **Multi-Currency Wallet** – Enable transactions in multiple cryptocurrencies.  
+📱 **Mobile App Development** – Extend functionality to iOS & Android.  
+🔐 **Enhanced Security** – Implement multi-signature authentication for high-value transactions.  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Contributing
 
-### Analyzing the Bundle Size
+Contributions are welcome! To get started:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Fork the repository  
+2. Create a new branch: `git checkout -b feature-branch`  
+3. Commit your changes: `git commit -m "Added a new feature"`  
+4. Push to the branch: `git push origin feature-branch`  
+5. Open a Pull Request  
 
-### Making a Progressive Web App
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for more details.
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 📞 Contact
 
-### Deployment
+For any queries or support, feel free to reach out:  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+📧 Email: [priyankpahwa41@gmail.com](mailto:priyankpahwa41@gmail.com)  
+🔗 LinkedIn: [Priyank Pahwa]([https://linkedin.com/in/priyankpahwa41])  
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+🔹 **WePay – Secure, Scalable, and Seamless Blockchain Payments** 🔹  
