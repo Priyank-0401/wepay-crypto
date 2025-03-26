@@ -1,6 +1,5 @@
 # WePay – Blockchain Transaction Application
 
-![WePay Logo](https://your-logo-url.com) <!-- Replace with actual logo URL if available -->
 
 ## Overview
 
@@ -99,7 +98,7 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for m
 For any queries or support, feel free to reach out:  
 
 📧 Email: [priyankpahwa41@gmail.com](mailto:priyankpahwa41@gmail.com)  
-🔗 LinkedIn: [https://linkedin.com/in/priyankpahwa41]([https://linkedin.com/in/priyankpahwa41])  
+🔗 LinkedIn: [Priyank Pahwa](https://linkedin.com/in/priyankpahwa41)  
 
 ---
 
