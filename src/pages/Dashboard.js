@@ -22,22 +22,52 @@ const Dashboard = () => {
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [debugMessage, setDebugMessage] = useState('Initializing...');
 
+  // Function definitions - this is where setMockData should go
+  const setMockData = () => {
+    const mockAddr = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+    setAccount(mockAddr);
+    setEthBalance("1.2345"); 
+    setGasPrice("20.00");
+    setNetworkId("1337");
+    setNetworkName("Ganache Local");
+    fetchTransactions(mockAddr, web3);
+    setPendingTransactions(Math.floor(Math.random() * 5));
+    setTotalGasUsed(parseFloat((Math.random() * 0.01).toFixed(4)));
+    setBlockNumber(12345);
+    console.log("Mock data loaded successfully");
+  };
+
   useEffect(() => {
     // Check if user is logged in
-    const user = localStorage.getItem('user');
+    const userString = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     
     console.log("Dashboard init - localStorage check:", { 
-      userExists: !!user, 
+      userExists: !!userString, 
       tokenExists: !!token 
     });
     
-    if (!user || !token) {
+    if (!userString || !token) {
       console.log("Missing user or token, redirecting to login");
       navigate('/login');
       return;
     }
 
+    // Parse user data safely with error handling
+    let userData;
+    try {
+      userData = JSON.parse(userString);
+      if (!userData) {
+        throw new Error("User data is null after parsing");
+      }
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+      localStorage.removeItem('user'); // Clear invalid data
+      localStorage.removeItem('token');
+      navigate('/login');
+      return;
+    }
+    
     // Initialize Web3 with Ganache
     const initWeb3 = async () => {
       try {
@@ -47,167 +77,118 @@ const Dashboard = () => {
         setConnectionAttempts(prev => prev + 1);
         setDebugMessage("Connecting to Ganache...");
         
-        // Connect directly to Ganache with minimal timeout
+        // Ganache URL
         const ganacheUrl = 'http://127.0.0.1:7545';
         console.log(`Connecting to Ganache at ${ganacheUrl}`);
         
-        // Create Web3 instance with minimal timeout settings
-        const web3Instance = new Web3(new Web3.providers.HttpProvider(ganacheUrl, {
-          timeout: 5000, // Reduced to 5 seconds
-        }));
-        
-        // Store the web3 instance first
+        // Create Web3 instance
+        const web3Instance = new Web3(ganacheUrl);
         setWeb3(web3Instance);
-        setDebugMessage("Web3 instance created");
         
-        // Try to display something even if we can't connect fully
-        let partialSuccess = false;
-
-        // Check if connected with a simple call
-        try {
-          setDebugMessage("Checking blockchain connection...");
-          const isListening = await web3Instance.eth.net.isListening();
-          console.log("Web3 connected:", isListening);
-          setConnectionStatus(isListening ? 'Connected' : 'Disconnected');
-          setDebugMessage(isListening ? "Connected to blockchain" : "Failed to connect");
-          
-          if (!isListening) {
-            throw new Error("Failed to connect to blockchain network");
-          }
-          partialSuccess = true;
-        } catch (connErr) {
-          console.error("Connection check failed:", connErr);
-          setError("Failed to connect to Ganache. Is it running on port 7545?");
-          setDebugMessage("Connection failed: " + connErr.message);
+        // Set up connection timeout
+        let connectionTimeout = setTimeout(() => {
+          console.log("Connection timeout - showing user's wallet data");
           setLoading(false);
-          return; // Exit early
-        }
-
-        // Get network information - don't fail if this doesn't work
-        try {
-          setDebugMessage("Getting network ID...");
-          const netId = await web3Instance.eth.net.getId();
-          console.log("Network ID:", netId);
-          setNetworkId(netId || 'Unknown');
+          setDebugMessage("Connection timed out, showing your wallet data");
+          setConnectionStatus('Disconnected');
           
-          // Determine network name based on ID
+          // Use user's wallet from registration instead of random mock data
+          if (userData.wallet_address) {
+            setAccount(userData.wallet_address);
+            setEthBalance(userData.wallet_balance || "0.0000");
+            fetchTransactions(userData.wallet_address, web3Instance);
+          } else {
+            // Fallback if no wallet in user data
+            setMockData();
+          }
+        }, 5000);
+        
+        try {
+          // Quick check that connection works
+          const blockNumber = await web3Instance.eth.getBlockNumber();
+          
+          // Clear the timeout
+          clearTimeout(connectionTimeout);
+          
+          setBlockNumber(blockNumber);
+          setConnectionStatus('Connected');
+          setDebugMessage("Connected to Ganache successfully");
+          
+          // Use the user's wallet address instead of getting accounts
+          if (userData.wallet_address) {
+            setAccount(userData.wallet_address);
+            
+            // Get real-time balance for the user's address
+            try {
+              const balanceWei = await web3Instance.eth.getBalance(userData.wallet_address);
+              const balanceEth = web3Instance.utils.fromWei(balanceWei, 'ether');
+              setEthBalance(parseFloat(balanceEth).toFixed(4));
+              
+              // Update in database via API call
+              updateWalletBalance(userData.wallet_address, balanceEth);
+              
+              // Get user's transactions
+              fetchTransactions(userData.wallet_address, web3Instance);
+            } catch (balanceError) {
+              console.error("Error getting balance:", balanceError);
+              setEthBalance(userData.wallet_balance || "0.0000");
+            }
+          } else {
+            console.warn("User has no wallet address assigned");
+            setMockData();
+          }
+          
+          // Get network info
+          const netId = await web3Instance.eth.net.getId();
+          setNetworkId(netId.toString());
+          
           let network = 'Unknown';
           if (netId === 5777 || netId === 1337) {
             network = 'Ganache Local';
           } else if (netId === 1) {
             network = 'Ethereum Mainnet';
-          } else if (netId === 11155111) {
-            network = 'Sepolia Testnet';
-          } else if (netId === 5) {
-            network = 'Goerli Testnet';
           }
           setNetworkName(network);
-          console.log("Network name:", network);
-          partialSuccess = true;
-        } catch (netIdErr) {
-          console.error("Failed to get network ID:", netIdErr);
-          setNetworkId('Unknown');
-          setNetworkName('Unknown');
-          setDebugMessage("Network ID retrieval failed, continuing...");
-          // Continue anyway - this is not critical
-        }
-
-        // Get current block number - don't fail if this doesn't work
-        try {
-          setDebugMessage("Getting block number...");
-          const currentBlock = await web3Instance.eth.getBlockNumber();
-          console.log("Current block:", currentBlock);
-          setBlockNumber(currentBlock);
-          partialSuccess = true;
-        } catch (blockErr) {
-          console.error("Failed to get block number:", blockErr);
-          setBlockNumber(0);
-          setDebugMessage("Block number retrieval failed, continuing...");
-          // Continue anyway - this is not critical
-        }
-
-        // Try to get accounts
-        let accounts = [];
-        try {
-          setDebugMessage("Getting accounts...");
-          accounts = await web3Instance.eth.getAccounts();
-          console.log("Accounts found:", accounts);
           
-          if (accounts.length === 0) {
-            console.warn("No accounts found in Ganache");
-            setDebugMessage("No accounts found, using mock data");
-            // Don't throw error, use mock data instead
-            accounts = ['0x742d35Cc6634C0532925a3b844Bc454e4438f44e'];
-          }
-          partialSuccess = true;
-        } catch (accountsError) {
-          console.error("Error getting accounts:", accountsError);
-          setDebugMessage("Account retrieval failed, using mock data");
-          // Use a mock account instead of failing
-          accounts = ['0x742d35Cc6634C0532925a3b844Bc454e4438f44e'];
-        }
-        
-        // Always use the first account
-        const userAddress = accounts[0];
-        console.log("Using address:", userAddress);
-        setAccount(userAddress);
-
-        // Try to get account balance
-        try {
-          setDebugMessage("Getting balance...");
-          const balanceWei = await web3Instance.eth.getBalance(userAddress);
-          const balanceEth = web3Instance.utils.fromWei(balanceWei, 'ether');
-          console.log("Account balance:", balanceEth, "ETH");
-          setEthBalance(parseFloat(balanceEth).toFixed(4));
-          partialSuccess = true;
-        } catch (balanceError) {
-          console.error("Error getting balance:", balanceError);
-          setEthBalance("0.0000");
-          setDebugMessage("Balance retrieval failed, using mock data");
-          // Continue anyway - this is not critical
-        }
-
-        // Try to get gas price
-        try {
-          setDebugMessage("Getting gas price...");
           const gasPriceWei = await web3Instance.eth.getGasPrice();
           const gasPriceGwei = web3Instance.utils.fromWei(gasPriceWei, 'gwei');
-          console.log("Gas price:", gasPriceGwei, "Gwei");
           setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
-          partialSuccess = true;
-        } catch (gasError) {
-          console.error("Error getting gas price:", gasError);
-          setGasPrice("20.00"); // Set a default value
-          setDebugMessage("Gas price retrieval failed, using default");
-          // Continue anyway - this is not critical
-        }
-
-        // Always fetch mock transactions even if other things fail
-        setDebugMessage("Setting up mock transactions...");
-        fetchTransactions(userAddress, web3Instance);
-        
-        // Get pending transactions (mock data for demo)
-        setPendingTransactions(Math.floor(Math.random() * 5));
-        
-        // Calculate total gas used (mock data for demo)
-        setTotalGasUsed(parseFloat((Math.random() * 0.01).toFixed(4)));
-        
-        console.log("Dashboard data loaded successfully");
-        setDebugMessage("Data loaded successfully");
-        setLoading(false);
-        
-        // If at least some data was retrieved, hide the loading screen
-        if (partialSuccess) {
+          
+          // Mock data for transaction counts, etc.
+          setPendingTransactions(Math.floor(Math.random() * 3));
+          setTotalGasUsed(parseFloat((Math.random() * 0.005).toFixed(4)));
+        } catch (error) {
+          console.error("Error connecting to web3:", error);
+          clearTimeout(connectionTimeout);
+          setConnectionStatus('Disconnected');
+          setError("Could not connect to blockchain: " + error.message);
+          
+          // Use user's wallet data from registration
+          if (userData.wallet_address) {
+            setAccount(userData.wallet_address);
+            setEthBalance(userData.wallet_balance || "0.0000");
+          } else {
+            setMockData();
+          }
+        } finally {
           setLoading(false);
         }
       } catch (error) {
-        console.error("Failed to initialize web3:", error);
-        setError("Failed to connect to blockchain: " + error.message);
-        setDebugMessage("Fatal error: " + error.message);
+        console.error("Critical failure:", error);
         setLoading(false);
+        setError("Critical error: " + error.message);
+        setDebugMessage("Critical failure in connection");
+        
+        // Still try to use user data
+        if (userData.wallet_address) {
+          setAccount(userData.wallet_address);
+          setEthBalance(userData.wallet_balance || "0.0000");
+        } else {
+          setMockData();
+        }
       }
     };
-
+    
     // Execute connection logic
     initWeb3();
     
@@ -221,12 +202,98 @@ const Dashboard = () => {
     // eslint-disable-next-line
   }, [navigate]);
 
-  // Function to fetch transactions - in a real app, you would get real transactions from the blockchain
+  // Add function to update wallet balance in the database
+  const updateWalletBalance = async (address, balance) => {
+    try {
+      const userString = localStorage.getItem('user');
+      if (!userString) return;
+      
+      let user;
+      try {
+        user = JSON.parse(userString);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        return;
+      }
+      
+      if (!user || !user.id) return;
+      
+      const response = await fetch('http://localhost/wepay-crypto/server/api/wallet/update_balance.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          user_id: user.id,
+          wallet_address: address,
+          balance: balance
+        }),
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        console.log("Wallet balance updated in database");
+        
+        // Update user data in localStorage
+        user.wallet_balance = balance;
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+    } catch (err) {
+      console.error("Error updating wallet balance:", err);
+    }
+  };
+
+  // Modify fetchTransactions to filter for only the user's transactions
   const fetchTransactions = async (address, web3Instance) => {
     console.log("Fetching transactions for address:", address);
     try {
-      // For demo purposes, we'll use mock data
-      // In a real app, you would use web3.eth.getPastLogs or a blockchain explorer API
+      // In a real app, you would get transactions from the blockchain for this specific address
+      // For now, we'll simulate this with filtered mock data
+      
+      // First, check if we can get real transactions
+      if (web3Instance) {
+        try {
+          // Try to get the last few blocks to check for transactions
+          const latestBlock = await web3Instance.eth.getBlockNumber();
+          const realTransactions = [];
+          
+          // Look through the last 50 blocks for transactions involving this address
+          for (let i = 0; i < 50; i++) {
+            if (latestBlock - i < 0) break;
+            
+            const block = await web3Instance.eth.getBlock(latestBlock - i, true);
+            if (block && block.transactions) {
+              block.transactions.forEach(tx => {
+                if (tx.from === address || tx.to === address) {
+                  realTransactions.push({
+                    id: tx.hash,
+                    from: tx.from,
+                    to: tx.to,
+                    value: tx.value,
+                    date: new Date().toISOString().slice(0, 10), // Just today's date
+                    gas: tx.gas,
+                    gasPrice: tx.gasPrice,
+                    status: 'confirmed',
+                    confirmations: i,
+                    type: tx.from === address ? 'Transfer' : 'Receive'
+                  });
+                }
+              });
+            }
+          }
+          
+          if (realTransactions.length > 0) {
+            console.log("Found real transactions:", realTransactions.length);
+            setTransactions(realTransactions);
+            return;
+          }
+        } catch (realTxError) {
+          console.error("Error getting real transactions:", realTxError);
+          // Fall back to mock data if we can't get real transactions
+        }
+      }
+      
+      // Mock data filtering - only show transactions related to this address
       const mockTxs = [
         {
           id: '0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b',
@@ -252,34 +319,11 @@ const Dashboard = () => {
           confirmations: 24,
           type: 'Receive'
         },
-        {
-          id: '0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b',
-          from: address,
-          to: '0x1Db3439a222C519ab44bb1144fC28167b4Fa6EE6',
-          value: web3Instance ? web3Instance.utils.toWei('0.02', 'ether') : '20000000000000000',
-          date: '2025-03-15',
-          gas: '32000',
-          gasPrice: web3Instance ? web3Instance.utils.toWei('22', 'gwei') : '22000000000',
-          status: 'confirmed',
-          confirmations: 36,
-          type: 'DeFi'
-        },
-        {
-          id: '0x7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5',
-          from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-          to: address,
-          value: web3Instance ? web3Instance.utils.toWei('0.15', 'ether') : '150000000000000000',
-          date: '2025-03-12',
-          gas: '21000',
-          gasPrice: web3Instance ? web3Instance.utils.toWei('15', 'gwei') : '15000000000',
-          status: 'confirmed',
-          confirmations: 48,
-          type: 'Receive'
-        },
+        // More mock transactions...
       ];
 
       setTransactions(mockTxs);
-      console.log("Transactions loaded:", mockTxs.length);
+      console.log("Mock transactions loaded for address:", address);
     } catch (err) {
       console.error("Error fetching transactions:", err);
       setTransactions([]);
@@ -339,10 +383,15 @@ const Dashboard = () => {
     window.location.reload();
   };
 
-  // Show dashboard with partial data
+  // Handle show anyway - Fix #6: Simplified this function
   const handleShowAnyway = () => {
+    console.log("User clicked 'Show Dashboard Anyway'");
     setLoading(false);
     setError(null);
+    setDebugMessage("Showing dashboard in offline mode");
+    
+    // Set mock data directly
+    setMockData();
   };
 
   // ETH activity by category data
@@ -416,6 +465,22 @@ const Dashboard = () => {
     );
   }
 
+  const handleLogout = () => {
+    console.log("Logging out...");
+    
+    // Clear authentication data from localStorage
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    // If you have any auth state in your app context, clear it too
+    // This depends on how your app is structured
+    // For example: setAuthState(false) or dispatch({ type: 'LOGOUT' })
+    
+    // Force reload the application to clear any in-memory state
+    // and redirect to login page
+    window.location.href = '/login';
+  };
+
   return (
     <div className="dashboard">
       <h1>Ethereum Blockchain Dashboard</h1>
@@ -439,11 +504,11 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-grid">
           <div className="wallet-card">
-            <h2>ETH Wallet</h2>
+            <h2>Your ETH Wallet</h2>
             <div className="eth-balance">{ethBalance} ETH</div>
             <div className="wallet-details">
               <div className="wallet-address">
-                <span>Address:</span>
+                <span>Your Address:</span>
                 <span className="address-text">{shortenAddress(account)}</span>
                 <button className="copy-btn" onClick={() => navigator.clipboard.writeText(account)}>
                   Copy
@@ -655,6 +720,10 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      
+      <button onClick={handleLogout} className="logout-btn">
+        Logout
+      </button>
     </div>
   );
 };

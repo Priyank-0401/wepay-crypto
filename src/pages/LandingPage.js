@@ -7,7 +7,9 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <header className="header">
-        <div className="logo">WePay</div>
+        <div className="logo">
+          <a href="src\pages\LandingPage.js"> WePay</a>
+          </div>
         <nav className="nav-links">
           <a href="#features">Features</a>
           <a href="#how-it-works">How It Works</a>

@@ -11,9 +11,18 @@ session_start();
 
 // Set content type
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
 
 // Get the database connection
-require_once '../../config/db_connect.php'; // Adjust this path as needed
+require_once '../../config/db_connect.php';
+require_once '../utils/web3_utils.php';
 
 // Create a log file
 $log_file = __DIR__ . '/login_debug.log';
@@ -62,13 +71,48 @@ try {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
             
+            // Check if user has a wallet, if not, assign one
+            if (empty($user['wallet_address'])) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . " - User has no wallet, assigning one\n", FILE_APPEND);
+                
+                $wallet = assignGanacheWallet();
+                if ($wallet['success']) {
+                    $wallet_address = $conn->real_escape_string($wallet['address']);
+                    $wallet_balance = $conn->real_escape_string($wallet['balance']);
+                    
+                    $update_query = "UPDATE users SET wallet_address = '$wallet_address', wallet_balance = '$wallet_balance' WHERE id = " . $user['id'];
+                    $conn->query($update_query);
+                    
+                    $user['wallet_address'] = $wallet_address;
+                    $user['wallet_balance'] = $wallet_balance;
+                    
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . " - Wallet assigned: $wallet_address\n", FILE_APPEND);
+                }
+            } else {
+                // Update wallet balance
+                $current_balance = getWalletBalance($user['wallet_address']);
+                $update_query = "UPDATE users SET wallet_balance = '$current_balance' WHERE id = " . $user['id'];
+                $conn->query($update_query);
+                $user['wallet_balance'] = $current_balance;
+            }
+            
+            // In login.php - Add debug logging
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - User data before sending response: " . json_encode($user) . "\n", FILE_APPEND);
+            
             $response = [
                 'success' => true, 
                 'message' => 'Login successful',
-                'user' => $user
+                'user' => [
+                    'id' => $user['id'],
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'wallet_address' => $user['wallet_address'] ?? '', // Use null coalescing to prevent undefined
+                    'wallet_balance' => $user['wallet_balance'] ?? '0.0000'
+                ],
+                'token' => bin2hex(random_bytes(16))
             ];
             
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending success response\n", FILE_APPEND);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Response to client: " . json_encode($response) . "\n", FILE_APPEND);
             echo json_encode($response);
         } else {
             // Password is incorrect

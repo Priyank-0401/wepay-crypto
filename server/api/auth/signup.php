@@ -15,6 +15,7 @@ ini_set('error_log', 'php_error.log');
 
 try {
     require_once '../../config/db_connect.php';
+    require_once '../utils/web3_utils.php'; // Include the web3 utilities
 
     // Get data from request
     $data = json_decode(file_get_contents('php://input'), true);
@@ -31,11 +32,31 @@ try {
         if ($result->num_rows > 0) {
             echo json_encode(['success' => false, 'message' => 'Email already registered']);
         } else {
-            // Insert new user
-            $insert_query = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
+            // Assign a wallet from Ganache
+            $wallet = assignGanacheWallet();
+            
+            if (!$wallet['success']) {
+                echo json_encode(['success' => false, 'message' => 'Failed to assign ETH wallet: ' . $wallet['message']]);
+                exit;
+            }
+            
+            $wallet_address = $conn->real_escape_string($wallet['address']);
+            $wallet_balance = $conn->real_escape_string($wallet['balance']);
+            
+            // Insert new user with wallet address
+            $insert_query = "INSERT INTO users (name, email, password, wallet_address, wallet_balance) 
+                            VALUES ('$name', '$email', '$password', '$wallet_address', '$wallet_balance')";
             
             if ($conn->query($insert_query) === TRUE) {
-                echo json_encode(['success' => true, 'message' => 'User registered successfully']);
+                // Return success with wallet info
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'User registered successfully',
+                    'wallet' => [
+                        'address' => $wallet_address,
+                        'balance' => $wallet_balance
+                    ]
+                ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
             }

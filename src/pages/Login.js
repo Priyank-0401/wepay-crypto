@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
@@ -7,14 +7,38 @@ const LoginPage = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      // User is already logged in
+      console.log("User already logged in, redirecting to dashboard");
+      onLogin(); // Update app authentication state
+      navigate('/dashboard');
+    }
+  }, [navigate, onLogin]);
+
+  // Handle successful login redirection
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log("Login successful, redirecting to dashboard");
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (isLoading) return; // Prevent multiple submissions
+    
     setIsLoading(true);
+    setError('');
     
     try {
+      console.log("Attempting login...");
       // Call to your PHP backend
       const response = await fetch('http://localhost/wepay-crypto/server/api/auth/login.php', {
         method: 'POST',
@@ -27,20 +51,31 @@ const LoginPage = ({ onLogin }) => {
       const data = await response.json();
       
       if (data.success) {
-        // Store user info
-        localStorage.setItem('user', JSON.stringify(data.user));
+        console.log("Login successful, storing user data:", data.user);
         
-        // Update app authentication state
-        onLogin();
-        
-        // Navigate to dashboard
-        navigate('/dashboard');
+        // Ensure data.user is not undefined before storing it
+        if (data.user) {
+          // Store user info
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('token', data.token || 'dummy-token');
+          
+          // Update app authentication state
+          onLogin(data.user); // Pass the user data to the onLogin function
+          
+          // Set logged in state to trigger redirection
+          setIsLoggedIn(true);
+        } else {
+          setError('Invalid user data received from server');
+          setIsLoading(false);
+        }
       } else {
+        console.log("Login failed:", data.message);
         setError(data.message || 'Invalid credentials');
+        setIsLoading(false);
       }
     } catch (err) {
+      console.error("Server error during login:", err);
       setError('Server error. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -76,6 +111,7 @@ const LoginPage = ({ onLogin }) => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -88,10 +124,11 @@ const LoginPage = ({ onLogin }) => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
+                  disabled={isLoading}
                 />
-                <div className="forgot-password">
+                {/* <div className="forgot-password">
                   <Link to="/forgot-password">Forgot Password?</Link>
-                </div>
+                </div> */}
               </div>
 
               <button type="submit" className="auth-submit-btn" disabled={isLoading}>

@@ -1,5 +1,5 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/App.css';
 
@@ -22,23 +22,46 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  // Initialize as not authenticated - no longer checking localStorage
+  // Check for user on component mount
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Check authentication status on load
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setIsAuthenticated(true);
+    }
+  }, []);
   
   // Authentication functions
   const login = (userData) => {
-    // Store user data in memory only (not in localStorage)
-    setIsAuthenticated(true);
-    return true;
+    if (userData) {
+      // Store user data in localStorage, checking it's valid first
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', 'auth-token-' + Date.now()); // Simple token
+      setIsAuthenticated(true);
+      return true;
+    } else {
+      console.error("Invalid user data in login function");
+      return false;
+    }
   };
   
   const signup = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', 'auth-token-' + Date.now()); // Simple token
     setIsAuthenticated(true);
     return true;
   };
   
   const logout = () => {
+    // Clear user data
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
+    
+    // Force redirect to login page
+    window.location.href = '/login';
   };
 
   return (
