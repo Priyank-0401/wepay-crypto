@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
 
-const Navbar = ({ onLogout, darkMode }) => {
+const Navbar = ({ onLogout, darkMode, toggleDarkMode }) => {
   // Add state variables
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInitial, setUserInitial] = useState('U');
@@ -84,6 +84,10 @@ const Navbar = ({ onLogout, darkMode }) => {
           </div>
         </div>
       </div>
+      
+      <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+        <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
+      </button>
     </div>
   );
 };

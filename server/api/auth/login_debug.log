@@ -378,3 +378,12 @@
 2025-04-01 02:16:31 - Response to client: {"success":true,"message":"Login successful","user":{"id":"8","name":"Priyank","email":"priyank@gmail.com","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"98.9993"},"token":"e482ecabffd8e8430822c033e118e851"}
 2025-04-01 02:16:31 - Login process completed
 
+2025-04-01 05:02:59 - Login attempt started
+2025-04-01 05:02:59 - Received input: {"email":"priyank@gmail.com","password":"hello"}
+2025-04-01 05:02:59 - Querying for email: priyank@gmail.com
+2025-04-01 05:02:59 - User found, verifying password
+2025-04-01 05:02:59 - Password verified successfully
+2025-04-01 05:02:59 - User data before sending response: {"id":"8","name":"Priyank","email":"priyank@gmail.com","created_at":"2025-04-01 05:18:42","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"98.9982","wallet_created_at":"2025-04-01 05:18:42"}
+2025-04-01 05:02:59 - Response to client: {"success":true,"message":"Login successful","user":{"id":"8","name":"Priyank","email":"priyank@gmail.com","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"98.9982"},"token":"adb07efbc6b28ccdb6fecd61b5a357de"}
+2025-04-01 05:02:59 - Login process completed
+

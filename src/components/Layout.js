@@ -38,7 +38,7 @@ const Layout = ({ onLogout }) => {
     <div className={`app-layout ${darkMode ? 'dark-mode' : ''}`}>
       <Sidebar darkMode={darkMode} />
       <div className="main-content">
-        <Navbar onLogout={onLogout} darkMode={darkMode} />
+        <Navbar onLogout={onLogout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <div className="content-area">
           <Outlet context={{ darkMode }} />
         </div>

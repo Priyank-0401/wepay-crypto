@@ -1,15 +1,42 @@
 // LandingPage.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/LandingPage.css';
+import '../styles/Landing.css';
 
 const LandingPage = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  
+  useEffect(() => {
+    // Check if user has a preference stored
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(isDarkMode);
+    
+    // Apply dark mode class to landing page if needed
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, []);
+  
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode);
+    
+    if (newDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  };
+
   return (
     <div className="landing-page">
       <header className="header">
         <div className="logo">
           <a href="src\pages\LandingPage.js"> WePay</a>
-          </div>
+        </div>
         <nav className="nav-links">
           <a href="#features">Features</a>
           <a href="#how-it-works">How It Works</a>
@@ -19,6 +46,9 @@ const LandingPage = () => {
         <div className="auth-buttons">
           <Link to="/login" className="login-btn">Login</Link>
           <Link to="/signup" className="create-account-btn">Create Account</Link>
+          <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+            <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
+          </button>
         </div>
       </header>
 
@@ -218,30 +248,7 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
-
-        {/* <section className="low-fee">
-          <h2>COMPLETELY FREE PLATFORM</h2>
-          <p>WePay charges absolutely no platform fees. You only pay the standard Ethereum network gas fees required for blockchain transactions.</p>
-          <div className="fee-card">
-            <div className="fee-highlight">0%</div>
-            <p>Platform Fee</p>
-            <div className="fee-details">
-              <div className="fee-detail">
-                <h4>PLATFORM FEE</h4>
-                <p>0%</p>
-              </div>
-              <div className="fee-detail">
-                <h4>WITHDRAWAL FEE</h4>
-                <p>0%</p>
-              </div>
-              <div className="fee-detail">
-                <h4>MONTHLY FEE</h4>
-                <p>$0</p>
-              </div>
-            </div>
-          </div>
-        </section> */}
-
+        
         <section className="cta-section">
           <h2>START TRANSACTING WITH CONFIDENCE</h2>
           <p>Join thousands of users who trust WePay for their Ethereum transactions</p>
