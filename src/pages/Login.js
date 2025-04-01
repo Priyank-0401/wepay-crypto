@@ -8,6 +8,7 @@ const LoginPage = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   // Check if user is already logged in
@@ -28,6 +29,31 @@ const LoginPage = ({ onLogin }) => {
       navigate('/dashboard', { replace: true });
     }
   }, [isLoggedIn, navigate]);
+
+  useEffect(() => {
+    // Check if user has a dark mode preference in localStorage
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode) {
+      setDarkMode(savedMode === 'true');
+    } else {
+      // Check if user's system prefers dark mode
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(prefersDarkMode);
+    }
+
+    // Listen for changes to darkMode in localStorage
+    const handleStorageChange = () => {
+      const currentMode = localStorage.getItem('darkMode');
+      if (currentMode) {
+        setDarkMode(currentMode === 'true');
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +108,7 @@ const LoginPage = ({ onLogin }) => {
 
   // Rest of your component remains the same
   return (
-    <div className="auth-page">
+    <div className={`auth-page ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
         <Link to="/" className="logo">WePay</Link>
         <div className="auth-switch">

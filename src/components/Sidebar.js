@@ -66,13 +66,6 @@ const Sidebar = () => {
           </li>
         </ul>
       </nav>
-      
-      <div className="quick-transfer">
-        <NavLink to="/quick-transfer" className="quick-transfer-btn">
-          <span className="icon">📤</span>
-          <span className="label">Quick Transfer</span>
-        </NavLink>
-      </div>
     </div>
   );
 };

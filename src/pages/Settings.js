@@ -4,6 +4,7 @@ import '../styles/Settings.css';
 
 const Settings = () => {
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -40,12 +41,12 @@ const Settings = () => {
         };
         
         setUserData(userData);
-        setFormData({
-          ...formData, 
+        setFormData(prevFormData => ({
+          ...prevFormData,
           name: userData.name,
           email: userData.email,
           username: userData.username
-        });
+        }));
       }
     } catch (error) {
       console.error('Error parsing user data:', error);

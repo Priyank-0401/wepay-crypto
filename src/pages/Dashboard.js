@@ -1,12 +1,13 @@
 // Dashboard.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import Web3 from 'web3';
 import '../styles/Dashboard.css';
 import { QRCodeSVG } from 'qrcode.react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { darkMode } = useOutletContext();
   const [account, setAccount] = useState('');
   const [ethBalance, setEthBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -591,7 +592,7 @@ const Dashboard = () => {
   // Show a loading state
   if (loading) {
     return (
-      <div className="dashboard loading-state">
+      <div className={`dashboard loading-state ${darkMode ? 'dark-mode' : ''}`}>
         <div className="loading-indicator">
           <p>Connecting to Ganache blockchain...</p>
           <div className="spinner"></div>
@@ -612,24 +613,8 @@ const Dashboard = () => {
     );
   }
 
-  const handleLogout = () => {
-    console.log("Logging out...");
-    
-    // Clear authentication data from localStorage
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    
-    // If you have any auth state in your app context, clear it too
-    // This depends on how your app is structured
-    // For example: setAuthState(false) or dispatch({ type: 'LOGOUT' })
-    
-    // Force reload the application to clear any in-memory state
-    // and redirect to login page
-    window.location.href = '/login';
-  };
-
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${darkMode ? 'dark-mode' : ''}`}>
       <div className="dashboard-content">
         {/* Show error message if there is one */}
         {error && (
@@ -1000,12 +985,6 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      
-      <div className="dashboard-actions">
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
-      </div>
     </div>
   );
 };

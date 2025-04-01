@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
@@ -10,7 +10,33 @@ const SignupPage = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user has a dark mode preference in localStorage
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode) {
+      setDarkMode(savedMode === 'true');
+    } else {
+      // Check if user's system prefers dark mode
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(prefersDarkMode);
+    }
+
+    // Listen for changes to darkMode in localStorage
+    const handleStorageChange = () => {
+      const currentMode = localStorage.getItem('darkMode');
+      if (currentMode) {
+        setDarkMode(currentMode === 'true');
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +75,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="auth-page">
+    <div className={`auth-page ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
         <Link to="/" className="logo">WePay</Link>
         <div className="auth-switch">
@@ -140,21 +166,6 @@ const SignupPage = () => {
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
-
-            {/*<div className="auth-divider">
-              <span>Or continue with</span>
-            </div>
-
-             <div className="social-auth">
-              <button className="social-auth-btn metamask-btn">
-                <span className="btn-icon">🦊</span>
-                <span>MetaMask</span>
-              </button>
-              <button className="social-auth-btn wallet-connect-btn">
-                <span className="btn-icon">🔗</span>
-                <span>WalletConnect</span>
-              </button>
-            </div> */}
           </div>
 
           <div className="auth-graphic">

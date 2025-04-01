@@ -3,11 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
 
-const Navbar = ({ onLogout }) => {
+const Navbar = ({ onLogout, darkMode }) => {
   // Add state variables
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInitial, setUserInitial] = useState('U');
-  const [searchQuery, setSearchQuery] = useState('');
   
   // Get user data from localStorage on component mount
   useEffect(() => {
@@ -68,38 +67,14 @@ const Navbar = ({ onLogout }) => {
       onLogout();
     }
   };
-  
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-    // Implement search functionality here
-  };
-  
+
   return (
-    <div className="navbar">
+    <div className={`navbar ${darkMode ? 'dark-mode' : ''}`}>
       <div className="navbar-left">
         <h2 className="page-title">Dashboard</h2>
       </div>
       
-      <div className="navbar-right">
-        <div className="navbar-search">
-          <form onSubmit={handleSearch}>
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit" className="search-btn">🔍</button>
-          </form>
-        </div>
-        
-        <div className="navbar-notifications">
-          <button className="notification-btn">🔔</button>
-          <span className="notification-badge">3</span>
-        </div>
-        
+      <div className="navbar-right">        
         <div className={`navbar-user ${dropdownOpen ? 'active' : ''}`}>
           <div className="user-avatar" onClick={toggleDropdown}>{userInitial}</div>
           <div className="user-dropdown">

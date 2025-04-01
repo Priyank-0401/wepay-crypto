@@ -40,7 +40,7 @@ const Layout = ({ onLogout }) => {
       <div className="main-content">
         <Navbar onLogout={onLogout} darkMode={darkMode} />
         <div className="content-area">
-          <Outlet />
+          <Outlet context={{ darkMode }} />
         </div>
         <button 
           className="dark-mode-toggle" 
