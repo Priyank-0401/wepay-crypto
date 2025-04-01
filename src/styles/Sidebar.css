@@ -7,6 +7,11 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  transition: background-color 0.3s;
+}
+
+.dark-mode .sidebar {
+  background-color: #0f0c1d;
 }
 
 .sidebar-header {
@@ -20,6 +25,9 @@
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
+  background: linear-gradient(to right, #3498db, #8e44ad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .sidebar-nav {
@@ -65,7 +73,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(to bottom, #ff65b5, #6665ff);
+  background: linear-gradient(to bottom, #3498db, #8e44ad);
 }
 
 .icon {
@@ -90,17 +98,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, #ff65b5, #6665ff);
+  background: linear-gradient(to right, #3498db, #8e44ad);
   color: white;
   padding: 0.75rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .quick-transfer-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .quick-transfer-btn {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .quick-transfer-btn:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 768px) {
