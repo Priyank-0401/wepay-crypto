@@ -14,29 +14,29 @@ const SignupPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user has a dark mode preference in localStorage
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode) {
-      setDarkMode(savedMode === 'true');
-    } else {
-      // Check if user's system prefers dark mode
-      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(prefersDarkMode);
-    }
-
-    // Listen for changes to darkMode in localStorage
-    const handleStorageChange = () => {
-      const currentMode = localStorage.getItem('darkMode');
-      if (currentMode) {
-        setDarkMode(currentMode === 'true');
-      }
-    };
+    // Check if user has a preference stored
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(isDarkMode);
     
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    // Apply dark mode class if needed
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, []);
+  
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode);
+    
+    if (newDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,9 +78,14 @@ const SignupPage = () => {
     <div className={`auth-page ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
         <Link to="/" className="logo">WePay</Link>
-        <div className="auth-switch">
-          <span>Already have an account?</span>
-          <Link to="/login" className="auth-switch-btn">Log In</Link>
+        <div className="auth-buttons">
+          <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+            <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
+          </button>
+          <div className="auth-switch">
+            <span>Already have an account?</span>
+            <Link to="/login" className="auth-switch-btn">Log In</Link>
+          </div>
         </div>
       </header>
 

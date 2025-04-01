@@ -206,3 +206,36 @@
     width: 150px;
   }
 }
+
+/* Hide the current floating dark mode button */
+.dark-mode-toggle-floating {
+  display: none;
+}
+
+/* Dark Mode Toggle Button - Clean navbar style */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-right: 15px;
+  color: var(--text-secondary);
+}
+
+.dark-mode-toggle:hover {
+  color: var(--primary);
+}
+
+.dark-mode .dark-mode-toggle {
+  color: #a0a0a0;
+}
+
+.dark-mode-toggle .icon {
+  font-size: 18px;
+}

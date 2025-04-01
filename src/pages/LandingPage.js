@@ -44,11 +44,11 @@ const LandingPage = () => {
           <a href="#advantages">Advantages</a>
         </nav>
         <div className="auth-buttons">
+          <button className="dark-mode-toggle" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+            {darkMode ? '☀️' : '🌙'}
+          </button>
           <Link to="/login" className="login-btn">Login</Link>
           <Link to="/signup" className="create-account-btn">Create Account</Link>
-          <button className="dark-mode-toggle" onClick={toggleDarkMode}>
-            <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
-          </button>
         </div>
       </header>
 

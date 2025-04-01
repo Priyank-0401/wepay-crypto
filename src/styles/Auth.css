@@ -779,3 +779,37 @@ body, html {
 .auth-page, .auth-page * {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
+
+.dark-mode-toggle {
+  /* Keep your existing styles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Add these properties to improve centering */
+  line-height: 1;
+  text-align: center;
+  padding: 0;
+}
+
+.dark-mode-toggle .icon,
+.dark-mode-toggle span {
+  /* Center the icon or text inside */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  position: relative;
+  top: 0; /* Adjust this value if needed, try -1px or 1px */
+}
+
+/* If you're using emoji characters */
+.dark-mode-toggle .icon {
+  font-size: 16px; /* Adjust size as needed */
+  /* Sometimes a slight vertical adjustment is needed for emoji */
+  transform: translateY(0px); /* Try small values like 1px or -1px if needed */
+}

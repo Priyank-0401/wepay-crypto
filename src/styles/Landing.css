@@ -1382,40 +1382,46 @@ body, html {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Dark Mode Toggle Button - Updated positioning and size */
+/* Fix positioning for dark mode toggle */
 .dark-mode-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;  /* Smaller width */
-  height: 30px;  /* Smaller height */
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: var(--transition);
-  margin-left: 10px;  /* Reduced margin */
-  color: var(--text-secondary);
-  position: relative;  /* Make sure it's positioned properly */
-  top: 0;  /* Reset any bottom positioning */
-  right: 0;  /* Reset any right positioning */
+  position: static !important; /* Override any absolute positioning */
+  bottom: auto !important;
+  right: auto !important;
+  float: none !important;
+  margin: 0 15px 0 0 !important;
+  transform: none !important;
+  
+  /* Simple styling */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 35px !important;
+  height: 35px !important;
+  background-color: rgba(240, 240, 240, 0.1); /* Very subtle light gray in light mode */
+  border: none !important;
+  cursor: pointer !important;
+  color: #777 !important;
+  opacity: 0.7 !important;
+  padding: 0 !important;
+  z-index: 1 !important;
 }
 
 .dark-mode-toggle:hover {
-  background-color: rgba(52, 152, 219, 0.1);
+  opacity: 1;
   color: var(--primary);
 }
 
 .dark-mode .dark-mode-toggle {
-  border-color: var(--border-color);
-  color: var(--text-secondary);
+  background-color: rgba(40, 40, 40, 0.2); /* Subtle dark gray in dark mode */
+  color: #aaa;
 }
 
-.dark-mode .dark-mode-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Moon/Sun icon styles can be added here */
 .dark-mode-toggle .icon {
-  font-size: 14px;  /* Smaller icon */
+  font-size: 16px;
+}
+
+/* Make sure the auth-buttons container properly displays the toggle */
+.auth-buttons {
+  display: flex !important;
+  align-items: center !important;
 } 

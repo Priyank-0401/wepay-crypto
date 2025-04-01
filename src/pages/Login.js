@@ -55,6 +55,27 @@ const LoginPage = ({ onLogin }) => {
     };
   }, []);
 
+  useEffect(() => {
+    // Apply dark mode class if needed
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode);
+    
+    if (newDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -111,9 +132,14 @@ const LoginPage = ({ onLogin }) => {
     <div className={`auth-page ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
         <Link to="/" className="logo">WePay</Link>
-        <div className="auth-switch">
-          <span>Don't have an account?</span>
-          <Link to="/signup" className="auth-switch-btn">Sign Up</Link>
+        <div className="auth-buttons">
+          <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+            <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
+          </button>
+          <div className="auth-switch">
+            <span>Don't have an account?</span>
+            <Link to="/signup" className="auth-switch-btn">Sign Up</Link>
+          </div>
         </div>
       </header>
 
@@ -162,20 +188,6 @@ const LoginPage = ({ onLogin }) => {
               </button>
             </form>
 
-            {/* <div className="auth-divider">
-              <span>Or continue with</span>
-            </div>
-
-            <div className="social-auth">
-              <button className="social-auth-btn metamask-btn">
-                <span className="btn-icon">🦊</span>
-                <span>MetaMask</span>
-              </button>
-              <button className="social-auth-btn wallet-connect-btn">
-                <span className="btn-icon">🔗</span>
-                <span>WalletConnect</span>
-              </button>
-            </div> */}
           </div>
 
           <div className="auth-graphic">
