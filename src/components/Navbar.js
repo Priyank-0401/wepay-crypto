@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
 
-const Navbar = ({ onLogout, darkMode, toggleDarkMode }) => {
+const Navbar = ({ onLogout }) => {
   // Add state variables
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInitial, setUserInitial] = useState('U');
@@ -69,25 +69,23 @@ const Navbar = ({ onLogout, darkMode, toggleDarkMode }) => {
   };
 
   return (
-    <div className={`navbar ${darkMode ? 'dark-mode' : ''}`}>
+    <div className="navbar dark-mode">
       <div className="navbar-left">
         <h2 className="page-title">Dashboard</h2>
       </div>
       
-      <div className="navbar-right">        
-        <div className={`navbar-user ${dropdownOpen ? 'active' : ''}`}>
+      <div className="navbar-right">
+        <div className="navbar-user">
           <div className="user-avatar" onClick={toggleDropdown}>{userInitial}</div>
-          <div className="user-dropdown">
-            <Link to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>
-            <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
+          {dropdownOpen && (
+            <div className="user-dropdown">
+              <Link to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>
+              <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          )}
         </div>
       </div>
-      
-      <button className="dark-mode-toggle" onClick={toggleDarkMode}>
-        <span className="icon">{darkMode ? '☀️' : '🌙'}</span>
-      </button>
     </div>
   );
 };

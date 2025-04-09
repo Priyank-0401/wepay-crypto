@@ -1,38 +1,60 @@
 /* Sidebar.css */
 .sidebar {
-  width: 250px;
+  width: 220px;
   height: 100vh;
-  background-color: #1a162e;
-  color: white;
+  background-color: #1e1e2d;
+  color: #a2a3b7;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   transition: background-color 0.3s;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .dark-mode .sidebar {
-  background-color: #0f0c1d;
+  background-color: #1a1a26;
 }
 
 .sidebar-header {
-  padding: 1.5rem;
+  padding: 1.5rem 1.2rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 0.5rem;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(to right, #3498db, #8e44ad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #3498db;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  padding: 0.75rem 1.5rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #565674;
+  letter-spacing: 0.7px;
+  margin-bottom: 0.75rem;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 1.5rem 0;
 }
 
 .sidebar-nav ul {
@@ -42,45 +64,50 @@
 }
 
 .sidebar-nav li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 2px;
 }
 
 .sidebar-nav a {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  padding: 0.65rem 1.5rem;
+  color: #a2a3b7;
   text-decoration: none;
   transition: all 0.2s ease;
+  font-size: 0.875rem;
+  border-radius: 0;
+  border-left: 3px solid transparent;
 }
 
 .sidebar-nav a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
 }
 
 .sidebar-nav a.active {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-weight: 600;
-  position: relative;
-}
-
-.sidebar-nav a.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(to bottom, #3498db, #8e44ad);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-weight: 500;
+  border-left: 3px solid #ff7b00;
 }
 
 .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 0.75rem;
-  font-size: 1.25rem;
-  width: 24px;
-  text-align: center;
+  width: 22px;
+  height: 22px;
+  color: inherit;
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.label {
+  font-weight: 400;
 }
 
 .divider {

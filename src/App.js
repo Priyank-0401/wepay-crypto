@@ -21,21 +21,26 @@ import QuickTransfer from './pages/QuickTransfer';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
-  // Check for user on component mount
+const App = () => {
+  // No need to manage dark mode state, just auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-  // Check authentication status on load
   useEffect(() => {
+    // Check if user is logged in on component mount
+    const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    if (user) {
+    
+    if (token && user) {
       setIsAuthenticated(true);
     }
+    
+    // Force dark mode
+    document.body.classList.add('dark-mode');
   }, []);
   
   // Authentication functions
   const login = (userData) => {
-    if (userData) {
+    if (userData && (userData.id || userData.email)) {
       // Store user data in localStorage, checking it's valid first
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('token', 'auth-token-' + Date.now()); // Simple token
@@ -48,10 +53,15 @@ function App() {
   };
   
   const signup = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', 'auth-token-' + Date.now()); // Simple token
-    setIsAuthenticated(true);
-    return true;
+    if (userData && (userData.id || userData.email)) {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', 'auth-token-' + Date.now()); // Simple token
+      setIsAuthenticated(true);
+      return true;
+    } else {
+      console.error("Invalid user data in signup function");
+      return false;
+    }
   };
   
   const logout = () => {
@@ -66,37 +76,39 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={
-          isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={login} />
-        } />
-        <Route path="/signup" element={
-          isAuthenticated ? <Navigate to="/dashboard" /> : <Signup onSignup={signup} />
-        } />
-        
-        {/* Protected routes - wrapped in Layout component for authenticated users */}
-        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-          <Route element={<Layout onLogout={logout} />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/accounts" element={<Accounts />} />
-            <Route path="/budgets" element={<Budgets />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/quick-transfer" element={<QuickTransfer />} />
+      <div className="app dark-mode">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={
+            isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={login} />
+          } />
+          <Route path="/signup" element={
+            isAuthenticated ? <Navigate to="/dashboard" /> : <Signup onSignup={signup} />
+          } />
+          
+          {/* Protected routes - wrapped in Layout component for authenticated users */}
+          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+            <Route element={<Layout onLogout={logout} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/accounts" element={<Accounts />} />
+              <Route path="/budgets" element={<Budgets />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/quick-transfer" element={<QuickTransfer />} />
+            </Route>
           </Route>
-        </Route>
-        
-        {/* Redirect to landing page if not authenticated */}
-        <Route 
-          path="*" 
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/" />} 
-        />
-      </Routes>
+          
+          {/* Redirect to landing page if not authenticated */}
+          <Route 
+            path="*" 
+            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/" />} 
+          />
+        </Routes>
+      </div>
     </Router>
   );
 }

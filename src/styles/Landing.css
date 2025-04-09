@@ -2,10 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Use the same color variables as dashboard and auth pages */
+  /* Base colors */
   --primary: #3498db;
   --primary-dark: #2980b9;
   --secondary: #8e44ad;
+  --secondary-dark: #7d3c98;
   --success: #2ecc71;
   --danger: #e74c3c;
   --warning: #f39c12;
@@ -15,10 +16,10 @@
   --text-secondary: #666;
   --border-color: #eaeaea;
   
-  /* Gradient combinations */
-  --gradient-primary: linear-gradient(45deg, #3498db, #8e44ad);
-  --gradient-secondary: linear-gradient(135deg, #00c4ff, #7857ff);
-  --gradient-success: linear-gradient(45deg, #2ecc71, #1abc9c);
+  /* Replace gradients with solid colors */
+  --solid-primary: #3498db;
+  --solid-secondary: #8e44ad;
+  --solid-accent: #00bcd4;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
 }
@@ -1382,46 +1383,41 @@ body, html {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Fix positioning for dark mode toggle */
+/* Remove dark mode toggle button styles */
 .dark-mode-toggle {
-  position: static !important; /* Override any absolute positioning */
-  bottom: auto !important;
-  right: auto !important;
-  float: none !important;
-  margin: 0 15px 0 0 !important;
-  transform: none !important;
-  
-  /* Simple styling */
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 35px !important;
-  height: 35px !important;
-  background-color: rgba(240, 240, 240, 0.1); /* Very subtle light gray in light mode */
-  border: none !important;
-  cursor: pointer !important;
-  color: #777 !important;
-  opacity: 0.7 !important;
-  padding: 0 !important;
-  z-index: 1 !important;
+  display: none !important; /* Hide dark mode toggle */
 }
 
-.dark-mode-toggle:hover {
-  opacity: 1;
-  color: var(--primary);
+/* General transitions for all interactive elements */
+.landing-page a, 
+.landing-page button,
+.feature-card,
+.advantage-card,
+.security-feature,
+.testimonial-card,
+.block,
+.step,
+.feature-tags span {
+  transition: all 0.3s ease; /* This creates a smooth transition for all properties */
 }
 
-.dark-mode .dark-mode-toggle {
-  background-color: rgba(40, 40, 40, 0.2); /* Subtle dark gray in dark mode */
-  color: #aaa;
+/* More specific transitions if needed */
+.nav-links a::after,
+.learn-more-btn::after,
+.footer-column ul li a::after {
+  transition: transform 0.3s ease; /* Smooth underline animations */
 }
 
-.dark-mode-toggle .icon {
-  font-size: 16px;
+.get-started-btn:hover,
+.create-account-btn:hover,
+.cta-btn:hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
-/* Make sure the auth-buttons container properly displays the toggle */
-.auth-buttons {
-  display: flex !important;
-  align-items: center !important;
+/* For cards that move on hover */
+.feature-card:hover,
+.advantage-card:hover,
+.security-feature:hover,
+.testimonial-card:hover {
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
 } 

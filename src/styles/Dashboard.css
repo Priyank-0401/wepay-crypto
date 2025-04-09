@@ -34,53 +34,36 @@ body, html {
   color: var(--neutral-800);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  overflow: hidden; /* Hide scrollbar on body/html */
 }
 
 /* Main dashboard container */
 .dashboard {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: var(--bg-main, #f5f7fa);
   color: var(--text-primary, #333);
   transition: background-color 0.3s, color 0.3s;
+  position: relative;
+  overflow: hidden; /* Hide scrollbar on dashboard container */
 }
 
 .dark-mode .dashboard {
-  background-color: var(--bg-main, #1a1a2e);
+  background-color: #121624; /* Darker, more saturated blue-ish background */
   color: var(--text-primary, #f0f0f0);
 }
-
-/* Header styling - keeping these as reference but commented out since we're using Navbar instead */
-/* .dashboard-header {
-  background-color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: static;
-  z-index: 1;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.dashboard-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--neutral-800);
-  letter-spacing: -0.025em;
-} */
 
 /* Main content container - adjust padding to account for navbar */
 .dashboard-content {
   flex: 1;
-  padding: 1.5rem 2rem 2rem;
-  max-width: 1600px;
-  margin: 0 auto;
+  padding: 1.5rem 2rem;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto; /* Allow scrolling only on dashboard content */
+  height: 100%;
 }
 
 /* Add smooth transitions for better UX */
@@ -122,92 +105,106 @@ body, html {
 /* Card grid layout */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.75rem;
+  margin-bottom: 2rem;
   animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* Beautiful card styling */
 .wallet-card, .stats-card, .gas-tracker-card, .network-card,
-.transactions-section, .analytics-section {
+.price-card, .tx-stats-card {
   background: var(--bg-content, white);
   border-radius: 1.25rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 8px rgba(0, 0, 0, 0.06);
-  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.04);
+  padding: 1.75rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   overflow: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
 }
 
 .dark-mode .wallet-card, 
 .dark-mode .stats-card, 
 .dark-mode .gas-tracker-card, 
 .dark-mode .network-card,
-.dark-mode .transactions-section, 
-.dark-mode .analytics-section {
-  background: var(--bg-content, #16213e);
-  border-color: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 8px rgba(0, 0, 0, 0.3);
+.dark-mode .price-card,
+.dark-mode .tx-stats-card {
+  background: #171d2d; /* Darker blue-ish card background */
+  border-color: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .wallet-card:hover, .stats-card:hover, 
-.gas-tracker-card:hover, .network-card:hover {
+.gas-tracker-card:hover, .network-card:hover,
+.price-card:hover, .tx-stats-card:hover {
   transform: translateY(-5px);
-  box-shadow: var(--hover-shadow);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
 }
 
 .dark-mode .wallet-card:hover, 
 .dark-mode .stats-card:hover, 
 .dark-mode .gas-tracker-card:hover, 
-.dark-mode .network-card:hover {
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+.dark-mode .network-card:hover,
+.dark-mode .price-card:hover,
+.dark-mode .tx-stats-card:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Card headers with accent line - match navbar color scheme */
+/* Card headers with accent line */
 .wallet-card h2, .stats-card h2, .gas-tracker-card h2, 
-.network-card h2, .transactions-section h2, .analytics-section h2 {
-  font-size: 1.125rem;
+.network-card h2, .price-card h2, .tx-stats-card h2 {
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary, #333);
   margin-top: 0;
   margin-bottom: 1.5rem;
   position: relative;
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  letter-spacing: -0.01em;
 }
 
 .wallet-card h2::after, .stats-card h2::after, 
 .gas-tracker-card h2::after, .network-card h2::after,
-.transactions-section h2::after, .analytics-section h2::after {
+.price-card h2::after, .tx-stats-card h2::after {
   content: '';
   position: absolute;
   left: 0;
   bottom: 0;
   height: 3px;
   width: 40px;
-  background: linear-gradient(45deg, #3498db, #8e44ad);
-  border-radius: 3px;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 
-/* ETH Balance display - match navbar gradient */
+.wallet-card:hover h2::after, .stats-card:hover h2::after, 
+.gas-tracker-card:hover h2::after, .network-card:hover h2::after,
+.price-card:hover h2::after, .tx-stats-card:hover h2::after {
+  width: 60px;
+}
+
+/* ETH Balance display */
 .eth-balance {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 700;
   color: var(--primary);
   text-align: center;
   margin: 1.5rem 0;
   letter-spacing: -0.025em;
-  background: linear-gradient(45deg, #3498db, #8e44ad);
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
+  position: relative;
 }
 
 /* Address display */
@@ -310,17 +307,17 @@ body, html {
 }
 
 .send-btn, .action-btn:nth-child(1) {
-  background: linear-gradient(45deg, #3498db, #8e44ad);
+  background-color: var(--primary);
   color: white;
 }
 
 .receive-btn, .action-btn:nth-child(2) {
-  background: linear-gradient(45deg, #3498db, #00c6ff);
+  background-color: var(--primary-dark);
   color: white;
 }
 
 .swap-btn, .action-btn:nth-child(3) {
-  background: linear-gradient(45deg, #8e44ad, #c13584);
+  background-color: var(--secondary);
   color: white;
 }
 
@@ -374,22 +371,22 @@ body, html {
 }
 
 .stat-icon.incoming {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+  background-color: rgba(52, 152, 219, 0.2);
   color: #3498db;
 }
 
 .stat-icon.outgoing {
-  background: linear-gradient(135deg, rgba(142, 68, 173, 0.1), rgba(142, 68, 173, 0.2));
+  background-color: rgba(142, 68, 173, 0.2);
   color: #8e44ad;
 }
 
 .stat-icon.gas {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2));
+  background-color: rgba(245, 158, 11, 0.2);
   color: var(--warning);
 }
 
 .stat-icon.transaction {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(79, 70, 229, 0.2));
+  background-color: rgba(79, 70, 229, 0.2);
   color: var(--primary);
 }
 
@@ -427,15 +424,27 @@ body, html {
 
 /* Gas Tracker */
 .gas-data {
-  background: linear-gradient(to right, #fef3c7, #fef9e7);
-  border-radius: 0.75rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-radius: 1rem;
   padding: 1.5rem;
   text-align: center;
   margin-bottom: 1.5rem;
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .dark-mode .gas-data {
-  background: linear-gradient(to right, rgba(254, 243, 199, 0.1), rgba(254, 249, 231, 0.15));
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.gas-data:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.1);
+}
+
+.dark-mode .gas-data:hover {
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
 }
 
 .gas-price-value {
@@ -443,6 +452,10 @@ body, html {
   font-weight: 800;
   color: var(--warning);
   line-height: 1;
+  background: linear-gradient(to right, var(--warning), #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
 }
 
 .gas-price-unit {
@@ -546,75 +559,277 @@ body, html {
 }
 
 /* Transaction section styling */
-.transactions-section {
-  margin-bottom: 1.5rem;
-}
-
-.section-header {
+.transactions-section, 
+.defi-portfolio-section {
+  grid-column: 1 / -1;
+  max-width: 100%;
+  overflow: hidden;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
+  flex-direction: column;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--bg-content, white);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.view-all-btn {
-  background-color: var(--bg-main, #f5f7fa);
-  border: 1px solid var(--border-color, #eaeaea);
-  padding: 0.5rem 1rem;
+.dark-mode .transactions-section,
+.dark-mode .defi-portfolio-section {
+  background: #171d2d;
+  border-color: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.transactions-section:hover,
+.defi-portfolio-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+}
+
+.dark-mode .transactions-section:hover,
+.dark-mode .defi-portfolio-section:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Create a flex row for the header to position heading and button */
+.transactions-section, 
+.defi-portfolio-section {
+  position: relative;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Move the heading to the left */
+.transactions-section h2,
+.defi-portfolio-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  position: relative;
+  padding-bottom: 0.35rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  margin-right: auto;
+  text-align: left;
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+
+.dark-mode .transactions-section h2,
+.dark-mode .defi-portfolio-section h2 {
+  color: var(--text-primary, #f0f0f0);
+}
+
+/* Bottom accent line for h2 */
+.transactions-section h2::after,
+.defi-portfolio-section h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 40px;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.transactions-section:hover h2::after,
+.defi-portfolio-section:hover h2::after {
+  width: 60px;
+}
+
+.transactions-section .view-all-btn,
+.defi-portfolio-section .view-all-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background-color: rgba(79, 70, 229, 0.08);
   border-radius: 0.5rem;
-  color: #3498db;
+  color: var(--primary);
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  border: none;
+  margin-left: auto;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* Keep all existing button hover styles */
 .dark-mode .view-all-btn {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, #2a2a40);
+  background-color: rgba(79, 70, 229, 0.15);
+  color: var(--primary-light);
 }
 
 .view-all-btn:hover {
-  background-color: var(--border-color, #eaeaea);
+  background-color: rgba(79, 70, 229, 0.15);
+  transform: translateY(-2px);
 }
 
 .dark-mode .view-all-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(79, 70, 229, 0.25);
 }
 
+/* Make sure the transaction list and defi-card-grid have proper spacing */
 .transaction-list {
-  max-height: 350px;
+  margin-top: 1.5rem;
   overflow-y: auto;
+  max-height: 340px;
   padding-right: 0.5rem;
+  scrollbar-width: thin;
 }
 
-.transaction-list::-webkit-scrollbar {
-  width: 6px;
+/* Transaction items */
+.transaction-item {
+  background: var(--bg-main, #f5f7fa);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.transaction-list::-webkit-scrollbar-track {
-  background: var(--neutral-100);
-  border-radius: 3px;
+.dark-mode .transaction-item {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.transaction-list::-webkit-scrollbar-thumb {
-  background: var(--neutral-300);
-  border-radius: 3px;
+.transaction-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-color, #eaeaea);
+  z-index: 1;
 }
 
-.no-transactions {
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--text-secondary, #666);
-  background-color: var(--bg-main, #f5f7fa);
-  border-radius: 0.75rem;
-  border: 1px dashed var(--border-color, #eaeaea);
-}
-
-.dark-mode .no-transactions {
-  color: var(--text-secondary, #a0a0a0);
-  background-color: rgba(255, 255, 255, 0.05);
+.dark-mode .transaction-item:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
   border-color: var(--border-color, #2a2a40);
+}
+
+.transaction-item:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.transaction-item:hover:before {
+  opacity: 1;
+}
+
+/* Improved transaction icon styling */
+.transaction-icon {
+  flex-shrink: 0;
+}
+
+.tx-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease;
+}
+
+.tx-icon.incoming {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.05));
+  border: 2px solid rgba(46, 204, 113, 0.2);
+}
+
+.tx-icon.outgoing {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(142, 68, 173, 0.05));
+  border: 2px solid rgba(155, 89, 182, 0.2);
+}
+
+.transaction-item:hover .tx-icon {
+  transform: scale(1.1);
+}
+
+/* Transaction details styling */
+.transaction-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-primary {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.transaction-type {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.transaction-amount {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.transaction-amount .income {
+  color: var(--success);
+}
+
+.transaction-amount .expense {
+  color: var(--danger);
+}
+
+.transaction-secondary, .transaction-meta {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.transaction-status {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.confirmed {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success);
+}
+
+.status-badge.pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.status-badge.failed {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger);
 }
 
 /* Analytics section styling */
@@ -684,67 +899,87 @@ body, html {
 @media (max-width: 1200px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 1rem;
   }
-  
   .dashboard-content {
     padding: 1.5rem;
+    overflow-y: auto;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  
   .analytics-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  
   .dashboard-content {
     padding: 1rem;
+    overflow-y: auto;
   }
-  
   .eth-balance {
     font-size: 2rem;
+  }
+  
+  body, html, .dashboard {
+    overflow-y: auto;
+    height: auto;
   }
 }
 
 @media (max-width: 576px) {
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
-  
   .wallet-address, .wallet-network {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: 0.75rem;
   }
-  
   .wallet-address span:first-child, .wallet-network span:first-child {
-    width: 100%;
     margin-bottom: 0.25rem;
+    min-width: auto;
   }
-  
   .address-text {
     width: 100%;
-    max-width: none;
+    margin-right: 0;
     margin-bottom: 0.5rem;
   }
-  
   .dashboard-header {
-    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
   .dashboard-header h1 {
-    font-size: 1.25rem;
+    margin-bottom: 1rem;
   }
-  
   .wallet-actions {
     flex-direction: column;
   }
-  
   .action-btn, .send-btn, .receive-btn, .swap-btn {
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin: 0.25rem 0;
+  }
+  
+  /* Ensure scrollable content on small screens */
+  .dashboard-content {
+    height: auto;
+    overflow-y: visible;
+    padding-bottom: 5rem; /* Add padding at the bottom for better UX */
+  }
+  
+  .transaction-list,
+  .defi-card-grid {
+    max-height: none; /* Allow content to flow naturally */
+  }
+  
+  .transactions-section,
+  .defi-portfolio-section {
+    max-height: none;
+    overflow: visible;
   }
 }
 
@@ -755,21 +990,25 @@ body, html {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
 }
 
 .transaction-modal {
   background-color: white;
   border-radius: 1rem;
-  width: 90%;
-  max-width: 450px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -803,6 +1042,8 @@ body, html {
 
 .modal-body {
   padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Form group styling */
@@ -841,7 +1082,7 @@ body, html {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--primary); 
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
@@ -1127,461 +1368,544 @@ body, html {
   color: var(--text-primary, #f0f0f0);
 }
 
-/* Dashboard actions styling */
-.dashboard-actions {
-  background-color: white;
-  border-top: 1px solid var(--neutral-200);
-  padding: 1rem 2rem;
-  margin-top: 2rem;
-}
-
-.logout-btn {
-  background: linear-gradient(to right, var(--danger), #f87171);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.logout-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
-}
-
-/* Add these styles to improve the overall dashboard aesthetics */
-.dashboard-content h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--neutral-700);
-  margin-bottom: 1.5rem;
-}
-
-/* Improve the token display */
-.token-card {
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+/* ETH Price Card */
+.price-card {
+  background: var(--bg-content, white);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
   height: 100%;
-}
-
-.token-list {
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .price-card {
+  background: var(--bg-content, #16213e);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.price-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.price-data {
+  width: 100%;
+}
+
+.price-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
   gap: 0.75rem;
 }
 
-.token-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  border-radius: 0.625rem;
-  background-color: var(--bg-main, #f5f7fa);
-  transition: all 0.2s;
-  border: 1px solid var(--border-color, #eaeaea);
-}
-
-.dark-mode .token-item {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, #2a2a40);
-}
-
-.token-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.token-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: var(--neutral-200);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.price-value {
+  font-size: 2rem;
   font-weight: 700;
-  font-size: 0.75rem;
-  color: var(--neutral-700);
-  margin-right: 0.75rem;
-}
-
-.token-details {
-  flex: 1;
-}
-
-.token-name {
-  font-size: 0.875rem;
-  font-weight: 500;
   color: var(--text-primary, #333);
 }
 
-.dark-mode .token-name {
+.dark-mode .price-value {
   color: var(--text-primary, #f0f0f0);
 }
 
-.token-balance {
-  font-size: 0.75rem;
-  color: var(--text-secondary, #666);
-  margin-top: 0.25rem;
-}
-
-.dark-mode .token-balance {
-  color: var(--text-secondary, #a0a0a0);
-}
-
-.token-actions {
-  margin-top: 1rem;
-}
-
-.token-action-btn {
-  width: 100%;
-  padding: 0.625rem;
-  border-radius: 0.5rem;
-  background-color: var(--bg-main, #f5f7fa);
-  border: 1px solid var(--border-color, #eaeaea);
-  color: var(--text-secondary, #666);
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.dark-mode .token-action-btn {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, #2a2a40);
-  color: var(--text-secondary, #a0a0a0);
-}
-
-.token-action-btn:hover {
-  background-color: var(--border-color, #eaeaea);
-}
-
-.dark-mode .token-action-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Category card improvements */
-.category-list {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.category-item {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s;
-}
-
-.dark-mode .category-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.category-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 0.75rem;
-}
-
-.category-name {
-  flex: 1;
-  font-size: 0.875rem;
-  color: var(--text-secondary, #666);
-}
-
-.dark-mode .category-name {
-  color: var(--text-secondary, #a0a0a0);
-}
-
-.category-value {
+.price-change {
+  font-size: 1rem;
   font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.price-change.positive {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success);
+}
+
+.price-change.negative {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger);
+}
+
+.price-stats {
+  margin-top: 1rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--border-color, #eaeaea);
   font-size: 0.875rem;
-  color: var(--text-primary, #333);
 }
 
-.dark-mode .category-value {
-  color: var(--text-primary, #f0f0f0);
+.dark-mode .price-row {
+  border-color: var(--border-color, #2a2a40);
 }
 
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .dashboard-actions {
-    padding: 1rem;
-  }
-  
-  .logout-btn {
-    width: 100%;
-    max-width: 200px;
-  }
-}
-
-/* Gas row fixes */
-.gas-row:last-child {
+.price-row:last-child {
   border-bottom: none;
 }
 
-/* Category item hover */
-.category-item:hover {
-  background-color: var(--bg-main, #f5f7fa);
+.price-row span:first-child {
+  color: var(--text-secondary, #666);
 }
 
-/* Loading state */
-.loading-state {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--bg-main, #f5f7fa);
-  transition: background-color 0.3s;
+.dark-mode .price-row span:first-child {
+  color: var(--text-secondary, #a0a0a0);
 }
 
-.dark-mode .loading-state {
-  background-color: var(--bg-main, #1a1a2e);
-}
-
-.loading-indicator {
-  text-align: center;
-  padding: 2rem;
-  background-color: var(--bg-content, white);
-  border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  width: 90%;
-  max-width: 400px;
-  border: 1px solid var(--border-color, #eaeaea);
-  transition: background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
-}
-
-.dark-mode .loading-indicator {
-  background-color: var(--bg-content, #16213e);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  border-color: var(--border-color, #2a2a40);
-}
-
-.loading-indicator p {
-  margin: 1rem 0;
+.price-row span:last-child {
+  font-weight: 600;
   color: var(--text-primary, #333);
 }
 
-.dark-mode .loading-indicator p {
+.dark-mode .price-row span:last-child {
   color: var(--text-primary, #f0f0f0);
 }
 
-.loading-tip {
-  font-size: 0.875rem;
-  color: var(--text-secondary, #666);
-}
-
-.dark-mode .loading-tip {
-  color: var(--text-secondary, #a0a0a0);
-}
-
-.debug-message {
-  font-size: 0.875rem;
-  color: var(--text-secondary, #666);
-  margin: 1rem 0;
-}
-
-.dark-mode .debug-message {
-  color: var(--text-secondary, #a0a0a0);
-}
-
-/* Error message */
-.error-message {
-  background-color: rgba(239, 68, 68, 0.1);
-  border-left: 4px solid var(--danger);
+/* Transaction Stats Card */
+.tx-stats-card {
+  background: var(--bg-content, white);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 8px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.dark-mode .error-message {
-  background-color: rgba(239, 68, 68, 0.2);
+.dark-mode .tx-stats-card {
+  background: var(--bg-content, #16213e);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 8px rgba(0, 0, 0, 0.3);
 }
 
-.error-message h3 {
-  color: var(--danger);
-  margin-top: 0;
+.tx-stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.tx-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.tx-stat-item {
+  background: var(--bg-main, #f5f7fa);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  transition: transform 0.2s;
+  border: 1px solid var(--border-color, #eaeaea);
+}
+
+.dark-mode .tx-stat-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color, #2a2a40);
+}
+
+.tx-stat-item:hover {
+  transform: translateY(-3px);
+}
+
+.tx-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
   margin-bottom: 0.5rem;
 }
 
-.error-message p {
-  color: var(--text-primary, #333);
-  margin: 0.5rem 0;
+.dark-mode .tx-stat-label {
+  color: var(--text-secondary, #a0a0a0);
 }
 
-.dark-mode .error-message p {
+.tx-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #333);
+  margin-bottom: 0.25rem;
+}
+
+.dark-mode .tx-stat-value {
   color: var(--text-primary, #f0f0f0);
 }
 
-/* Modal styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.tx-stat-value.income {
+  color: var(--success);
 }
 
-.transaction-modal {
-  background-color: var(--bg-content, white);
+.tx-stat-value.expense {
+  color: var(--danger);
+}
+
+.tx-stat-usd {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
+}
+
+.dark-mode .tx-stat-usd {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+/* DeFi Portfolio Section */
+.defi-portfolio-section {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  background: var(--bg-content, white);
   border-radius: 1rem;
-  width: 90%;
-  max-width: 450px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  max-height: 600px;
   overflow: hidden;
-  transition: background-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
-.dark-mode .transaction-modal {
-  background-color: var(--bg-content, #16213e);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+.defi-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  overflow-y: auto;
+  max-height: 500px;
+  padding-right: 0.5rem;
+  width: 100%;
 }
 
-.modal-header {
+.defi-card {
+  background: var(--bg-main, #f5f7fa);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #eaeaea);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark-mode .defi-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color, #2a2a40);
+}
+
+.defi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .defi-card:hover {
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+}
+
+.defi-card-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color, #eaeaea);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-color, #eaeaea);
-  background: linear-gradient(to right, var(--bg-main, #f9fafb), var(--bg-content, white));
-  transition: background 0.3s, border-color 0.3s;
 }
 
-.dark-mode .modal-header {
+.dark-mode .defi-card-header {
   border-color: var(--border-color, #2a2a40);
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), var(--bg-content, #16213e));
 }
 
-.modal-header h3 {
+.protocol-name {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary, #333);
 }
 
-.dark-mode .modal-header h3 {
+.dark-mode .protocol-name {
   color: var(--text-primary, #f0f0f0);
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--text-secondary, #666);
-  cursor: pointer;
-  transition: color 0.2s;
+.apy-badge {
+  background: linear-gradient(45deg, #3498db, #8e44ad);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-.dark-mode .close-btn {
+.defi-card-body {
+  padding: 1.25rem;
+}
+
+.asset-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #333);
+  margin-bottom: 0.25rem;
+}
+
+.dark-mode .asset-amount {
+  color: var(--text-primary, #f0f0f0);
+}
+
+.asset-value {
+  font-size: 1rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 1rem;
+}
+
+.dark-mode .asset-value {
   color: var(--text-secondary, #a0a0a0);
 }
 
-.close-btn:hover {
+.asset-growth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.growth-label {
+  color: var(--text-secondary, #666);
+}
+
+.dark-mode .growth-label {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.growth-value {
+  font-weight: 600;
+}
+
+.growth-value.positive {
+  color: var(--success);
+}
+
+.growth-value.negative {
+  color: var(--danger);
+}
+
+.defi-card-actions {
+  padding: 1.25rem;
+  border-top: 1px solid var(--border-color, #eaeaea);
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dark-mode .defi-card-actions {
+  border-color: var(--border-color, #2a2a40);
+}
+
+.defi-action-btn {
+  flex: 1;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.defi-action-btn.deposit {
+  background: linear-gradient(45deg, #3498db, #2ecc71);
+  color: white;
+}
+
+.defi-action-btn.withdraw {
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-primary, #333);
+  border: 1px solid var(--border-color, #eaeaea);
 }
 
-.dark-mode .close-btn:hover {
+.dark-mode .defi-action-btn.withdraw {
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary, #f0f0f0);
+  border-color: var(--border-color, #2a2a40);
 }
 
-.modal-body {
-  padding: 1.5rem;
+.defi-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* QR code container */
-.qr-code-container {
+.dark-mode .defi-action-btn:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Media queries for responsive design */
+@media (max-width: 1400px) {
+  .defi-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .tx-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .defi-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eth-distribution-chart {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1.5rem 0;
 }
 
-.qr-code-container p {
-  margin-bottom: 1rem;
-  color: var(--text-secondary, #666);
-  font-size: 0.875rem;
+.chart-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 1rem auto;
 }
 
-.dark-mode .qr-code-container p {
-  color: var(--text-secondary, #a0a0a0);
+.placeholder-chart {
+  display: none; /* Hide the placeholder when using the real chart */
 }
 
-/* Address display for receiving */
-.receive-address {
+.category-list {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 
-.address-display {
-  padding: 0.75rem 1rem;
-  background-color: var(--bg-main, #f5f7fa);
-  border-radius: 0.5rem;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
-  color: var(--text-primary, #333);
-  word-break: break-all;
-  margin-bottom: 0.75rem;
-  border: 1px solid var(--border-color, #eaeaea);
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+/* Add new styles for the dashboard header controls */
+.dashboard-header-controls {
+  display: none;
 }
 
-.dark-mode .address-display {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, #2a2a40);
+/* Adjust dashboard-content to account for removal of header */
+.dashboard-content {
+  padding-top: 2rem;
+}
+
+/* Ensure the user dropdown menu functionality is preserved but positioned differently if needed */
+.dashboard-user-controls .user-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  background-color: var(--bg-content, #171d2d);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
+  border: 1px solid #242b3d;
+}
+
+/* New dashboard header styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
   color: var(--text-primary, #f0f0f0);
+  margin: 0;
 }
 
-.copy-address-btn {
-  padding: 0.625rem 1rem;
-  background: linear-gradient(45deg, #3498db, #8e44ad);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+.user-profile {
+  position: relative;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.dark-mode .copy-address-btn {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ff6b6b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.copy-address-btn:hover {
-  background-color: var(--primary-dark);
+.profile-icon:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.dark-mode .copy-address-btn:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+.user-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  background-color: #171d2d;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
+  border: 1px solid #242b3d;
 }
 
-.receive-note {
-  padding: 0.75rem 1rem;
-  background-color: rgba(245, 158, 11, 0.1);
-  border-left: 3px solid var(--warning);
-  font-size: 0.875rem;
-  color: var(--text-primary, #333);
-  border-radius: 0.25rem;
-}
-
-.dark-mode .receive-note {
-  background-color: rgba(245, 158, 11, 0.2);
+.user-dropdown a, 
+.user-dropdown button {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
   color: var(--text-primary, #f0f0f0);
+  font-size: 0.9rem;
+  text-align: left;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-dropdown a:hover, 
+.user-dropdown button:hover {
+  background-color: #242b3d;
+}
+
+/* Make 'No transactions found' message more visible */
+.no-transactions {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.no-transactions p {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #8a94a6;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.no-transactions p::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238a94a6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
 }

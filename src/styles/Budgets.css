@@ -1,0 +1,298 @@
+/* Budgets.css - Specific styles for the budgets page */
+
+/* Budget page specific overrides */
+.page-container {
+  background: linear-gradient(180deg, rgba(30, 39, 60, 0.2) 0%, transparent 100%);
+}
+
+/* Custom page title for Budgets */
+.page-title {
+  position: relative;
+  display: inline-block;
+  font-size: 1.8rem !important;
+  background: linear-gradient(45deg, var(--primary) 30%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* Custom styling for page cards in Budgets page */
+.page-card {
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.page-card-title {
+  font-size: 1.25rem;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.page-card-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+}
+
+/* Budget summary section */
+.budget-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.budget-summary-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.budget-summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Add subtle gradient overlay to summary cards */
+.budget-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.budget-summary-card:hover::before {
+  opacity: 1;
+}
+
+.summary-icon {
+  margin-bottom: 0.75rem;
+  color: var(--primary-light);
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.summary-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* Budget items */
+.budgets-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Add animation for budget items */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.budget-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Stagger animation for budget items */
+.budget-item:nth-child(1) { animation-delay: 0.1s; }
+.budget-item:nth-child(2) { animation-delay: 0.2s; }
+.budget-item:nth-child(3) { animation-delay: 0.3s; }
+.budget-item:nth-child(4) { animation-delay: 0.4s; }
+
+.budget-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.budget-category {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.budget-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.budget-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.budget-amount-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.amount-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.amount-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.amount-depleted {
+  color: var(--danger);
+}
+
+.budget-progress-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.budget-progress {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  background-image: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0.15) 25%, 
+    transparent 25%, 
+    transparent 50%, 
+    rgba(255, 255, 255, 0.15) 50%, 
+    rgba(255, 255, 255, 0.15) 75%, 
+    transparent 75%, 
+    transparent);
+  background-size: 20px 20px;
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  from { background-position: 0 0; }
+  to { background-position: 20px 0; }
+}
+
+.budget-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.budget-percentage {
+  font-weight: 500;
+}
+
+.budget-transactions {
+  color: var(--text-secondary);
+}
+
+/* Add subtle background patterns to budget items */
+.budget-item:nth-child(odd)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.budget-item:nth-child(even)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .budget-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .budgets-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .budget-amounts {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .budget-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .budget-item, .budget-summary-card {
+    background: rgba(20, 25, 40, 0.5);
+  }
+} 

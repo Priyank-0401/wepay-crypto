@@ -13,13 +13,33 @@ const LoginPage = ({ onLogin }) => {
 
   // Check if user is already logged in
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      // User is already logged in
-      console.log("User already logged in, redirecting to dashboard");
-      onLogin(); // Update app authentication state
-      navigate('/dashboard');
-    }
+    const checkAuth = () => {
+      const userString = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      
+      if (userString && token) {
+        try {
+          // Verify user data is valid
+          const userData = JSON.parse(userString);
+          if (userData && (userData.id || userData.email)) {
+            // User is already logged in
+            console.log("User already logged in, redirecting to dashboard");
+            onLogin(userData); // Update app authentication state
+            navigate('/dashboard');
+          } else {
+            // Invalid user data
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+          }
+        } catch (e) {
+          console.error("Invalid user data in localStorage:", e);
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+        }
+      }
+    };
+    
+    checkAuth();
   }, [navigate, onLogin]);
 
   // Handle successful login redirection
@@ -120,8 +140,8 @@ const LoginPage = ({ onLogin }) => {
         setError(data.message || 'Invalid credentials');
         setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Server error during login:", err);
+    } catch (error) {
+      console.error("Login error:", error);
       setError('Server error. Please try again.');
       setIsLoading(false);
     }

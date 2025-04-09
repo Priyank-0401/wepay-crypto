@@ -62,3 +62,24 @@
   background: #f8f9fa;
   overflow-y: auto;
 }
+
+/* Apply dark mode globally */
+body, html {
+  background-color: #121624; /* Dark theme main background */
+  color: #f0f0f0; /* Light text for dark theme */
+}
+
+.app {
+  min-height: 100vh;
+  background-color: #121624; /* Dark theme main background */
+  color: #f0f0f0; /* Light text for dark theme */
+}
+
+/* Use the dark-mode class everywhere required */
+.dark-mode {
+  --bg-main: #121624;
+  --bg-content: #171d2d;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --border-color: #242b3d;
+}

@@ -1,38 +1,16 @@
 // LandingPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Landing.css';
 
 const LandingPage = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  
+  // Force dark mode
   useEffect(() => {
-    // Check if user has a preference stored
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(isDarkMode);
-    
-    // Apply dark mode class to landing page if needed
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
+    document.body.classList.add('dark-mode');
   }, []);
-  
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode);
-    
-    if (newDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  };
 
   return (
-    <div className="landing-page">
+    <div className="landing-page dark-mode">
       <header className="header">
         <div className="logo">
           <a href="src\pages\LandingPage.js"> WePay</a>
@@ -44,9 +22,6 @@ const LandingPage = () => {
           <a href="#advantages">Advantages</a>
         </nav>
         <div className="auth-buttons">
-          <button className="dark-mode-toggle" onClick={toggleDarkMode} aria-label="Toggle dark mode">
-            {darkMode ? '☀️' : '🌙'}
-          </button>
           <Link to="/login" className="login-btn">Login</Link>
           <Link to="/signup" className="create-account-btn">Create Account</Link>
         </div>

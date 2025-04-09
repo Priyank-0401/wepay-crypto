@@ -2,10 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Use the same color variables as dashboard */
+  /* Base colors */
   --primary: #3498db;
   --primary-dark: #2980b9;
   --secondary: #8e44ad;
+  --secondary-dark: #7d3c98;
   --success: #2ecc71;
   --danger: #e74c3c;
   --warning: #f39c12;
@@ -15,10 +16,10 @@
   --text-secondary: #666;
   --border-color: #eaeaea;
   
-  /* Gradient combinations */
-  --gradient-primary: linear-gradient(45deg, #3498db, #8e44ad);
-  --gradient-secondary: linear-gradient(135deg, #00c4ff, #7857ff);
-  --gradient-success: linear-gradient(45deg, #2ecc71, #1abc9c);
+  /* Replace gradients with solid colors */
+  --solid-primary: #3498db;
+  --solid-secondary: #8e44ad;
+  --solid-accent: #00bcd4;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
 }
@@ -106,9 +107,7 @@ body, html {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   position: relative;
 }
 
@@ -119,7 +118,7 @@ body, html {
   height: 3px;
   bottom: -6px;
   left: 0;
-  background: var(--gradient-primary);
+  background-color: var(--primary);
   border-radius: 10px;
   transform: scaleX(0);
   transform-origin: left;
@@ -145,7 +144,7 @@ body, html {
   padding: 0.625rem 1.5rem;
   border: none;
   border-radius: 50px;
-  background: var(--gradient-primary);
+  background-color: var(--primary);
   color: white;
   font-weight: 600;
   font-size: 0.95rem;
@@ -163,7 +162,7 @@ body, html {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: rgba(255, 255, 255, 0.2);
   transition: 0.5s;
 }
 
@@ -222,9 +221,7 @@ body, html {
 .auth-form-header h1 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   animation: slideIn 0.6s ease-out forwards;
 }
 
@@ -440,7 +437,7 @@ body, html {
 /* Submit Button */
 .auth-submit-btn {
   padding: 1rem;
-  background: var(--gradient-primary);
+  background-color: var(--primary);
   border: none;
   border-radius: 12px;
   color: white;
@@ -463,7 +460,7 @@ body, html {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: rgba(255, 255, 255, 0.2);
   transition: 0.5s;
 }
 
@@ -560,7 +557,7 @@ body, html {
 /* Auth Graphic */
 .auth-graphic {
   flex: 1;
-  background: linear-gradient(135deg, #3498db, #8e44ad);
+  background-color: var(--secondary);
   padding: 2rem;
   overflow: hidden;
   position: relative;
@@ -781,35 +778,5 @@ body, html {
 }
 
 .dark-mode-toggle {
-  /* Keep your existing styles */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  /* Add these properties to improve centering */
-  line-height: 1;
-  text-align: center;
-  padding: 0;
-}
-
-.dark-mode-toggle .icon,
-.dark-mode-toggle span {
-  /* Center the icon or text inside */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  position: relative;
-  top: 0; /* Adjust this value if needed, try -1px or 1px */
-}
-
-/* If you're using emoji characters */
-.dark-mode-toggle .icon {
-  font-size: 16px; /* Adjust size as needed */
-  /* Sometimes a slight vertical adjustment is needed for emoji */
-  transform: translateY(0px); /* Try small values like 1px or -1px if needed */
+  display: none; /* Hide dark mode toggle */
 }

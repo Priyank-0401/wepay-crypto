@@ -1,5 +1,4 @@
-// Dashboard.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import Web3 from 'web3';
 import '../styles/Dashboard.css';
@@ -7,7 +6,8 @@ import { QRCodeSVG } from 'qrcode.react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { darkMode } = useOutletContext();
+  useOutletContext();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [account, setAccount] = useState('');
   const [ethBalance, setEthBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -30,6 +30,81 @@ const Dashboard = () => {
   const [transactionStatus, setTransactionStatus] = useState(null);
   const [transactionHash, setTransactionHash] = useState('');
   const [transactionError, setTransactionError] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [userInitial, setUserInitial] = useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [spendingByCategory, setSpendingByCategory] = useState([
+    { category: 'Transfers', amount: 0.05, color: '#3498db' },
+    { category: 'DeFi', amount: 0.17, color: '#2ecc71' },
+    { category: 'NFTs', amount: 0.01, color: '#9b59b6' },
+    { category: 'Smart Contracts', amount: 0.02, color: '#f1c40f' },
+    { category: 'Gas Fees', amount: 0, color: '#e74c3c' },
+  ]);
+  
+  // New state variables for additional dashboard data
+  const [ethPrice, setEthPrice] = useState(0);
+  const [ethPriceChange, setEthPriceChange] = useState(0);
+  const [marketCap, setMarketCap] = useState(0);
+  const [volume24h, setVolume24h] = useState(0);
+  const [transactionStats, setTransactionStats] = useState({
+    sent: 0.07,
+    received: 0.95,
+    totalFees: 0,
+    avgValue: 0
+  });
+  const [defiPortfolio, setDefiPortfolio] = useState([
+    { protocol: 'Aave', amount: 0.05, apy: 3.2, value: 0 },
+    { protocol: 'Compound', amount: 0.1, apy: 2.8, value: 0 },
+    { protocol: 'Uniswap', amount: 0.02, apy: 5.4, value: 0 }
+  ]);
+
+  // Get user data for profile icon
+  useEffect(() => {
+    const getUserData = () => {
+      try {
+        const userString = localStorage.getItem('user');
+        if (userString) {
+          const userData = JSON.parse(userString);
+          if (userData) {
+            // Try to get initial from name first
+            if (userData.name) {
+              const initial = userData.name.charAt(0).toUpperCase();
+              setUserInitial(initial);
+            } 
+            // Fall back to email if name is not available
+            else if (userData.email) {
+              const initial = userData.email.charAt(0).toUpperCase();
+              setUserInitial(initial);
+            }
+            // Fallback to username if available
+            else if (userData.username) {
+              const initial = userData.username.charAt(0).toUpperCase();
+              setUserInitial(initial);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error retrieving user data:', error);
+      }
+    };
+    
+    getUserData();
+  }, []);
+  
+  // Handle clicking outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const userDropdown = document.querySelector('.dashboard-user-controls');
+      if (userDropdown && !userDropdown.contains(event.target) && dropdownOpen) {
+        setDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   // Function definitions - this is where setMockData should go
   const setMockData = () => {
@@ -43,6 +118,36 @@ const Dashboard = () => {
     setPendingTransactions(Math.floor(Math.random() * 5));
     setTotalGasUsed(parseFloat((Math.random() * 0.01).toFixed(4)));
     setBlockNumber(12345);
+    
+    // Mock price and market data
+    setEthPrice(2842.15);
+    setEthPriceChange(3.27);
+    setMarketCap(318.45);
+    setVolume24h(12.75);
+    
+    // Mock transaction stats
+    setTransactionStats({
+      sent: 0.07,
+      received: 0.95,
+      totalFees: totalGasUsed,
+      avgValue: 0.12
+    });
+    
+    // Update DeFi portfolio values based on ETH price
+    setDefiPortfolio(prevState => prevState.map(item => ({
+      ...item,
+      value: (item.amount * 2842.15).toFixed(2)
+    })));
+    
+    // Update spending by category with mock data
+    setSpendingByCategory([
+      { category: 'Transfers', amount: 0.05, color: '#3498db' },
+      { category: 'DeFi', amount: 0.17, color: '#2ecc71' },
+      { category: 'NFTs', amount: 0.01, color: '#9b59b6' },
+      { category: 'Smart Contracts', amount: 0.02, color: '#f1c40f' },
+      { category: 'Gas Fees', amount: totalGasUsed, color: '#e74c3c' },
+    ]);
+    
     console.log("Mock data loaded successfully");
   };
 
@@ -228,6 +333,77 @@ const Dashboard = () => {
     }
   }, [web3, account, connectionStatus]); // Dependencies to ensure interval is only set up when needed
 
+  // Add useEffect to fetch price data
+  // eslint-disable-next-line no-use-before-define
+  useEffect(() => {
+    // Fetch price data when component mounts and then every 60 seconds
+    // eslint-disable-next-line no-use-before-define
+    fetchEthPriceData();
+    
+    const priceInterval = setInterval(() => {
+      // eslint-disable-next-line no-use-before-define
+      fetchEthPriceData();
+    }, 60000); // Every minute
+    
+    return () => {
+      clearInterval(priceInterval);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectionStatus]); // Only include connectionStatus as dependency
+  
+  // Update transaction stats whenever transactions change
+  // eslint-disable-next-line no-use-before-define
+  useEffect(() => {
+    if (transactions.length > 0) {
+      // eslint-disable-next-line no-use-before-define
+      const stats = calculateTransactionStats(transactions, ethBalance);
+      setTransactionStats(stats);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions, account, ethBalance]); // Remove calculateTransactionStats from dependency array
+
+  // Update spending by category when transactions or gas fees change
+  useEffect(() => {
+    // Calculate total sent amount from transactions
+    let transferAmount = 0;
+    
+    if (transactions.length > 0) {
+      transactions.forEach(tx => {
+        // Only count outgoing transactions for transfers
+        if (tx.from.toLowerCase() === account.toLowerCase()) {
+          transferAmount += parseFloat(weiToEth(tx.value));
+        }
+      });
+    }
+    
+    // Update spending categories
+    setSpendingByCategory(prevCategories => {
+      const updatedCategories = [...prevCategories];
+      
+      // Update Transfers category
+      const transferIndex = updatedCategories.findIndex(cat => cat.category === 'Transfers');
+      if (transferIndex !== -1) {
+        updatedCategories[transferIndex].amount = parseFloat(transferAmount.toFixed(4));
+      }
+      
+      // Update DeFi category based on portfolio
+      const defiIndex = updatedCategories.findIndex(cat => cat.category === 'DeFi');
+      if (defiIndex !== -1) {
+        const defiTotal = defiPortfolio.reduce((sum, item) => sum + item.amount, 0);
+        updatedCategories[defiIndex].amount = parseFloat(defiTotal.toFixed(4));
+      }
+      
+      // Update Gas Fees category
+      const gasIndex = updatedCategories.findIndex(cat => cat.category === 'Gas Fees');
+      if (gasIndex !== -1) {
+        updatedCategories[gasIndex].amount = parseFloat(totalGasUsed);
+      }
+      
+      return updatedCategories;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions, totalGasUsed, account, defiPortfolio]);
+
   // Add function to update wallet balance in the database
   const updateWalletBalance = async (address, balance) => {
     try {
@@ -368,50 +544,92 @@ const Dashboard = () => {
     }
   };
 
+  // Define helper functions first, before using them in useEffects
+  
   // Helper function to shorten addresses for display
   const shortenAddress = (address) => {
     if (!address) return 'Unknown';
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // Helper function to convert wei to ETH for display
-  const weiToEth = (wei) => {
-    if (!web3 || !wei) return '0';
-    try {
-      return parseFloat(web3.utils.fromWei(wei, 'ether')).toFixed(4);
-    } catch (e) {
-      console.error("Error converting wei to ETH:", e);
-      // Fallback calculation if web3 isn't available
-      return (parseFloat(wei) / 1e18).toFixed(4);
-    }
-  };
+  // Define weiToEth with useCallback to prevent it from changing on every render
+  const weiToEth = useCallback((wei) => {
+    if (!web3 || !wei) return "0";
+    return web3.utils.fromWei(wei.toString(), 'ether');
+  }, [web3]); // Only depends on web3
 
-  // Calculate gas fee for a transaction
-  const calculateGasFee = (gas, gasPrice) => {
-    if (!web3 || !gas || !gasPrice) {
-      // Fallback calculation if web3 isn't available
-      return (parseFloat(gas) * parseFloat(gasPrice) / 1e18).toFixed(6);
+  // Add the calculateGasFee function that was missing
+  const calculateGasFee = useCallback((gas, gasPrice) => {
+    if (!web3 || !gas || !gasPrice) return "0";
+    const gasCost = web3.utils.toBN(gas).mul(web3.utils.toBN(gasPrice));
+    return web3.utils.fromWei(gasCost.toString(), 'ether');
+  }, [web3]);
+
+  // Define fetchEthPriceData with useCallback
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchEthPriceData = useCallback(async () => {
+    try {
+      // In a real app, you would use an API like CoinGecko or CryptoCompare
+      // For now, we'll mock the data for demonstration
+      if (connectionStatus === 'Connected') {
+        // If connected to a real blockchain, make API call here
+        // const response = await fetch('https://api.coingecko.com/api/v3/coins/ethereum');
+        // const data = await response.json();
+        // setEthPrice(data.market_data.current_price.usd);
+        // setEthPriceChange(data.market_data.price_change_percentage_24h);
+        // setMarketCap(data.market_data.market_cap.usd / 1e9); // In billions
+        // setVolume24h(data.market_data.total_volume.usd / 1e9); // In billions
+        
+        // Mock data for now
+        setEthPrice(2842.15);
+        setEthPriceChange(3.27);
+        setMarketCap(318.45);
+        setVolume24h(12.75);
+        
+        // Update DeFi portfolio values based on ETH price
+        setDefiPortfolio(prevState => prevState.map(item => ({
+          ...item,
+          value: (item.amount * 2842.15).toFixed(2)
+        })));
+      }
+    } catch (error) {
+      console.error("Error fetching ETH price data:", error);
+    }
+  }, [connectionStatus]); // Add connectionStatus as dependency
+  
+  // Define calculateTransactionStats with useCallback
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const calculateTransactionStats = useCallback((transactions, ethBalance) => {
+    if (!transactions || transactions.length === 0) {
+      return {
+        sent: 0,
+        received: 0,
+        totalFees: totalGasUsed,
+        avgValue: 0
+      };
     }
     
-    try {
-      // Handle possible BigNumber conversion issues
-      let gasBN, gasPriceBN;
-      try {
-        gasBN = web3.utils.toBN(gas);
-        gasPriceBN = web3.utils.toBN(gasPrice);
-      } catch (bnError) {
-        console.error("Error converting to BN:", bnError);
-        // Fallback calculation
-        return (parseFloat(gas) * parseFloat(gasPrice) / 1e18).toFixed(6);
+    let sent = 0;
+    let received = 0;
+    let totalValue = 0;
+    
+    transactions.forEach(tx => {
+      const txValue = parseFloat(weiToEth(tx.value));
+      if (tx.from.toLowerCase() === account.toLowerCase()) {
+        sent += txValue;
+      } else {
+        received += txValue;
       }
-      
-      const gasFeeWei = gasBN.mul(gasPriceBN);
-      return parseFloat(web3.utils.fromWei(gasFeeWei, 'ether')).toFixed(6);
-    } catch (e) {
-      console.error("Error calculating gas fee:", e);
-      return (parseFloat(gas) * parseFloat(gasPrice) / 1e18).toFixed(6);
-    }
-  };
+      totalValue += txValue;
+    });
+    
+    return {
+      sent: sent.toFixed(4),
+      received: received.toFixed(4),
+      totalFees: totalGasUsed,
+      avgValue: transactions.length > 0 ? (totalValue / transactions.length).toFixed(4) : 0
+    };
+  }, [totalGasUsed, account, weiToEth]); // Add proper dependencies
 
   // Handle retry connection
   const handleRetryConnection = () => {
@@ -431,15 +649,6 @@ const Dashboard = () => {
     // Set mock data directly
     setMockData();
   };
-
-  // ETH activity by category data
-  const spendingByCategory = [
-    { category: 'Transfers', amount: 0.05, color: '#3498db' },
-    { category: 'DeFi', amount: 0.02, color: '#2ecc71' },
-    { category: 'NFTs', amount: 0, color: '#9b59b6' },
-    { category: 'Smart Contracts', amount: 0, color: '#f1c40f' },
-    { category: 'Gas Fees', amount: totalGasUsed, color: '#e74c3c' },
-  ];
 
   // Function to send ETH transaction
   const sendTransaction = async () => {
@@ -589,10 +798,29 @@ const Dashboard = () => {
     }
   };
 
+  // Add a useEffect to handle scroll behavior
+  useEffect(() => {
+    // Force enabling scroll
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+    
+    // Create a scroll event listener to debug scroll behavior
+    const handleScroll = () => {
+      console.log('Scrolling detected');
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Only run once on component mount
+
   // Show a loading state
   if (loading) {
     return (
-      <div className={`dashboard loading-state ${darkMode ? 'dark-mode' : ''}`}>
+      <div className="dashboard loading-state dark-mode" style={{ height: '100vh', overflowY: 'auto' }}>
         <div className="loading-indicator">
           <p>Connecting to Ganache blockchain...</p>
           <div className="spinner"></div>
@@ -614,20 +842,41 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`dashboard ${darkMode ? 'dark-mode' : ''}`}>
-      <div className="dashboard-content">
-        {/* Show error message if there is one */}
-        {error && (
-          <div className="error-message">
-            <h3>Blockchain Connection Error</h3>
-            <p>{error}</p>
-            <p>Please make sure Ganache is running on http://127.0.0.1:7545</p>
-            <button onClick={handleRetryConnection} className="retry-btn">
-              Retry Connection
-            </button>
+    <div className="dashboard dark-mode">
+      {/* Dashboard header with title and profile icon */}
+      <div className="dashboard-header">
+        <h1>Dashboard</h1>
+        <div className="user-profile" onClick={() => setDropdownOpen(!dropdownOpen)}>
+          <div className="profile-icon">
+            {userInitial || "P"}
           </div>
-        )}
-        
+          {dropdownOpen && (
+            <div className="user-dropdown">
+              <a href="/profile">Profile</a>
+              <a href="/settings">Settings</a>
+              <button onClick={() => {
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+              }}>Logout</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Show error message if there is one */}
+      {error && (
+        <div className="error-message">
+          <h3>Blockchain Connection Error</h3>
+          <p>{error}</p>
+          <p>Please make sure Ganache is running on http://127.0.0.1:7545</p>
+          <button onClick={handleRetryConnection} className="retry-btn">
+            Retry Connection
+          </button>
+        </div>
+      )}
+      
+      <div className="dashboard-content">
         <div className="dashboard-grid">
           <div className="wallet-card">
             <h2>Your ETH Wallet</h2>
@@ -734,13 +983,67 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+          
+          {/* ETH Price Card */}
+          <div className="price-card">
+            <h2>ETH Price</h2>
+            <div className="price-data">
+              <div className="price-main">
+                <span className="price-value">${ethPrice.toLocaleString()}</span>
+                <span className={`price-change ${ethPriceChange >= 0 ? 'positive' : 'negative'}`}>
+                  {ethPriceChange >= 0 ? '+' : ''}{ethPriceChange}%
+                </span>
+              </div>
+              <div className="price-stats">
+                <div className="price-row">
+                  <span>Market Cap:</span>
+                  <span>${marketCap.toLocaleString()} B</span>
+                </div>
+                <div className="price-row">
+                  <span>24h Volume:</span>
+                  <span>${volume24h.toLocaleString()} B</span>
+                </div>
+                <div className="price-row">
+                  <span>Your Holdings:</span>
+                  <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Transaction Stats Card */}
+          <div className="tx-stats-card">
+            <h2>Your Stats</h2>
+            <div className="tx-stats-data">
+              <div className="tx-stats-grid">
+                <div className="tx-stat-item">
+                  <div className="tx-stat-label">Sent</div>
+                  <div className="tx-stat-value expense">{transactionStats.sent} ETH</div>
+                  <div className="tx-stat-usd">${(parseFloat(transactionStats.sent) * ethPrice).toFixed(2)}</div>
+                </div>
+                <div className="tx-stat-item">
+                  <div className="tx-stat-label">Received</div>
+                  <div className="tx-stat-value income">{transactionStats.received} ETH</div>
+                  <div className="tx-stat-usd">${(parseFloat(transactionStats.received) * ethPrice).toFixed(2)}</div>
+                </div>
+                <div className="tx-stat-item">
+                  <div className="tx-stat-label">Gas Fees</div>
+                  <div className="tx-stat-value expense">{transactionStats.totalFees} ETH</div>
+                  <div className="tx-stat-usd">${(parseFloat(transactionStats.totalFees) * ethPrice).toFixed(2)}</div>
+                </div>
+                <div className="tx-stat-item">
+                  <div className="tx-stat-label">Avg. Transaction</div>
+                  <div className="tx-stat-value">{transactionStats.avgValue} ETH</div>
+                  <div className="tx-stat-usd">${(parseFloat(transactionStats.avgValue) * ethPrice).toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="transactions-section">
-          <div className="section-header">
-            <h2>Recent Transactions</h2>
-            <button className="view-all-btn">View All</button>
-          </div>
+          <h2>Recent Transactions</h2>
+          <button className="view-all-btn">View All</button>
           <div className="transaction-list">
             {loading ? (
               <div className="loading-transactions">
@@ -797,56 +1100,30 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="analytics-section">
-          <div className="section-header">
-            <h2>ETH Activity Analysis</h2>
-          </div>
-          <div className="analytics-grid">
-            <div className="category-card">
-              <h3>Activity by Category</h3>
-              <div className="placeholder-chart">
-                <div className="chart-note">ETH Distribution Chart</div>
-              </div>
-              <div className="category-list">
-                {spendingByCategory.map((item, index) => (
-                  <div key={index} className="category-item">
-                    <div className="category-color" style={{ backgroundColor: item.color }}></div>
-                    <div className="category-name">{item.category}</div>
-                    <div className="category-value">{item.amount} ETH</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="token-card">
-              <h3>ERC-20 Tokens</h3>
-              <div className="token-list">
-                <div className="token-item">
-                  <div className="token-icon">DAI</div>
-                  <div className="token-details">
-                    <div className="token-name">Dai Stablecoin</div>
-                    <div className="token-balance">0 DAI</div>
+        <div className="defi-portfolio-section">
+          <h2>DeFi Portfolio</h2>
+          <button className="view-all-btn">Manage Assets</button>
+          <div className="defi-card-grid">
+            {defiPortfolio.map((asset, index) => (
+              <div className="defi-card" key={index}>
+                <div className="defi-card-header">
+                  <h3 className="protocol-name">{asset.protocol}</h3>
+                  <div className="apy-badge">APY: {asset.apy}%</div>
+                </div>
+                <div className="defi-card-body">
+                  <div className="asset-amount">{asset.amount} ETH</div>
+                  <div className="asset-value">${asset.value}</div>
+                  <div className="asset-growth">
+                    <span className="growth-label">Earned:</span>
+                    <span className="growth-value positive">+{(asset.amount * asset.apy / 365).toFixed(6)} ETH / day</span>
                   </div>
                 </div>
-                <div className="token-item">
-                  <div className="token-icon">USDC</div>
-                  <div className="token-details">
-                    <div className="token-name">USD Coin</div>
-                    <div className="token-balance">0 USDC</div>
-                  </div>
-                </div>
-                <div className="token-item">
-                  <div className="token-icon">LINK</div>
-                  <div className="token-details">
-                    <div className="token-name">Chainlink</div>
-                    <div className="token-balance">0 LINK</div>
-                  </div>
+                <div className="defi-card-actions">
+                  <button className="defi-action-btn deposit">Deposit</button>
+                  <button className="defi-action-btn withdraw">Withdraw</button>
                 </div>
               </div>
-              <div className="token-actions">
-                <button className="token-action-btn">Add Token</button>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
