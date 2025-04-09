@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './styles/App.css';
 
 // Pages
@@ -21,9 +21,35 @@ import QuickTransfer from './pages/QuickTransfer';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
+// Create a "last path" utility to handle refresh redirects
+const getLastVisitedPath = () => {
+  const lastPath = localStorage.getItem('lastPath');
+  return lastPath || '/dashboard'; // Default to dashboard if no last path
+};
+
+const saveLastVisitedPath = (path) => {
+  // Only save paths that aren't login or signup
+  if (path !== '/login' && path !== '/signup' && path !== '/') {
+    localStorage.setItem('lastPath', path);
+  }
+};
+
+// Path tracker component to save the current path
+const PathTracker = ({ children }) => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Save the current path whenever it changes
+    saveLastVisitedPath(location.pathname);
+  }, [location.pathname]);
+  
+  return children;
+};
+
 const App = () => {
   // No need to manage dark mode state, just auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Check if user is logged in on component mount
@@ -36,6 +62,9 @@ const App = () => {
     
     // Force dark mode
     document.body.classList.add('dark-mode');
+    
+    // Set loading to false after initial auth check
+    setIsLoading(false);
   }, []);
   
   // Authentication functions
@@ -74,41 +103,48 @@ const App = () => {
     window.location.href = '/login';
   };
 
+  // Show loading state until auth check is complete
+  if (isLoading) {
+    return <div className="loading-auth">Loading...</div>;
+  }
+
   return (
     <Router>
-      <div className="app dark-mode">
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={
-            isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={login} />
-          } />
-          <Route path="/signup" element={
-            isAuthenticated ? <Navigate to="/dashboard" /> : <Signup onSignup={signup} />
-          } />
-          
-          {/* Protected routes - wrapped in Layout component for authenticated users */}
-          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-            <Route element={<Layout onLogout={logout} />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/accounts" element={<Accounts />} />
-              <Route path="/budgets" element={<Budgets />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/quick-transfer" element={<QuickTransfer />} />
+      <PathTracker>
+        <div className="app dark-mode">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={
+              isAuthenticated ? <Navigate to={getLastVisitedPath()} /> : <Login onLogin={login} />
+            } />
+            <Route path="/signup" element={
+              isAuthenticated ? <Navigate to={getLastVisitedPath()} /> : <Signup onSignup={signup} />
+            } />
+            
+            {/* Protected routes - wrapped in Layout component for authenticated users */}
+            <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+              <Route element={<Layout onLogout={logout} />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/budgets" element={<Budgets />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/quick-transfer" element={<QuickTransfer />} />
+              </Route>
             </Route>
-          </Route>
-          
-          {/* Redirect to landing page if not authenticated */}
-          <Route 
-            path="*" 
-            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/" />} 
-          />
-        </Routes>
-      </div>
+            
+            {/* Redirect to last visited path if authenticated, or landing page if not */}
+            <Route 
+              path="*" 
+              element={isAuthenticated ? <Navigate to={getLastVisitedPath()} /> : <Navigate to="/" />} 
+            />
+          </Routes>
+        </div>
+      </PathTracker>
     </Router>
   );
 }

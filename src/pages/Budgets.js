@@ -9,6 +9,16 @@ const Budgets = () => {
   const [currentMonth, setCurrentMonth] = useState('');
   
   useEffect(() => {
+    // Check if user is logged in
+    const userString = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (!userString || !token) {
+      // Don't navigate directly - let ProtectedRoute handle this
+      console.log('User not authenticated in Budgets page');
+      return;
+    }
+    
     const fetchBudgets = async () => {
       setLoading(true);
       try {

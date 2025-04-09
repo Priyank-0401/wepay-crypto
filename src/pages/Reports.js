@@ -10,6 +10,16 @@ const Reports = () => {
   const [showSaveReport, setShowSaveReport] = useState(false);
   
   useEffect(() => {
+    // Check if user is logged in
+    const userString = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (!userString || !token) {
+      // Don't navigate directly - let ProtectedRoute handle this
+      console.log('User not authenticated in Reports page');
+      return;
+    }
+    
     const fetchReportData = async () => {
       setLoading(true);
       try {

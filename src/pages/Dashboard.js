@@ -163,7 +163,7 @@ const Dashboard = () => {
     
     if (!userString || !token) {
       console.log("Missing user or token, redirecting to login");
-      navigate('/login');
+      // Don't redirect directly, let the ProtectedRoute component handle redirects
       return;
     }
 
@@ -178,7 +178,7 @@ const Dashboard = () => {
       console.error("Error parsing user data from localStorage:", error);
       localStorage.removeItem('user'); // Clear invalid data
       localStorage.removeItem('token');
-      navigate('/login');
+      // Don't redirect directly, let the ProtectedRoute component handle redirects
       return;
     }
     
@@ -1179,7 +1179,14 @@ const Dashboard = () => {
                       disabled={transactionStatus === "pending"}
                     />
                     <div className="balance-display">
-                      Balance: {ethBalance} ETH
+                      <span>Balance: {ethBalance} ETH</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setSendAmount(ethBalance)}
+                        disabled={transactionStatus === "pending"}
+                      >
+                        MAX
+                      </button>
                     </div>
                   </div>
                   
@@ -1246,6 +1253,10 @@ const Dashboard = () => {
                     alert('Address copied to clipboard!');
                   }}
                 >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
                   Copy Address
                 </button>
               </div>

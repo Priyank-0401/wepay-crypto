@@ -83,3 +83,100 @@ body, html {
   --text-secondary: #a0a0a0;
   --border-color: #242b3d;
 }
+
+/* Add loading state styling */
+.loading-auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-main, #111827);
+  color: var(--text-primary, #f0f0f0);
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+/* Dropdown Menu Styles */
+select,
+.dropdown-menu {
+  appearance: none;
+  background-color: var(--bg-content, #171d2d);
+  color: var(--text-primary, #f0f0f0);
+  border: 1px solid var(--border-color, #242b3d);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+select:hover,
+.dropdown-menu:hover {
+  border-color: var(--primary, #3b82f6);
+  background-color: rgba(23, 29, 45, 0.95);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+select:focus,
+.dropdown-menu:focus {
+  border-color: var(--primary, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  background-color: rgba(23, 29, 45, 1);
+}
+
+/* Dropdown options styling */
+option {
+  background-color: var(--bg-content, #171d2d);
+  color: var(--text-primary, #f0f0f0);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+option:hover,
+option:focus,
+option:checked {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Filter dropdown container */
+.filter-container {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.filter-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary, #f0f0f0);
+  letter-spacing: 0.01em;
+}
+
+/* For custom dropdown menu items */
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.dropdown-item.active {
+  background-color: rgba(59, 130, 246, 0.2);
+  font-weight: 500;
+}
