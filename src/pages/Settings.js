@@ -139,7 +139,7 @@ const Settings = () => {
           <p className="settings-header-description">
             Manage your profile information, preferences, security settings, and connected wallets
           </p>
-        </div>
+      </div>
       </section>
       
       {/* Settings Content Section */}
@@ -227,7 +227,7 @@ const Settings = () => {
           
           {/* Settings Main Content */}
           <div className="settings-main-content">
-            {message.text && (
+      {message.text && (
               <div className={`settings-alert ${message.type}`}>
                 <div className="settings-alert-icon">
                   {message.type === 'success' ? (
@@ -247,9 +247,9 @@ const Settings = () => {
                   <div className="settings-alert-title">{message.type === 'success' ? 'Success!' : 'Error'}</div>
                   <div className="settings-alert-message">{message.text}</div>
                 </div>
-              </div>
-            )}
-
+        </div>
+      )}
+      
             {activeSection === 'profile' && (
               <div className="settings-section">
                 <div className="settings-section-header">
@@ -262,43 +262,43 @@ const Settings = () => {
                   </h2>
                 </div>
                 <div className="settings-section-content">
-                  <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="name">Full Name</label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter your full name"
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
                         className="settings-form-input"
-                      />
-                    </div>
-                    
+              />
+            </div>
+            
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="email">Email Address</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Enter your email"
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
                         className="settings-form-input"
-                      />
+              />
                       <p className="settings-info-text">Your email is used for notifications and account recovery.</p>
-                    </div>
-                    
+            </div>
+            
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="username">Username</label>
-                      <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        placeholder="Enter your username"
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter your username"
                         className="settings-form-input"
                       />
                       <p className="settings-info-text">Your username is visible to other users in the ecosystem.</p>
@@ -344,12 +344,12 @@ const Settings = () => {
                       </button>
                     </div>
                   </form>
-                </div>
-              </div>
+            </div>
+          </div>
             )}
-
+          
             {activeSection === 'security' && (
-              <div className="settings-section">
+          <div className="settings-section">
                 <div className="settings-section-header">
                   <h2 className="settings-section-title">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -362,40 +362,40 @@ const Settings = () => {
                 <div className="settings-section-content">
                   <div className="settings-form-group">
                     <label className="settings-form-label" htmlFor="current_password">Current Password</label>
-                    <input
-                      type="password"
-                      id="current_password"
-                      name="current_password"
-                      value={formData.current_password}
-                      onChange={handleChange}
-                      placeholder="Enter your current password"
+              <input
+                type="password"
+                id="current_password"
+                name="current_password"
+                value={formData.current_password}
+                onChange={handleChange}
+                placeholder="Enter your current password"
                       className="settings-form-input"
-                    />
-                  </div>
-                  
+              />
+            </div>
+            
                   <div className="settings-form-group">
                     <label className="settings-form-label" htmlFor="new_password">New Password</label>
-                    <input
-                      type="password"
-                      id="new_password"
-                      name="new_password"
-                      value={formData.new_password}
-                      onChange={handleChange}
-                      placeholder="Enter new password"
+              <input
+                type="password"
+                id="new_password"
+                name="new_password"
+                value={formData.new_password}
+                onChange={handleChange}
+                placeholder="Enter new password"
                       className="settings-form-input"
-                    />
+              />
                     <p className="settings-info-text">Use a strong password that includes letters, numbers, and special characters.</p>
-                  </div>
-                  
+            </div>
+            
                   <div className="settings-form-group">
                     <label className="settings-form-label" htmlFor="confirm_password">Confirm New Password</label>
-                    <input
-                      type="password"
-                      id="confirm_password"
-                      name="confirm_password"
-                      value={formData.confirm_password}
-                      onChange={handleChange}
-                      placeholder="Confirm new password"
+              <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                value={formData.confirm_password}
+                onChange={handleChange}
+                placeholder="Confirm new password"
                       className="settings-form-input"
                     />
                   </div>
@@ -409,17 +409,17 @@ const Settings = () => {
                         <div className="settings-toggle-description">Enable 2FA for additional account security</div>
                       </div>
                       <div className="settings-toggle"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="settings-actions">
+            </div>
+          </div>
+          
+          <div className="settings-actions">
                     <button type="button" className="settings-action-btn primary">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                       </svg>
                       Update Security Settings
-                    </button>
+            </button>
                   </div>
                 </div>
               </div>
@@ -449,7 +449,7 @@ const Settings = () => {
               </div>
             )}
           </div>
-        </div>
+      </div>
       </section>
     </div>
   );
