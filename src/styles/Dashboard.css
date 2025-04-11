@@ -341,32 +341,42 @@ body, html {
 .stat-item {
   background: var(--bg-main, #f5f7fa);
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 1.25rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  transition: transform 0.2s;
+  gap: 1rem;
+  transition: all 0.2s ease-in-out;
   border: 1px solid var(--border-color, #eaeaea);
   overflow: hidden;
+  position: relative;
 }
 
 .dark-mode .stat-item {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, #2a2a40);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .stat-item:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .stat-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .stat-icon.incoming {
@@ -374,9 +384,19 @@ body, html {
   color: #3498db;
 }
 
+.stat-icon.incoming::before {
+  content: "↓";
+  font-weight: bold;
+}
+
 .stat-icon.outgoing {
   background-color: rgba(142, 68, 173, 0.2);
   color: #8e44ad;
+}
+
+.stat-icon.outgoing::before {
+  content: "↑";
+  font-weight: bold;
 }
 
 .stat-icon.gas {
@@ -384,9 +404,18 @@ body, html {
   color: var(--warning);
 }
 
+.stat-icon.gas::before {
+  content: "⛽";
+}
+
 .stat-icon.transaction {
   background-color: rgba(79, 70, 229, 0.2);
   color: var(--primary);
+}
+
+.stat-icon.transaction::before {
+  content: "↔";
+  font-weight: bold;
 }
 
 .stat-data {
@@ -397,12 +426,17 @@ body, html {
 
 .stat-value {
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: var(--neutral-700);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 0.25rem;
+}
+
+.dark-mode .stat-value {
+  color: var(--text-primary);
 }
 
 .stat-value.income, .positive {
@@ -414,11 +448,16 @@ body, html {
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--neutral-500);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.dark-mode .stat-label {
+  color: var(--text-secondary);
+  opacity: 0.8;
 }
 
 /* Gas Tracker */
@@ -2182,4 +2221,65 @@ body, html {
   opacity: 0.8;
   max-width: 300px;
   margin: 0 auto;
+}
+
+/* Price chart styling */
+.price-chart-container {
+  margin-top: 1.5rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chart-timeframe-selector {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+.timeframe-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeframe-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.timeframe-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+.price-chart {
+  height: 200px;
+  position: relative;
+}
+
+.chart-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-secondary);
+}
+
+.chart-loading .spinner {
+  width: 30px;
+  height: 30px;
+  border-width: 3px;
+  margin-bottom: 1rem;
 }

@@ -1,14 +1,40 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import '../styles/Dashboard.css';
 import { QRCodeSVG } from 'qrcode.react';
 import TransactionService from '../services/transactionService';
+import axios from 'axios';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale,
+} from 'chart.js';
+import 'chartjs-adapter-date-fns';
 
 // Helper function to format addresses - moved outside component
 const formatAddressUtil = (address) => {
     if (!address) return 'Unknown';
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  TimeScale,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
   useOutletContext();
@@ -44,6 +70,10 @@ const Dashboard = () => {
   const [ethPriceChange, setEthPriceChange] = useState(0);
   const [marketCap, setMarketCap] = useState(0);
   const [volume24h, setVolume24h] = useState(0);
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [chartTimeframe, setChartTimeframe] = useState('1d'); // '1d', '7d', '30d'
+  const [chartLoading, setChartLoading] = useState(true);
+  const chartRef = useRef(null);
   const [transactionStats, setTransactionStats] = useState({
     sent: 0.07,
     received: 0.95,
@@ -210,14 +240,104 @@ const Dashboard = () => {
   // Define fetchEthPriceData with useCallback
   const fetchEthPriceData = useCallback(async () => {
     try {
-      // In a real app, you would use an API like CoinGecko or CryptoCompare
-      // For now, we'll mock the data for demonstration
+      setChartLoading(true);
+      
+      // Fetch current price data
+      const priceResponse = await axios.get('https://api.coingecko.com/api/v3/coins/ethereum', {
+        params: {
+          localization: false,
+          tickers: false,
+          market_data: true,
+          community_data: false,
+          developer_data: false,
+          sparkline: false
+        }
+      });
+      
+      if (priceResponse.data && priceResponse.data.market_data) {
+        const marketData = priceResponse.data.market_data;
+        
+        // Update price state
+        const currentPrice = marketData.current_price.usd;
+        setEthPrice(currentPrice);
+        
+        // Update price change percentage
+        const changePercentage = marketData.price_change_percentage_24h;
+        setEthPriceChange(changePercentage ? parseFloat(changePercentage.toFixed(2)) : 0);
+        
+        // Update market cap and volume
+        const marketCapInB = marketData.market_cap.usd / 1000000000;
+        setMarketCap(parseFloat(marketCapInB.toFixed(2)));
+        
+        const volumeInB = marketData.total_volume.usd / 1000000000;
+        setVolume24h(parseFloat(volumeInB.toFixed(2)));
+        
+        // Update DeFi portfolio values based on ETH price
+        setDefiPortfolio(prevState => prevState.map(item => ({
+          ...item,
+          value: (item.amount * currentPrice).toFixed(2)
+        })));
+      }
+      
+      // Fetch historical price data for chart
+      let days;
+      switch (chartTimeframe) {
+        case '7d':
+          days = 7;
+          break;
+        case '30d':
+          days = 30;
+          break;
+        case '1d':
+        default:
+          days = 1;
+          break;
+      }
+      
+      const historyResponse = await axios.get('https://api.coingecko.com/api/v3/coins/ethereum/market_chart', {
+        params: {
+          vs_currency: 'usd',
+          days: days,
+          interval: days > 1 ? 'daily' : 'hourly'
+        }
+      });
+      
+      if (historyResponse.data && historyResponse.data.prices) {
+        const priceData = historyResponse.data.prices.map(item => ({
+          timestamp: item[0],
+          price: item[1]
+        }));
+        
+        setPriceHistory(priceData);
+      }
+      
+      setChartLoading(false);
+    } catch (error) {
+      console.error("Error fetching ETH price data:", error);
+      setChartLoading(false);
+      
+      // Fallback to mock data if API fails
       if (connectionStatus === 'Connected') {
-        // Mock data for now
         setEthPrice(2842.15);
         setEthPriceChange(3.27);
         setMarketCap(318.45);
         setVolume24h(12.75);
+        
+        // Create mock price history data
+        const mockHistory = [];
+        const now = Date.now();
+        const basePrice = 2842.15;
+        
+        for (let i = 24; i >= 0; i--) {
+          const time = now - (i * 60 * 60 * 1000);
+          const randomChange = (Math.random() - 0.5) * 50;
+          mockHistory.push({
+            timestamp: time,
+            price: basePrice + randomChange
+          });
+        }
+        
+        setPriceHistory(mockHistory);
         
         // Update DeFi portfolio values based on ETH price
         setDefiPortfolio(prevState => prevState.map(item => ({
@@ -225,10 +345,8 @@ const Dashboard = () => {
           value: (item.amount * 2842.15).toFixed(2)
         })));
       }
-    } catch (error) {
-      console.error("Error fetching ETH price data:", error);
     }
-  }, [connectionStatus]);
+  }, [connectionStatus, chartTimeframe]);
 
   // Initialize Web3 
   useEffect(() => {
@@ -766,6 +884,134 @@ const Dashboard = () => {
     );
   };
 
+  // Render ETH price chart
+  const renderPriceChart = useCallback(() => {
+    if (chartLoading || priceHistory.length === 0) {
+      return (
+        <div className="chart-loading">
+          <div className="spinner"></div>
+          <p>Loading chart data...</p>
+        </div>
+      );
+    }
+    
+    const chartData = {
+      labels: priceHistory.map(dataPoint => new Date(dataPoint.timestamp)),
+      datasets: [
+        {
+          label: 'ETH Price (USD)',
+          data: priceHistory.map(dataPoint => dataPoint.price),
+          borderColor: ethPriceChange >= 0 ? 'rgba(46, 204, 113, 1)' : 'rgba(231, 76, 60, 1)', 
+          backgroundColor: ethPriceChange >= 0 ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 3,
+        }
+      ]
+    };
+    
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `$${context.raw.toFixed(2)}`;
+            },
+            title: function(context) {
+              // Ensure we have a valid date by using the timestamp directly from the dataset
+              const dataIndex = context[0].dataIndex;
+              const timestamp = priceHistory[dataIndex]?.timestamp;
+              
+              if (!timestamp) return 'Unknown date';
+              
+              const date = new Date(timestamp);
+              if (isNaN(date.getTime())) return 'Invalid date';
+              
+              const formatDate = chartTimeframe === '1d' 
+                ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : date.toLocaleDateString([], { month: 'short', day: 'numeric', year: '2-digit' });
+                
+              return formatDate;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: chartTimeframe === '1d' ? 'hour' : 'day',
+            tooltipFormat: chartTimeframe === '1d' ? 'HH:mm' : 'MMM d',
+            displayFormats: {
+              hour: 'HH:mm',
+              day: 'MMM d'
+            }
+          },
+          grid: {
+            display: false,
+            drawBorder: false,
+          },
+          ticks: {
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 6,
+            color: 'rgba(255, 255, 255, 0.5)', 
+          }
+        },
+        y: {
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)',
+          },
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toLocaleString();
+            },
+            color: 'rgba(255, 255, 255, 0.5)',
+          }
+        }
+      }
+    };
+    
+    return (
+      <div className="price-chart-container">
+        <div className="chart-timeframe-selector">
+          <button 
+            className={`timeframe-btn ${chartTimeframe === '1d' ? 'active' : ''}`}
+            onClick={() => setChartTimeframe('1d')}
+          >
+            1D
+          </button>
+          <button 
+            className={`timeframe-btn ${chartTimeframe === '7d' ? 'active' : ''}`}
+            onClick={() => setChartTimeframe('7d')}
+          >
+            7D
+          </button>
+          <button 
+            className={`timeframe-btn ${chartTimeframe === '30d' ? 'active' : ''}`}
+            onClick={() => setChartTimeframe('30d')}
+          >
+            30D
+          </button>
+        </div>
+        <div className="price-chart">
+          <Line ref={chartRef} data={chartData} options={chartOptions} />
+        </div>
+      </div>
+    );
+  }, [chartLoading, priceHistory, ethPriceChange, chartTimeframe]);
+
   // Show a loading state
   if (loading) {
     return (
@@ -856,21 +1102,21 @@ const Dashboard = () => {
               <div className="stat-item">
                 <div className="stat-icon incoming"></div>
                 <div className="stat-data">
-                  <div className="stat-value income">+0.95 ETH</div>
+                  <div className="stat-value income">+{transactionStats.received} ETH</div>
                   <div className="stat-label">Received</div>
                 </div>
               </div>
               <div className="stat-item">
                 <div className="stat-icon outgoing"></div>
                 <div className="stat-data">
-                  <div className="stat-value expense">-0.07 ETH</div>
+                  <div className="stat-value expense">-{transactionStats.sent} ETH</div>
                   <div className="stat-label">Sent</div>
                 </div>
               </div>
               <div className="stat-item">
                 <div className="stat-icon gas"></div>
                 <div className="stat-data">
-                  <div className="stat-value expense">{totalGasUsed} ETH</div>
+                  <div className="stat-value expense">{parseFloat(totalGasUsed).toFixed(6)} ETH</div>
                   <div className="stat-label">Gas Fees</div>
                 </div>
               </div>
@@ -957,6 +1203,8 @@ const Dashboard = () => {
                   <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
                 </div>
               </div>
+              {/* Add chart */}
+              {renderPriceChart()}
             </div>
           </div>
           
