@@ -1,134 +1,84 @@
 // src/pages/Transactions.js
 import React, { useState, useEffect } from 'react';
 import '../styles/Pages.css';
+import TransactionService from '../services/transactionService';
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
-  const [accounts, setAccounts] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [selectedType, setSelectedType] = useState('all');
+  const [error, setError] = useState(null);
 
+  // Fetch transactions when component mounts
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTransactions = async () => {
       setLoading(true);
+      setError(null);
+      
       try {
-        // Mock data for accounts
-        const mockAccounts = [
-          '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-          '0x8Fe7A9C9bA9C6628232CDc299E9Daa4127b5F5E2'
-        ];
+        // Initialize TransactionService if needed
+        if (!TransactionService.web3) {
+          await TransactionService.init();
+        }
         
-        // Mock data for transactions
-        const mockTransactions = [
-          {
-            id: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-            type: 'send',
-            from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-            to: '0x8Fe7A9C9bA9C6628232CDc299E9Daa4127b5F5E2',
-            value: '0.5',
-            timestamp: Date.now() - 1000 * 60 * 60 * 2, // 2 hours ago
-            status: 'success',
-            gasUsed: '0.0021'
-          },
-          {
-            id: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-            type: 'receive',
-            from: '0x8Fe7A9C9bA9C6628232CDc299E9Daa4127b5F5E2',
-            to: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-            value: '0.8',
-            timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2, // 2 days ago
-            status: 'success',
-            gasUsed: '0'
-          },
-          {
-            id: '0xfedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321',
-            type: 'send',
-            from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-            to: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-            value: '0.2',
-            timestamp: Date.now() - 1000 * 60 * 30, // 30 mins ago
-            status: 'pending',
-            gasUsed: '0.0015'
-          },
-          {
-            id: '0x0987654321fedcba0987654321fedcba0987654321fedcba0987654321fedcba',
-            type: 'send',
-            from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-            to: '0x1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
-            value: '0.3',
-            timestamp: Date.now() - 1000 * 60 * 60 * 24 * 5, // 5 days ago
-            status: 'failed',
-            gasUsed: '0.0008'
-          }
-        ];
+        // Get user's account
+        const userAccount = await TransactionService.getDefaultAccount();
         
-        setAccounts(mockAccounts);
-        setTransactions(mockTransactions);
+        if (!userAccount) {
+          setError("Could not determine user account");
+          setLoading(false);
+          return;
+        }
+        
+        console.log(`Using account: ${userAccount}`);
+        
+        // Fetch transactions for this account
+        const txList = await TransactionService.getTransactions(userAccount);
+        console.log(`Found ${txList.length} transactions`);
+        
+        setTransactions(txList);
       } catch (error) {
-        console.error('Error fetching transaction data:', error);
+        console.error('Error fetching transactions:', error);
+        setError("Failed to fetch transaction data");
       } finally {
         setLoading(false);
       }
     };
     
-    fetchData();
+    fetchTransactions();
+    
+    // Set up polling for transactions every 5 seconds
+    const interval = setInterval(() => {
+      fetchTransactions();
+    }, 5000);
+    
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
-  // Filter transactions based on selected account and type
+  // Filter transactions by type
   const filteredTransactions = transactions.filter(tx => {
-    const accountMatch = selectedAccount === 'all' || 
-                         tx.from === selectedAccount || 
-                         tx.to === selectedAccount;
-    const typeMatch = selectedType === 'all' || tx.type === selectedType;
-    
-    return accountMatch && typeMatch;
+    return selectedType === 'all' || tx.type === selectedType;
   });
 
-  // Sort transactions by timestamp (newest first)
-  const sortedTransactions = [...filteredTransactions].sort((a, b) => b.timestamp - a.timestamp);
-
-  // Format date from timestamp
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    
-    // If the transaction was today, show only the time
-    const isToday = new Date().toDateString() === date.toDateString();
-    
-    if (isToday) {
-      return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    }
-    
-    // Check if the transaction was yesterday
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const isYesterday = yesterday.toDateString() === date.toDateString();
-    
-    if (isYesterday) {
-      return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    }
-    
-    // Otherwise show the full date
-    return date.toLocaleDateString([], { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  // Format address to show only first and last few characters
+  // Helper function to format addresses
   const formatAddress = (address) => {
-    if (!address) return '';
+    if (!address) return 'Unknown';
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // Determine badge class based on transaction status
+  // Helper function to format date
+  const formatDate = (timestamp) => {
+    return new Date(Number(timestamp)).toLocaleString();
+  };
+
+  // Helper function to determine badge class
   const getBadgeClass = (status) => {
-    switch (status) {
+    if (!status) return 'badge-info';
+    
+    switch (status.toLowerCase()) {
       case 'success':
-      case 'completed':
+      case 'confirmed':
         return 'badge-success';
       case 'pending':
         return 'badge-warning';
@@ -139,51 +89,71 @@ const Transactions = () => {
     }
   };
 
+  // Helper function to calculate total sent
+  const calculateTotalSent = () => {
+    try {
+      return transactions
+        .filter(tx => tx.type === 'Transfer')
+        .reduce((sum, tx) => {
+          const ethValue = TransactionService.weiToEth(tx.value);
+          return sum + parseFloat(ethValue || '0');
+        }, 0)
+        .toFixed(4);
+    } catch (error) {
+      console.error('Error calculating total sent:', error);
+      return '0.0000';
+    }
+  };
+
+  // Helper function to calculate total received
+  const calculateTotalReceived = () => {
+    try {
+      return transactions
+        .filter(tx => tx.type === 'Receive')
+        .reduce((sum, tx) => {
+          const ethValue = TransactionService.weiToEth(tx.value);
+          return sum + parseFloat(ethValue || '0');
+        }, 0)
+        .toFixed(4);
+    } catch (error) {
+      console.error('Error calculating total received:', error);
+      return '0.0000';
+    }
+  };
+  
+  // Helper function to calculate total gas fees
+  const calculateTotalGasFees = () => {
+    try {
+      return transactions
+        .reduce((sum, tx) => {
+          const fee = TransactionService.calculateGasFee(tx.gas, tx.gasPrice);
+          return sum + parseFloat(fee || '0');
+        }, 0)
+        .toFixed(6);
+    } catch (error) {
+      console.error('Error calculating total gas fees:', error);
+      return '0.000000';
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Transactions</h1>
-        <div className="page-actions">
-          <button className="btn btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            New Transaction
-          </button>
-          <button className="btn btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Export
-          </button>
-        </div>
+        <h1 className="page-title">Transaction History</h1>
       </div>
+      
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
       
       <div className="page-card">
         <div className="page-card-header">
           <h2 className="page-card-title">Transaction History</h2>
         </div>
         
-        <div className="form-grid" style={{ marginBottom: '2rem' }}>
-          <div className="form-control">
-            <label htmlFor="account-filter">Filter by Account</label>
-            <select 
-              id="account-filter"
-              value={selectedAccount}
-              onChange={(e) => setSelectedAccount(e.target.value)}
-            >
-              <option value="all">All Accounts</option>
-              {accounts.map((account) => (
-                <option key={account} value={account}>
-                  {formatAddress(account)}
-                </option>
-              ))}
-            </select>
-          </div>
-          
+        <div className="filter-controls">
           <div className="form-control">
             <label htmlFor="type-filter">Filter by Type</label>
             <select 
@@ -192,81 +162,68 @@ const Transactions = () => {
               onChange={(e) => setSelectedType(e.target.value)}
             >
               <option value="all">All Types</option>
-              <option value="send">Send</option>
-              <option value="receive">Receive</option>
-              <option value="swap">Swap</option>
+              <option value="Transfer">Sent</option>
+              <option value="Receive">Received</option>
             </select>
           </div>
         </div>
         
         {loading ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">⏳</div>
-            <div className="empty-state-title">Loading transactions...</div>
-            <div className="empty-state-text">Please wait while we fetch your transaction history.</div>
+          <div className="loading-state">
+            <span className="spinner"></span> Loading transactions...
           </div>
-        ) : sortedTransactions.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">📭</div>
-            <div className="empty-state-title">No transactions found</div>
-            <div className="empty-state-text">
-              We couldn't find any transactions matching your current filters.
-            </div>
-            {(selectedAccount !== 'all' || selectedType !== 'all') && (
-              <button 
-                className="btn btn-secondary"
-                onClick={() => {
-                  setSelectedAccount('all');
-                  setSelectedType('all');
-                }}
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
-        ) : (
+        ) : filteredTransactions.length > 0 ? (
           <div className="table-container">
             <table className="table">
               <thead>
                 <tr>
                   <th>Date</th>
                   <th>Type</th>
-                  <th>From</th>
-                  <th>To</th>
+                  <th>Address</th>
                   <th>Amount</th>
                   <th>Gas Fee</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {sortedTransactions.map((tx) => (
-                  <tr key={tx.id}>
-                    <td>{formatDate(tx.timestamp)}</td>
-                    <td>
-                      <span className={`badge ${tx.type === 'send' ? 'badge-info' : 'badge-success'}`}>
-                        {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
-                      </span>
-                    </td>
-                    <td style={{ fontFamily: 'monospace' }}>{formatAddress(tx.from)}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{formatAddress(tx.to)}</td>
-                    <td>
-                      <span style={{ 
-                        color: tx.type === 'send' ? 'var(--danger)' : 'var(--success)',
-                        fontWeight: '600'
-                      }}>
-                        {tx.type === 'send' ? '-' : '+'}{tx.value} ETH
-                      </span>
-                    </td>
-                    <td>{tx.gasUsed} ETH</td>
-                    <td>
-                      <span className={`badge ${getBadgeClass(tx.status)}`}>
-                        {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {filteredTransactions.map((tx) => {
+                  const isOutgoing = tx.type === 'Transfer';
+                  // Show the recipient address for outgoing, sender for incoming
+                  const displayAddress = isOutgoing ? tx.to : tx.from;
+                  
+                  return (
+                    <tr key={tx.id}>
+                      <td>{formatDate(tx.timestamp)}</td>
+                      <td>
+                        <span className={`badge ${isOutgoing ? 'badge-info' : 'badge-success'}`}>
+                          {isOutgoing ? 'Sent' : 'Received'}
+                        </span>
+                      </td>
+                      <td style={{ fontFamily: 'monospace' }}>{formatAddress(displayAddress)}</td>
+                      <td>
+                        <span style={{ 
+                          color: isOutgoing ? 'var(--danger)' : 'var(--success)',
+                          fontWeight: '600'
+                        }}>
+                          {isOutgoing ? '-' : '+'}{TransactionService.weiToEth(tx.value)} ETH
+                        </span>
+                      </td>
+                      <td>{TransactionService.calculateGasFee(tx.gas, tx.gasPrice)} ETH</td>
+                      <td>
+                        <span className={`badge ${getBadgeClass(tx.status)}`}>
+                          {tx.status ? tx.status.charAt(0).toUpperCase() + tx.status.slice(1) : 'Unknown'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+          </div>
+        ) : (
+          <div className="empty-state">
+            <p>No transactions found</p>
+            <p className="empty-state-sub">Transactions will appear here after you send or receive ETH</p>
           </div>
         )}
       </div>
@@ -279,26 +236,22 @@ const Transactions = () => {
         <div className="form-grid">
           <div className="stat-card">
             <div className="stat-title">Total Sent</div>
-            <div className="stat-value">1.0 ETH</div>
-            <div className="stat-change negative">-5% from last month</div>
+            <div className="stat-value">{calculateTotalSent()} ETH</div>
           </div>
           
           <div className="stat-card">
             <div className="stat-title">Total Received</div>
-            <div className="stat-value">0.8 ETH</div>
-            <div className="stat-change positive">+12% from last month</div>
+            <div className="stat-value">{calculateTotalReceived()} ETH</div>
           </div>
           
           <div className="stat-card">
             <div className="stat-title">Gas Fees Spent</div>
-            <div className="stat-value">0.0044 ETH</div>
-            <div className="stat-change neutral">Same as last month</div>
+            <div className="stat-value">{calculateTotalGasFees()} ETH</div>
           </div>
           
           <div className="stat-card">
             <div className="stat-title">Transaction Count</div>
-            <div className="stat-value">4</div>
-            <div className="stat-change positive">+2 from last month</div>
+            <div className="stat-value">{transactions.length}</div>
           </div>
         </div>
       </div>

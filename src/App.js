@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './styles/App.css';
+import TransactionService from './services/transactionService';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -47,12 +48,41 @@ const PathTracker = ({ children }) => {
 };
 
 const App = () => {
-  // No need to manage dark mode state, just auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
+  // Initialize TransactionService
   useEffect(() => {
-    // Check if user is logged in on component mount
+    const initializeServices = async () => {
+      try {
+        console.log('Initializing services from App component...');
+        
+        // Initialize the transaction service as early as possible
+        const serviceInitialized = await TransactionService.init();
+        
+        if (serviceInitialized) {
+          console.log('TransactionService initialized successfully');
+          
+          // Get default account to verify user setup
+          const defaultAccount = await TransactionService.getDefaultAccount();
+          if (defaultAccount) {
+            console.log(`Default account available: ${defaultAccount.substring(0, 10)}...`);
+          } else {
+            console.warn('No default account found');
+          }
+        } else {
+          console.error('Failed to initialize TransactionService');
+        }
+      } catch (error) {
+        console.error('Error initializing services:', error);
+      }
+    };
+    
+    initializeServices();
+  }, []);
+  
+  // Check authentication status
+  useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     
@@ -105,7 +135,7 @@ const App = () => {
 
   // Show loading state until auth check is complete
   if (isLoading) {
-    return <div className="loading-auth">Loading...</div>;
+    return <div className="loading-auth">Loading application...</div>;
   }
 
   return (

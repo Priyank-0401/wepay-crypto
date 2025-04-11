@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import Web3 from 'web3';
+import { useOutletContext } from 'react-router-dom';
 import '../styles/Dashboard.css';
 import { QRCodeSVG } from 'qrcode.react';
+import TransactionService from '../services/transactionService';
+
+// Helper function to format addresses - moved outside component
+const formatAddressUtil = (address) => {
+    if (!address) return 'Unknown';
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   useOutletContext();
+  
+  // State variables
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [account, setAccount] = useState('');
   const [ethBalance, setEthBalance] = useState(0);
@@ -30,18 +37,9 @@ const Dashboard = () => {
   const [transactionStatus, setTransactionStatus] = useState(null);
   const [transactionHash, setTransactionHash] = useState('');
   const [transactionError, setTransactionError] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [userInitial, setUserInitial] = useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [spendingByCategory, setSpendingByCategory] = useState([
-    { category: 'Transfers', amount: 0.05, color: '#3498db' },
-    { category: 'DeFi', amount: 0.17, color: '#2ecc71' },
-    { category: 'NFTs', amount: 0.01, color: '#9b59b6' },
-    { category: 'Smart Contracts', amount: 0.02, color: '#f1c40f' },
-    { category: 'Gas Fees', amount: 0, color: '#e74c3c' },
-  ]);
   
-  // New state variables for additional dashboard data
+  // State variables for additional dashboard data
   const [ethPrice, setEthPrice] = useState(0);
   const [ethPriceChange, setEthPriceChange] = useState(0);
   const [marketCap, setMarketCap] = useState(0);
@@ -56,6 +54,14 @@ const Dashboard = () => {
     { protocol: 'Aave', amount: 0.05, apy: 3.2, value: 0 },
     { protocol: 'Compound', amount: 0.1, apy: 2.8, value: 0 },
     { protocol: 'Uniswap', amount: 0.02, apy: 5.4, value: 0 }
+  ]);
+  // Initialize spendingByCategory state with only categories, not mock data
+  const [spendingByCategory, setSpendingByCategory] = useState([
+    { category: 'Transfers', amount: 0, color: '#3498db' },
+    { category: 'DeFi', amount: 0, color: '#2ecc71' },
+    { category: 'NFTs', amount: 0, color: '#9b59b6' },
+    { category: 'Smart Contracts', amount: 0, color: '#f1c40f' },
+    { category: 'Gas Fees', amount: 0, color: '#e74c3c' },
   ]);
 
   // Get user data for profile icon
@@ -106,17 +112,70 @@ const Dashboard = () => {
     };
   }, [dropdownOpen]);
 
-  // Function definitions - this is where setMockData should go
-  const setMockData = () => {
+  // Fetch transactions function - Define this first so it can be used in setMockData
+  const fetchTransactions = useCallback(async (address) => {
+    if (!address) {
+      console.error("Missing address for transaction fetch");
+      return;
+    }
+    
+    try {
+      console.log(`Fetching transactions for: ${address}`);
+      const txList = await TransactionService.getTransactions(address);
+      console.log(`Found ${txList.length} transactions`);
+      
+      if (txList.length > 0) {
+        setTransactions(txList);
+        
+        // Update transaction stats based on fetched transactions
+        let sent = 0;
+        let received = 0;
+        let totalFees = 0;
+        
+        txList.forEach(tx => {
+          const txValue = parseFloat(TransactionService.weiToEth(tx.value));
+          
+          if (tx.type === 'Transfer') {
+            sent += txValue;
+          } else if (tx.type === 'Receive') {
+            received += txValue;
+          }
+          
+          const gasFee = parseFloat(TransactionService.calculateGasFee(tx.gas, tx.gasPrice));
+          totalFees += gasFee;
+        });
+        
+        // Update transaction stats
+        setTransactionStats({
+          sent: sent.toFixed(4),
+          received: received.toFixed(4),
+          totalFees: totalFees.toFixed(6),
+          avgValue: txList.length > 0 ? ((sent + received) / txList.length).toFixed(4) : '0'
+        });
+        
+        // Update total gas used
+        setTotalGasUsed(totalFees);
+      } else {
+        console.log("No transactions found");
+        setTransactions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+  }, []);
+
+  // Set mock data function - remove mock data for spending categories
+  const setMockData = useCallback(() => {
     const mockAddr = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
     setAccount(mockAddr);
     setEthBalance("1.2345"); 
     setGasPrice("20.00");
     setNetworkId("1337");
     setNetworkName("Ganache Local");
-    fetchTransactions(mockAddr, web3);
+    fetchTransactions(mockAddr);
     setPendingTransactions(Math.floor(Math.random() * 5));
-    setTotalGasUsed(parseFloat((Math.random() * 0.01).toFixed(4)));
+    const randomGasUsed = parseFloat((Math.random() * 0.01).toFixed(4));
+    setTotalGasUsed(randomGasUsed);
     setBlockNumber(12345);
     
     // Mock price and market data
@@ -129,7 +188,7 @@ const Dashboard = () => {
     setTransactionStats({
       sent: 0.07,
       received: 0.95,
-      totalFees: totalGasUsed,
+      totalFees: randomGasUsed,
       avgValue: 0.12
     });
     
@@ -139,239 +198,193 @@ const Dashboard = () => {
       value: (item.amount * 2842.15).toFixed(2)
     })));
     
-    // Update spending by category with mock data
-    setSpendingByCategory([
-      { category: 'Transfers', amount: 0.05, color: '#3498db' },
-      { category: 'DeFi', amount: 0.17, color: '#2ecc71' },
-      { category: 'NFTs', amount: 0.01, color: '#9b59b6' },
-      { category: 'Smart Contracts', amount: 0.02, color: '#f1c40f' },
-      { category: 'Gas Fees', amount: totalGasUsed, color: '#e74c3c' },
-    ]);
-    
     console.log("Mock data loaded successfully");
-  };
+  }, [fetchTransactions]);
 
-  useEffect(() => {
-    // Check if user is logged in
-    const userString = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    console.log("Dashboard init - localStorage check:", { 
-      userExists: !!userString, 
-      tokenExists: !!token 
-    });
-    
-    if (!userString || !token) {
-      console.log("Missing user or token, redirecting to login");
-      // Don't redirect directly, let the ProtectedRoute component handle redirects
-      return;
-    }
+  // Define weiToEth with useCallback
+  const weiToEth = useCallback((wei) => {
+    if (!web3 || !wei) return "0";
+    return web3.utils.fromWei(wei.toString(), 'ether');
+  }, [web3]);
 
-    // Parse user data safely with error handling
-    let userData;
+  // Define fetchEthPriceData with useCallback
+  const fetchEthPriceData = useCallback(async () => {
     try {
-      userData = JSON.parse(userString);
-      if (!userData) {
-        throw new Error("User data is null after parsing");
+      // In a real app, you would use an API like CoinGecko or CryptoCompare
+      // For now, we'll mock the data for demonstration
+      if (connectionStatus === 'Connected') {
+        // Mock data for now
+        setEthPrice(2842.15);
+        setEthPriceChange(3.27);
+        setMarketCap(318.45);
+        setVolume24h(12.75);
+        
+        // Update DeFi portfolio values based on ETH price
+        setDefiPortfolio(prevState => prevState.map(item => ({
+          ...item,
+          value: (item.amount * 2842.15).toFixed(2)
+        })));
       }
     } catch (error) {
-      console.error("Error parsing user data from localStorage:", error);
-      localStorage.removeItem('user'); // Clear invalid data
-      localStorage.removeItem('token');
-      // Don't redirect directly, let the ProtectedRoute component handle redirects
-      return;
+      console.error("Error fetching ETH price data:", error);
     }
-    
-    // Initialize Web3 with Ganache
-    const initWeb3 = async () => {
+  }, [connectionStatus]);
+
+  // Initialize Web3 
+  useEffect(() => {
+    const initializeWeb3 = async () => {
       try {
-        console.log("Attempting to connect to Ganache blockchain...");
+        console.log('Initializing Web3 and blockchain connection...');
         setLoading(true);
-        setError(null);
-        setConnectionAttempts(prev => prev + 1);
         setDebugMessage("Connecting to Ganache...");
         
-        // Ganache URL
-        const ganacheUrl = 'http://127.0.0.1:7545';
-        console.log(`Connecting to Ganache at ${ganacheUrl}`);
-        
-        // Create Web3 instance
-        const web3Instance = new Web3(ganacheUrl);
-        setWeb3(web3Instance);
-        
-        // Set up connection timeout
-        let connectionTimeout = setTimeout(() => {
-          console.log("Connection timeout - showing user's wallet data");
+        // Initialize the TransactionService first
+        const serviceInitialized = await TransactionService.init();
+        if (!serviceInitialized) {
+          console.error('Failed to initialize TransactionService');
+          setError('Could not connect to Ganache. Is it running?');
+          setConnectionAttempts(prev => prev + 1); // Increment connection attempts
           setLoading(false);
-          setDebugMessage("Connection timed out, showing your wallet data");
-          setConnectionStatus('Disconnected');
-          
-          // Use user's wallet from registration instead of random mock data
-          if (userData.wallet_address) {
-            setAccount(userData.wallet_address);
-            setEthBalance(userData.wallet_balance || "0.0000");
-            fetchTransactions(userData.wallet_address, web3Instance);
-          } else {
-            // Fallback if no wallet in user data
-            setMockData();
-          }
-        }, 5000);
+          return;
+        }
         
-        try {
-          // Quick check that connection works
-          const blockNumber = await web3Instance.eth.getBlockNumber();
+        // Use the same Web3 instance from TransactionService
+        if (TransactionService.web3) {
+          setWeb3(TransactionService.web3);
+          console.log('Using TransactionService Web3 instance');
           
-          // Clear the timeout
-          clearTimeout(connectionTimeout);
-          
-          setBlockNumber(blockNumber);
-          setConnectionStatus('Connected');
-          setDebugMessage("Connected to Ganache successfully");
-          
-          // Use the user's wallet address instead of getting accounts
-          if (userData.wallet_address) {
-            setAccount(userData.wallet_address);
+          try {
+            // Get user's account
+            const userAccount = await TransactionService.getDefaultAccount();
             
-            // Get real-time balance for the user's address
-            try {
-              const balanceWei = await web3Instance.eth.getBalance(userData.wallet_address);
-              const balanceEth = web3Instance.utils.fromWei(balanceWei, 'ether');
-              setEthBalance(parseFloat(balanceEth).toFixed(4));
-              
-              // Update in database via API call
-              updateWalletBalance(userData.wallet_address, balanceEth);
-              
-              // Get user's transactions
-              fetchTransactions(userData.wallet_address, web3Instance);
-            } catch (balanceError) {
-              console.error("Error getting balance:", balanceError);
-              setEthBalance(userData.wallet_balance || "0.0000");
+            if (!userAccount) {
+              setError('No account available');
+              setConnectionAttempts(prev => prev + 1); // Increment connection attempts
+              setLoading(false);
+              return;
             }
-          } else {
-            console.warn("User has no wallet address assigned");
-            setMockData();
-          }
+            
+            console.log('Using account:', userAccount);
+            setAccount(userAccount);
+            
+            // Get account balance
+            try {
+              const balance = await TransactionService.getBalance(userAccount);
+              setEthBalance(balance);
           
           // Get network info
-          const netId = await web3Instance.eth.net.getId();
+              const netId = await TransactionService.web3.eth.net.getId();
           setNetworkId(netId.toString());
           
           let network = 'Unknown';
           if (netId === 5777 || netId === 1337) {
             network = 'Ganache Local';
-          } else if (netId === 1) {
-            network = 'Ethereum Mainnet';
           }
           setNetworkName(network);
           
-          const gasPriceWei = await web3Instance.eth.getGasPrice();
-          const gasPriceGwei = web3Instance.utils.fromWei(gasPriceWei, 'gwei');
+              // Get current block number
+              const blockNumber = await TransactionService.web3.eth.getBlockNumber();
+              setBlockNumber(blockNumber);
+              
+              // Get gas price
+              const gasPrice = await TransactionService.web3.eth.getGasPrice();
+              const gasPriceGwei = TransactionService.web3.utils.fromWei(gasPrice, 'gwei');
           setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
           
-          // Mock data for transaction counts, etc.
-          setPendingTransactions(Math.floor(Math.random() * 3));
-          setTotalGasUsed(parseFloat((Math.random() * 0.005).toFixed(4)));
-        } catch (error) {
-          console.error("Error connecting to web3:", error);
-          clearTimeout(connectionTimeout);
-          setConnectionStatus('Disconnected');
-          setError("Could not connect to blockchain: " + error.message);
-          
-          // Use user's wallet data from registration
-          if (userData.wallet_address) {
-            setAccount(userData.wallet_address);
-            setEthBalance(userData.wallet_balance || "0.0000");
-          } else {
-            setMockData();
+              // Set connection status
+              setConnectionStatus('Connected');
+              
+              // Fetch transactions
+              fetchTransactions(userAccount);
+              
+              // Mock price data for now
+              setEthPrice(2842.15);
+              setEthPriceChange(3.27);
+            } catch (balanceError) {
+              console.error('Error fetching balance:', balanceError);
+              setEthBalance('0');
+              setConnectionAttempts(prev => prev + 1); // Increment connection attempts
+            }
+          } catch (accountsError) {
+            console.error('Error fetching account:', accountsError);
+            setError('Error fetching account');
+            setConnectionAttempts(prev => prev + 1); // Increment connection attempts
           }
+          } else {
+          console.error('Web3 not initialized in TransactionService');
+          setError('Web3 not initialized');
+          setConnectionAttempts(prev => prev + 1); // Increment connection attempts
+          }
+      } catch (error) {
+        console.error('Error initializing Web3:', error);
+        setError(`Error connecting to Ganache: ${error.message}`);
+        setConnectionAttempts(prev => prev + 1); // Increment connection attempts
         } finally {
           setLoading(false);
-        }
-      } catch (error) {
-        console.error("Critical failure:", error);
-        setLoading(false);
-        setError("Critical error: " + error.message);
-        setDebugMessage("Critical failure in connection");
-        
-        // Still try to use user data
-        if (userData.wallet_address) {
-          setAccount(userData.wallet_address);
-          setEthBalance(userData.wallet_balance || "0.0000");
-        } else {
-          setMockData();
-        }
       }
     };
     
-    // Execute connection logic
-    initWeb3();
+    initializeWeb3();
     
-    // Setup a cleanup function
-    return () => {
-      // Close any open connections if needed
-      if (web3 && web3.currentProvider && web3.currentProvider.disconnect) {
-        web3.currentProvider.disconnect();
+    // Set up polling for transactions
+    const interval = setInterval(() => {
+      if (account && connectionStatus === 'Connected') {
+        fetchTransactions(account);
       }
-    };
-    // eslint-disable-next-line
-  }, [navigate]);
-
-  useEffect(() => {
-    // Only set up transaction polling if we have a web3 connection and an account
-    if (web3 && account && connectionStatus === 'Connected') {
-      console.log("Setting up transaction polling");
-      
-      // Set up interval to fetch transactions every 15 seconds
-      const transactionInterval = setInterval(() => {
-        fetchTransactions(account, web3);
-      }, 15000);
-      
-      // Clean up interval on component unmount
-      return () => {
-        clearInterval(transactionInterval);
-      };
-    }
-  }, [web3, account, connectionStatus]); // Dependencies to ensure interval is only set up when needed
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [account, connectionStatus, fetchTransactions]);
 
   // Add useEffect to fetch price data
-  // eslint-disable-next-line no-use-before-define
   useEffect(() => {
     // Fetch price data when component mounts and then every 60 seconds
-    // eslint-disable-next-line no-use-before-define
     fetchEthPriceData();
     
     const priceInterval = setInterval(() => {
-      // eslint-disable-next-line no-use-before-define
       fetchEthPriceData();
     }, 60000); // Every minute
     
     return () => {
       clearInterval(priceInterval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionStatus]); // Only include connectionStatus as dependency
-  
-  // Update transaction stats whenever transactions change
-  // eslint-disable-next-line no-use-before-define
-  useEffect(() => {
-    if (transactions.length > 0) {
-      // eslint-disable-next-line no-use-before-define
-      const stats = calculateTransactionStats(transactions, ethBalance);
-      setTransactionStats(stats);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, account, ethBalance]); // Remove calculateTransactionStats from dependency array
+  }, [fetchEthPriceData]); // Include fetchEthPriceData in the dependency array
 
   // Update spending by category when transactions or gas fees change
   useEffect(() => {
     // Calculate total sent amount from transactions
     let transferAmount = 0;
+    let nftAmount = 0;
+    let smartContractAmount = 0;
     
     if (transactions.length > 0) {
       transactions.forEach(tx => {
-        // Only count outgoing transactions for transfers
-        if (tx.from.toLowerCase() === account.toLowerCase()) {
-          transferAmount += parseFloat(weiToEth(tx.value));
+        try {
+          // Only count outgoing transactions for categorization
+          if (tx.from && account && tx.from.toLowerCase() === account.toLowerCase()) {
+            const value = parseFloat(weiToEth(tx.value) || '0');
+            
+            // Categorize transactions based on their properties
+            if (tx.input && tx.input !== '0x') {
+              // This is a contract interaction
+              if (tx.input.includes('0xa9059cbb') || tx.input.includes('0x23b872dd')) {
+                // Common ERC20 transfer methods - categorize as transfers
+                transferAmount += isNaN(value) ? 0 : value;
+              } else if (tx.input.includes('0x42842e0e') || tx.input.includes('0x23b872dd')) {
+                // Common NFT transfer methods - categorize as NFTs
+                nftAmount += isNaN(value) ? 0 : value;
+              } else {
+                // Other contract interactions
+                smartContractAmount += isNaN(value) ? 0 : value;
+              }
+            } else {
+              // Simple ETH transfers
+              transferAmount += isNaN(value) ? 0 : value;
+            }
+          }
+        } catch (error) {
+          console.error("Error processing transaction for spending category:", error, tx);
+          // Continue with next transaction
         }
       });
     }
@@ -389,23 +402,83 @@ const Dashboard = () => {
       // Update DeFi category based on portfolio
       const defiIndex = updatedCategories.findIndex(cat => cat.category === 'DeFi');
       if (defiIndex !== -1) {
-        const defiTotal = defiPortfolio.reduce((sum, item) => sum + item.amount, 0);
+        const defiTotal = defiPortfolio.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
         updatedCategories[defiIndex].amount = parseFloat(defiTotal.toFixed(4));
+      }
+      
+      // Update NFTs category
+      const nftIndex = updatedCategories.findIndex(cat => cat.category === 'NFTs');
+      if (nftIndex !== -1) {
+        updatedCategories[nftIndex].amount = parseFloat(nftAmount.toFixed(4));
+      }
+      
+      // Update Smart Contracts category
+      const scIndex = updatedCategories.findIndex(cat => cat.category === 'Smart Contracts');
+      if (scIndex !== -1) {
+        updatedCategories[scIndex].amount = parseFloat(smartContractAmount.toFixed(4));
       }
       
       // Update Gas Fees category
       const gasIndex = updatedCategories.findIndex(cat => cat.category === 'Gas Fees');
       if (gasIndex !== -1) {
-        updatedCategories[gasIndex].amount = parseFloat(totalGasUsed);
+        updatedCategories[gasIndex].amount = parseFloat(totalGasUsed || 0);
       }
       
       return updatedCategories;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, totalGasUsed, account, defiPortfolio]);
+  }, [transactions, totalGasUsed, account, defiPortfolio, weiToEth]);
 
-  // Add function to update wallet balance in the database
-  const updateWalletBalance = async (address, balance) => {
+  // Handle retry connection
+  const handleRetryConnection = () => {
+    setLoading(true);
+    setError(null);
+    setDebugMessage("Retrying connection...");
+    window.location.reload();
+  };
+
+  // Handle show anyway
+  const handleShowAnyway = useCallback(() => {
+    console.log("User clicked 'Show Dashboard Anyway'");
+    setLoading(false);
+    setError(null);
+    setDebugMessage("Showing dashboard in offline mode");
+    
+    // Set mock data directly
+    setMockData();
+  }, [setMockData]);
+
+  // Add a useEffect to handle scroll behavior
+  useEffect(() => {
+    // Force enabling scroll
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+    
+    // Create a scroll event listener to debug scroll behavior
+    const handleScroll = () => {
+      console.log('Scrolling detected');
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Only run once on component mount
+
+  // Helper function to format addresses
+  const formatAddress = useCallback((address) => {
+    return formatAddressUtil(address);
+  }, []);
+
+  // Helper function to shorten addresses for display
+  const shortenAddress = useCallback((address) => {
+    if (!address) return 'Unknown';
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  }, []);
+
+  // Function to update wallet balance in the database
+  const updateWalletBalance = useCallback(async (address, balance) => {
     try {
       const userString = localStorage.getItem('user');
       if (!userString) return;
@@ -443,218 +516,13 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error updating wallet balance:", err);
     }
-  };
-
-  // Update the fetchTransactions function to better retrieve real transactions
-  const fetchTransactions = async (address, web3Instance) => {
-    console.log("Fetching transactions for address:", address);
-    try {
-      if (!web3Instance || !address) {
-        console.error("Missing web3 instance or address");
-        setTransactions([]);
-        return;
-      }
-      
-      // Clear existing transactions while fetching
-      setTransactions([]);
-      
-      try {
-        // Get the latest block number
-        const latestBlock = await web3Instance.eth.getBlockNumber();
-        console.log(`Current block number: ${latestBlock}`);
-        
-        // Look back through more blocks for a comprehensive history
-        // In Ganache, you might want to check all blocks since it's a test environment
-        const blocksToCheck = Math.min(100, latestBlock); // Check up to 100 blocks or all blocks if less
-        const realTransactions = [];
-        
-        console.log(`Checking ${blocksToCheck} blocks for transactions...`);
-        
-        // Use a more efficient approach - get block details in batches
-        const batchSize = 10;
-        for (let batch = 0; batch < blocksToCheck; batch += batchSize) {
-          const batchPromises = [];
-          
-          for (let i = 0; i < batchSize && batch + i < blocksToCheck; i++) {
-            const blockNumber = latestBlock - batch - i;
-            if (blockNumber >= 0) {
-              batchPromises.push(web3Instance.eth.getBlock(blockNumber, true));
-            }
-          }
-          
-          const blocks = await Promise.all(batchPromises);
-          
-          // Process each block's transactions
-          blocks.forEach((block, index) => {
-            if (block && block.transactions && block.transactions.length > 0) {
-              // Process all transactions in this block
-              block.transactions.forEach(tx => {
-                const normalizedFromAddress = tx.from.toLowerCase();
-                const normalizedToAddress = tx.to ? tx.to.toLowerCase() : null;
-                const normalizedUserAddress = address.toLowerCase();
-                
-                // Check if this transaction involves the user's address
-                if (normalizedFromAddress === normalizedUserAddress || normalizedToAddress === normalizedUserAddress) {
-                  // Format transaction data
-                  realTransactions.push({
-                    id: tx.hash,
-                    from: tx.from,
-                    to: tx.to || 'Contract Creation',
-                    value: tx.value,
-                    // Use actual timestamp from block
-                    date: new Date(block.timestamp * 1000).toISOString().split('T')[0],
-                    gas: tx.gas,
-                    gasPrice: tx.gasPrice,
-                    status: 'confirmed',
-                    confirmations: latestBlock - block.number,
-                    blockNumber: block.number,
-                    // Determine if this is a send or receive transaction
-                    type: normalizedFromAddress === normalizedUserAddress ? 'Transfer' : 'Receive'
-                  });
-                }
-              });
-            }
-          });
-        }
-        
-        if (realTransactions.length > 0) {
-          console.log(`Found ${realTransactions.length} real transactions for address ${address}`);
-          
-          // Sort transactions by block number (descending) to show most recent first
-          realTransactions.sort((a, b) => b.blockNumber - a.blockNumber);
-          
-          // Update state with real transactions
-          setTransactions(realTransactions);
-          return;
-        } else {
-          console.log("No transactions found on-chain for this address");
-        }
-      } catch (error) {
-        console.error("Error fetching real transactions:", error);
-      }
-      
-      // Only fall back to mock data if explicitly desired
-      // For now, just show empty state to be more accurate
-      console.log("No transactions found, showing empty state");
-      setTransactions([]);
-      
-    } catch (err) {
-      console.error("Error in transaction fetching process:", err);
-      setTransactions([]);
-    }
-  };
-
-  // Define helper functions first, before using them in useEffects
-  
-  // Helper function to shorten addresses for display
-  const shortenAddress = (address) => {
-    if (!address) return 'Unknown';
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-  };
-
-  // Define weiToEth with useCallback to prevent it from changing on every render
-  const weiToEth = useCallback((wei) => {
-    if (!web3 || !wei) return "0";
-    return web3.utils.fromWei(wei.toString(), 'ether');
-  }, [web3]); // Only depends on web3
-
-  // Add the calculateGasFee function that was missing
-  const calculateGasFee = useCallback((gas, gasPrice) => {
-    if (!web3 || !gas || !gasPrice) return "0";
-    const gasCost = web3.utils.toBN(gas).mul(web3.utils.toBN(gasPrice));
-    return web3.utils.fromWei(gasCost.toString(), 'ether');
-  }, [web3]);
-
-  // Define fetchEthPriceData with useCallback
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchEthPriceData = useCallback(async () => {
-    try {
-      // In a real app, you would use an API like CoinGecko or CryptoCompare
-      // For now, we'll mock the data for demonstration
-      if (connectionStatus === 'Connected') {
-        // If connected to a real blockchain, make API call here
-        // const response = await fetch('https://api.coingecko.com/api/v3/coins/ethereum');
-        // const data = await response.json();
-        // setEthPrice(data.market_data.current_price.usd);
-        // setEthPriceChange(data.market_data.price_change_percentage_24h);
-        // setMarketCap(data.market_data.market_cap.usd / 1e9); // In billions
-        // setVolume24h(data.market_data.total_volume.usd / 1e9); // In billions
-        
-        // Mock data for now
-        setEthPrice(2842.15);
-        setEthPriceChange(3.27);
-        setMarketCap(318.45);
-        setVolume24h(12.75);
-        
-        // Update DeFi portfolio values based on ETH price
-        setDefiPortfolio(prevState => prevState.map(item => ({
-          ...item,
-          value: (item.amount * 2842.15).toFixed(2)
-        })));
-      }
-    } catch (error) {
-      console.error("Error fetching ETH price data:", error);
-    }
-  }, [connectionStatus]); // Add connectionStatus as dependency
-  
-  // Define calculateTransactionStats with useCallback
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const calculateTransactionStats = useCallback((transactions, ethBalance) => {
-    if (!transactions || transactions.length === 0) {
-      return {
-        sent: 0,
-        received: 0,
-        totalFees: totalGasUsed,
-        avgValue: 0
-      };
-    }
-    
-    let sent = 0;
-    let received = 0;
-    let totalValue = 0;
-    
-    transactions.forEach(tx => {
-      const txValue = parseFloat(weiToEth(tx.value));
-      if (tx.from.toLowerCase() === account.toLowerCase()) {
-        sent += txValue;
-      } else {
-        received += txValue;
-      }
-      totalValue += txValue;
-    });
-    
-    return {
-      sent: sent.toFixed(4),
-      received: received.toFixed(4),
-      totalFees: totalGasUsed,
-      avgValue: transactions.length > 0 ? (totalValue / transactions.length).toFixed(4) : 0
-    };
-  }, [totalGasUsed, account, weiToEth]); // Add proper dependencies
-
-  // Handle retry connection
-  const handleRetryConnection = () => {
-    setLoading(true);
-    setError(null);
-    setDebugMessage("Retrying connection...");
-    window.location.reload();
-  };
-
-  // Handle show anyway - Fix #6: Simplified this function
-  const handleShowAnyway = () => {
-    console.log("User clicked 'Show Dashboard Anyway'");
-    setLoading(false);
-    setError(null);
-    setDebugMessage("Showing dashboard in offline mode");
-    
-    // Set mock data directly
-    setMockData();
-  };
+  }, []);
 
   // Function to send ETH transaction
-  const sendTransaction = async () => {
+  const sendTransaction = useCallback(async () => {
     try {
-      if (!web3 || !account) {
-        setTransactionError("Web3 or account not available");
+      if (!account) {
+        setTransactionError("Account not available");
         return;
       }
       
@@ -663,7 +531,7 @@ const Dashboard = () => {
         return;
       }
       
-      if (!web3.utils.isAddress(recipientAddress)) {
+      if (!TransactionService.web3.utils.isAddress(recipientAddress)) {
         setTransactionError("Please enter a valid Ethereum address");
         return;
       }
@@ -671,42 +539,22 @@ const Dashboard = () => {
       setTransactionStatus("pending");
       setTransactionError(null);
       
-      // Convert ETH amount to Wei
-      const amountWei = web3.utils.toWei(sendAmount, 'ether');
+      // Send transaction using the TransactionService
+      const receipt = await TransactionService.sendTransaction(recipientAddress, sendAmount, account);
       
-      // Get gas estimate (optional but recommended)
-      const gasEstimate = await web3.eth.estimateGas({
-        from: account,
-        to: recipientAddress,
-        value: amountWei
-      });
-      
-      // Send transaction
-      const tx = await web3.eth.sendTransaction({
-        from: account,
-        to: recipientAddress,
-        value: amountWei,
-        gas: gasEstimate
-      });
-      
-      console.log("Transaction sent:", tx);
-      setTransactionHash(tx.transactionHash);
+      console.log("Transaction sent:", receipt);
+      setTransactionHash(receipt.transactionHash);
       setTransactionStatus("confirmed");
       
       // Update balance
-      const newBalanceWei = await web3.eth.getBalance(account);
-      const newBalanceEth = web3.utils.fromWei(newBalanceWei, 'ether');
-      setEthBalance(parseFloat(newBalanceEth).toFixed(4));
+      const newBalance = await TransactionService.getBalance(account);
+      setEthBalance(newBalance);
       
-      // Update in database
-      updateWalletBalance(account, newBalanceEth);
+      // Update in database if needed
+      updateWalletBalance(account, newBalance);
       
-      // Add a slight delay before fetching transactions to ensure the transaction
-      // has been included in a block
-      setTimeout(() => {
         // Refresh transactions
-        fetchTransactions(account, web3);
-      }, 1000);
+      fetchTransactions(account);
       
       // Reset form
       setSendAmount('');
@@ -723,99 +571,200 @@ const Dashboard = () => {
       setTransactionStatus("failed");
       setTransactionError(error.message);
     }
-  };
+  }, [account, sendAmount, recipientAddress, fetchTransactions, updateWalletBalance]);
+
+  // Helper function to render just the transaction content without the View All link
+  const renderRecentTransactionsContent = useCallback(() => {
+    if (loading) {
+      return (
+        <div className="dashboard-card-body loading-state">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">Loading transactions...</div>
+        </div>
+      );
+    }
+
+    if (transactions.length === 0) {
+      return (
+        <div className="dashboard-card-body empty-state">
+          <div className="empty-icon">📊</div>
+          <div className="empty-text">No transactions found</div>
+          <div className="empty-subtext">Your transaction history will appear here</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="dashboard-card-body">
+        <div className="transaction-list">
+          {transactions.slice(0, 3).map((tx) => {
+            try {
+              const isOutgoing = tx.type === 'Transfer';
+              const direction = isOutgoing ? 'outgoing' : 'incoming';
+              const ethValue = TransactionService.weiToEth(tx.value);
+              
+              return (
+                <div 
+                  key={tx.id} 
+                  className={`transaction-item ${direction}`}
+                >
+                  <div className="transaction-icon">
+                    {isOutgoing ? '↑' : '↓'}
+                  </div>
+                  <div className="transaction-details">
+                    <div className="transaction-type">
+                      {isOutgoing ? 'Sent to' : 'Received from'}
+                    </div>
+                    <div className="transaction-address">
+                      {isOutgoing 
+                        ? formatAddress(tx.to)
+                        : formatAddress(tx.from)
+                      }
+                    </div>
+                  </div>
+                  <div className="transaction-amount">
+                    <div className={`amount ${isOutgoing ? 'negative' : 'positive'}`}>
+                      {isOutgoing ? '-' : '+'}{ethValue} ETH
+                    </div>
+                    <div className="transaction-date">
+                      {new Date(Number(tx.timestamp)).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              );
+            } catch (error) {
+              console.error("Error rendering transaction:", error, tx);
+              return null; // Skip this transaction if there's an error
+            }
+          }).filter(Boolean)} {/* Filter out null values */}
+        </div>
+      </div>
+    );
+  }, [loading, transactions, formatAddress]);
 
   // eslint-disable-next-line no-unused-vars
-  const sendTestTransaction = async () => {
-    try {
-      if (!web3 || !account) {
-        alert("Web3 or account not available");
-        return;
-      }
-      
-      // Get the first account from Ganache to send to
-      const accounts = await web3.eth.getAccounts();
-      if (accounts.length === 0) {
-        alert("No accounts found in Ganache");
-        return;
-      }
-      
-      // Pick a different account than the current one
-      const recipientAddress = accounts[0].toLowerCase() !== account.toLowerCase() ? 
-        accounts[0] : accounts[1];
-      
-      console.log("Sending test transaction:");
-      console.log("From:", account);
-      console.log("To:", recipientAddress);
-      
-      // Send a very small amount
-      const amountWei = web3.utils.toWei('0.001', 'ether');
-      
-      // First check if the account is unlocked/available
-      try {
-        // Get account balance first to verify access
-        const balanceWei = await web3.eth.getBalance(account);
-        console.log(`Current balance: ${web3.utils.fromWei(balanceWei, 'ether')} ETH`);
-        
-        if (balanceWei === '0') {
-          alert("Account has zero balance. Cannot send transaction.");
-          return;
-        }
-      } catch (balanceError) {
-        console.error("Error checking balance:", balanceError);
-        alert(`Cannot access account: ${balanceError.message}`);
-        return;
-      }
-      
-      // Send transaction
-      try {
-        const tx = await web3.eth.sendTransaction({
-          from: account,
-          to: recipientAddress,
-          value: amountWei,
-          gas: 21000
-        });
-        
-        console.log("Test transaction sent:", tx);
-        alert(`Transaction sent! Hash: ${tx.transactionHash}`);
-        
-        // Update balance
-        const newBalanceWei = await web3.eth.getBalance(account);
-        const newBalanceEth = web3.utils.fromWei(newBalanceWei, 'ether');
-        setEthBalance(parseFloat(newBalanceEth).toFixed(4));
-        
-        // Refresh transactions after a delay
-        setTimeout(() => {
-          fetchTransactions(account, web3);
-        }, 1000);
-      } catch (txError) {
-        console.error("Error sending transaction:", txError);
-        alert(`Transaction failed: ${txError.message}`);
-      }
-    } catch (error) {
-      console.error("Test transaction error:", error);
-      alert(`Error: ${error.message}`);
+  const renderRecentTransactions = useCallback(() => {
+    if (loading) {
+      return (
+        <div className="dashboard-card-body loading-state">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">Loading transactions...</div>
+        </div>
+      );
     }
-  };
 
-  // Add a useEffect to handle scroll behavior
-  useEffect(() => {
-    // Force enabling scroll
-    document.body.style.overflow = 'auto';
-    document.documentElement.style.overflow = 'auto';
+    if (transactions.length === 0) {
+      return (
+        <div className="dashboard-card-body empty-state">
+          <div className="empty-icon">📊</div>
+          <div className="empty-text">No transactions found</div>
+          <div className="empty-subtext">Your transaction history will appear here</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="dashboard-card-body">
+        <div className="transaction-list">
+          {transactions.slice(0, 3).map((tx) => {
+            try {
+              const isOutgoing = tx.type === 'Transfer';
+              const direction = isOutgoing ? 'outgoing' : 'incoming';
+              const ethValue = TransactionService.weiToEth(tx.value);
+              
+              return (
+                <div 
+                  key={tx.id} 
+                  className={`transaction-item ${direction}`}
+                >
+                  <div className="transaction-icon">
+                    {isOutgoing ? '↑' : '↓'}
+                  </div>
+                  <div className="transaction-details">
+                    <div className="transaction-type">
+                      {isOutgoing ? 'Sent to' : 'Received from'}
+                    </div>
+                    <div className="transaction-address">
+                      {isOutgoing 
+                        ? formatAddress(tx.to)
+                        : formatAddress(tx.from)
+                      }
+                    </div>
+                  </div>
+                  <div className="transaction-amount">
+                    <div className={`amount ${isOutgoing ? 'negative' : 'positive'}`}>
+                      {isOutgoing ? '-' : '+'}{ethValue} ETH
+                    </div>
+                    <div className="transaction-date">
+                      {new Date(Number(tx.timestamp)).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              );
+    } catch (error) {
+              console.error("Error rendering transaction:", error, tx);
+              return null; // Skip this transaction if there's an error
+            }
+          }).filter(Boolean)}
+        </div>
+      </div>
+    );
+  }, [loading, transactions, formatAddress]);
+
+  // Enhance the spending categories section
+  const renderSpendingCategories = () => {
+    // Calculate total spending for percentage calculation
+    const totalSpending = spendingByCategory.reduce((sum, category) => sum + category.amount, 0);
     
-    // Create a scroll event listener to debug scroll behavior
-    const handleScroll = () => {
-      console.log('Scrolling detected');
-    };
+    // Filter out categories with zero amounts
+    const activeCategories = spendingByCategory.filter(category => category.amount > 0);
     
-    window.addEventListener('scroll', handleScroll);
+    if (activeCategories.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">📊</div>
+          <div className="empty-text">No spending data yet</div>
+          <div className="empty-subtext">
+            Make transactions to see your spending categories
+          </div>
+        </div>
+      );
+    }
     
-    // Clean up
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []); // Only run once on component mount
+    return (
+      <div className="categories-grid">
+        {activeCategories.map((category, index) => {
+          const percentage = totalSpending > 0 
+            ? (category.amount / totalSpending * 100).toFixed(1) 
+            : 0;
+            
+          return (
+            <div className="category-item" key={index}>
+              <div className="category-header" style={{ backgroundColor: category.color }}>
+                <span className="category-name">{category.category}</span>
+              </div>
+              <div className="category-amount">
+                <span>{category.amount.toFixed(4)} ETH</span>
+                <span className="category-usd">${(category.amount * ethPrice).toFixed(2)}</span>
+              </div>
+              <div className="category-bar">
+                <div 
+                  className="category-bar-fill" 
+                  style={{ 
+                    width: `${percentage}%`, 
+                    backgroundColor: category.color 
+                  }}
+                ></div>
+              </div>
+              <div className="category-percentage">
+                {percentage}% of total spend
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   // Show a loading state
   if (loading) {
@@ -864,23 +813,23 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Show error message if there is one */}
-      {error && (
-        <div className="error-message">
-          <h3>Blockchain Connection Error</h3>
-          <p>{error}</p>
-          <p>Please make sure Ganache is running on http://127.0.0.1:7545</p>
-          <button onClick={handleRetryConnection} className="retry-btn">
-            Retry Connection
-          </button>
-        </div>
-      )}
-      
+        {/* Show error message if there is one */}
+        {error && (
+          <div className="error-message">
+            <h3>Blockchain Connection Error</h3>
+            <p>{error}</p>
+            <p>Please make sure Ganache is running on http://127.0.0.1:7545</p>
+            <button onClick={handleRetryConnection} className="retry-btn">
+              Retry Connection
+            </button>
+          </div>
+        )}
+        
       <div className="dashboard-content">
         <div className="dashboard-grid">
           <div className="wallet-card">
             <h2>Your ETH Wallet</h2>
-            <div className="eth-balance">{ethBalance} ETH</div>
+            <div className="eth-balance">{parseFloat(ethBalance).toFixed(4)} ETH</div>
             <div className="wallet-details">
               <div className="wallet-address">
                 <span>Your Address:</span>
@@ -1043,61 +992,10 @@ const Dashboard = () => {
         
         <div className="transactions-section">
           <h2>Recent Transactions</h2>
-          <button className="view-all-btn">View All</button>
-          <div className="transaction-list">
-            {loading ? (
-              <div className="loading-transactions">
-                <span className="spinner-sm"></span> Loading transactions...
-              </div>
-            ) : transactions.length > 0 ? (
-              transactions.map(transaction => (
-                <div key={transaction.id} className="transaction-item">
-                  <div className="transaction-icon">
-                    <div className={`tx-icon ${transaction.from.toLowerCase() === account.toLowerCase() ? 'outgoing' : 'incoming'}`}></div>
-                  </div>
-                  <div className="transaction-details">
-                    <div className="transaction-primary">
-                      <div className="transaction-type">{transaction.type}</div>
-                      <div className="transaction-amount">
-                        <span className={transaction.from.toLowerCase() === account.toLowerCase() ? 'expense' : 'income'}>
-                          {transaction.from.toLowerCase() === account.toLowerCase() ? '-' : '+'}
-                          {weiToEth(transaction.value)} ETH
-                        </span>
-                      </div>
-                    </div>
-                    <div className="transaction-secondary">
-                      <div className="transaction-addresses">
-                        {transaction.from.toLowerCase() === account.toLowerCase() 
-                          ? `To: ${shortenAddress(transaction.to)}` 
-                          : `From: ${shortenAddress(transaction.from)}`}
-                      </div>
-                      <div className="transaction-gas">
-                        Gas: {calculateGasFee(transaction.gas, transaction.gasPrice)} ETH
-                      </div>
-                    </div>
-                    <div className="transaction-meta">
-                      <div className="transaction-date">{transaction.date}</div>
-                      <div className="transaction-confirmations">
-                        {transaction.confirmations} confirmations
-                      </div>
-                      <div className="transaction-hash">
-                        Tx: {shortenAddress(transaction.id)}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="transaction-status">
-                    <div className={`status-badge ${transaction.status}`}>
-                      {transaction.status}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-transactions">
-                <p>No transactions found for this address</p>
-              </div>
-            )}
-          </div>
+          {transactions.length > 5 && (
+            <a href="/transactions" className="view-all-btn">View all</a>
+          )}
+          {renderRecentTransactionsContent()}
         </div>
         
         <div className="defi-portfolio-section">
@@ -1124,6 +1022,14 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+        
+        {/* Update spending categories section */}
+        <div className="spending-categories-section">
+          <h2>Spending Categories</h2>
+          <div className="categories-card">
+            {renderSpendingCategories()}
           </div>
         </div>
       </div>
@@ -1179,10 +1085,10 @@ const Dashboard = () => {
                       disabled={transactionStatus === "pending"}
                     />
                     <div className="balance-display">
-                      <span>Balance: {ethBalance} ETH</span>
+                      <span>Balance: {parseFloat(ethBalance).toFixed(4)} ETH</span>
                       <button 
                         type="button" 
-                        onClick={() => setSendAmount(ethBalance)}
+                        onClick={() => setSendAmount(parseFloat(ethBalance).toFixed(4))}
                         disabled={transactionStatus === "pending"}
                       >
                         MAX

@@ -1,6 +1,5 @@
 /*Dashboard.css*/
 
-/* Modern, Professional Dashboard Styling */
 
 :root {
   /* Modern color palette */
@@ -1646,8 +1645,7 @@ body, html {
 
 /* DeFi Portfolio Section */
 .defi-portfolio-section {
-  grid-column: 1 / -1;
-  margin-top: 2rem;
+  position: relative;
   margin-bottom: 2rem;
   background: var(--bg-content, white);
   border-radius: 1rem;
@@ -1658,6 +1656,18 @@ body, html {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.defi-portfolio-section h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+}
+
+.defi-portfolio-section .view-all-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
 }
 
 .defi-card-grid {
@@ -1997,4 +2007,179 @@ body, html {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238a94a6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+/* Section headers with action buttons */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.view-all-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .view-all-btn {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.view-all-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  transform: translateY(-2px);
+}
+
+/* Spending Categories Section */
+.spending-categories-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.spending-categories-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.categories-card {
+  background: var(--bg-content);
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .categories-card {
+  background: var(--bg-content, #16213e);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.category-item {
+  background: var(--bg-main);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s;
+}
+
+.dark-mode .category-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.category-item:hover {
+  transform: translateY(-3px);
+}
+
+.category-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .category-header {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.category-name {
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.category-amount {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.category-amount span:first-child {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.category-usd {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.category-percentage {
+  padding: 0 1rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Bar chart representation for categories */
+.category-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin: 0.5rem 1rem 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.category-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* Empty state for spending categories and other sections */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  height: 100%;
+  min-height: 200px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.empty-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.empty-subtext {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  max-width: 300px;
+  margin: 0 auto;
 }

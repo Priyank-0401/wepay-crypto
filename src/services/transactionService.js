@@ -2,113 +2,276 @@
 
 import Web3 from 'web3';
 
-// Transaction service to handle all Ethereum transactions
+// Simple transaction service focused on reliability
 const TransactionService = {
   // Web3 instance
   web3: null,
   
-  // Initialize the service
+  // Initialize the service with direct connection to Ganache
   init: async () => {
     try {
-      // Connect to Ganache
-      TransactionService.web3 = new Web3('http://127.0.0.1:7545');
+      console.log('Initializing TransactionService...');
+      
+      // Connect directly to Ganache with HTTP provider
+      const ganacheUrl = 'http://127.0.0.1:7545';
+      console.log(`Connecting to Ganache at ${ganacheUrl}`);
+      
+      // Create a new Web3 instance with HTTP provider
+      const provider = new Web3.providers.HttpProvider(ganacheUrl);
+      TransactionService.web3 = new Web3(provider);
+      
+      // Verify connection
       const isConnected = await TransactionService.web3.eth.net.isListening();
-      if (!isConnected) {
-        throw new Error('Failed to connect to Ganache');
+      
+      if (isConnected) {
+        console.log('Successfully connected to Ganache');
+        
+        // Get chain ID to confirm connection
+        const chainId = await TransactionService.web3.eth.getChainId();
+        console.log(`Connected to chain ID: ${chainId}`);
+        
+        return true;
+      } else {
+        console.error('Failed to connect to Ganache');
+        return false;
       }
-      console.log('TransactionService initialized successfully');
-      return true;
     } catch (error) {
       console.error('TransactionService initialization error:', error);
       return false;
     }
   },
   
-  // Get accounts from Ganache
+  // Get all accounts from Ganache
   getAccounts: async () => {
     try {
-      return await TransactionService.web3.eth.getAccounts();
+      // Ensure web3 is initialized
+      if (!TransactionService.web3) {
+        await TransactionService.init();
+      }
+      
+      const accounts = await TransactionService.web3.eth.getAccounts();
+      console.log(`Retrieved ${accounts.length} accounts from Ganache`);
+      return accounts;
     } catch (error) {
       console.error('Error getting accounts:', error);
-      throw error;
+      return [];
     }
   },
   
-  // Get balance for a specific account
+  // Get first account (for simplicity since users only have one account)
+  getDefaultAccount: async () => {
+    try {
+      // Get user's account from localStorage if available
+      const userString = localStorage.getItem('user');
+      if (userString) {
+        const userData = JSON.parse(userString);
+        if (userData && userData.wallet_address) {
+          return userData.wallet_address;
+        }
+      }
+      
+      // Fall back to first Ganache account
+      const accounts = await TransactionService.getAccounts();
+      return accounts.length > 0 ? accounts[0] : null;
+    } catch (error) {
+      console.error('Error getting default account:', error);
+      return null;
+    }
+  },
+  
+  // Get account balance
   getBalance: async (address) => {
     try {
+      if (!TransactionService.web3) {
+        await TransactionService.init();
+      }
+      
+      if (!address) {
+        address = await TransactionService.getDefaultAccount();
+      }
+      
+      if (!address) {
+        throw new Error('No account available');
+      }
+      
       const balanceWei = await TransactionService.web3.eth.getBalance(address);
-      return TransactionService.web3.utils.fromWei(balanceWei, 'ether');
+      // Ensure balanceWei is handled as string
+      const balanceEth = TransactionService.web3.utils.fromWei(String(balanceWei), 'ether');
+      return balanceEth;
     } catch (error) {
       console.error('Error getting balance:', error);
-      throw error;
+      return '0';
     }
   },
   
-  // Estimate gas for a transaction
-  estimateGas: async (from, to, value) => {
+  // Get all transactions for an account directly from Ganache
+  getTransactions: async (address) => {
     try {
-      const gasPrice = await TransactionService.web3.eth.getGasPrice();
-      const gasEstimate = await TransactionService.web3.eth.estimateGas({
-        from,
-        to,
-        value: TransactionService.web3.utils.toWei(value, 'ether')
-      });
+      if (!TransactionService.web3) {
+        await TransactionService.init();
+      }
       
-      const gasFeeWei = calculateGasFee(gasEstimate, gasPrice);
+      if (!address) {
+        address = await TransactionService.getDefaultAccount();
+      }
       
-      const gasCostWei = Web3.utils.toBN(gasFeeWei).mul(Web3.utils.toBN(gasEstimate));
-      const gasCostEth = TransactionService.web3.utils.fromWei(gasCostWei.toString(), 'ether');
+      if (!address) {
+        throw new Error('No account available');
+      }
       
-      return {
-        gasEstimate,
-        gasPrice: TransactionService.web3.utils.fromWei(gasPrice, 'gwei'),
-        gasCostEth
-      };
+      // Normalize the address for comparison
+      const normalizedAddress = address.toLowerCase();
+      console.log(`Fetching transactions for address: ${normalizedAddress}`);
+      
+      // Get the latest block number
+      const latestBlockNumber = await TransactionService.web3.eth.getBlockNumber();
+      console.log(`Latest block number: ${latestBlockNumber}`);
+      
+      // Check the last 50 blocks (adjust as needed)
+      // Convert latestBlockNumber to a regular number to avoid BigInt errors with Math.min
+      const latestBlockAsNumber = Number(latestBlockNumber);
+      const blocksToCheck = Math.min(50, latestBlockAsNumber);
+      console.log(`Will check the latest ${blocksToCheck} blocks`);
+      
+      const transactions = [];
+      
+      // Process blocks one by one (more reliable than batch processing)
+      for (let i = 0; i < blocksToCheck; i++) {
+        const blockNumber = latestBlockAsNumber - i;
+        
+        try {
+          // Get the block with full transaction objects
+          const block = await TransactionService.web3.eth.getBlock(blockNumber, true);
+          
+          if (block && block.transactions) {
+            console.log(`Block ${blockNumber} has ${block.transactions.length} transactions`);
+            
+            // Check each transaction in the block
+            for (const tx of block.transactions) {
+              // Convert addresses to lowercase for comparison
+              const txFromAddress = tx.from ? tx.from.toLowerCase() : '';
+              const txToAddress = tx.to ? tx.to.toLowerCase() : '';
+              
+              // Check if transaction involves our address
+              if (txFromAddress === normalizedAddress || txToAddress === normalizedAddress) {
+                console.log(`Found matching transaction: ${tx.hash}`);
+                
+                // Determine transaction type
+                const type = txFromAddress === normalizedAddress ? 'Transfer' : 'Receive';
+                
+                // Create a transaction object - convert all numeric values to strings
+                const transaction = {
+                  id: tx.hash,
+                  blockNumber: String(tx.blockNumber),
+                  from: tx.from,
+                  to: tx.to || 'Contract Creation',
+                  value: String(tx.value), // Convert to string to avoid BigInt issues
+                  gas: String(tx.gas || '0'),
+                  gasPrice: String(tx.gasPrice || '0'),
+                  timestamp: Number(block.timestamp) * 1000, // Convert to milliseconds after converting to Number
+                  status: 'confirmed',
+                  type: type
+                };
+                
+                transactions.push(transaction);
+              }
+            }
+          }
+        } catch (blockError) {
+          console.error(`Error processing block ${blockNumber}:`, blockError);
+          // Continue with next block
+        }
+      }
+      
+      console.log(`Found ${transactions.length} transactions for address ${normalizedAddress}`);
+      
+      // Add local transactions from localStorage
+      const localTransactions = TransactionService.getLocalTransactions();
+      
+      // Add local transactions that aren't already in the list
+      for (const localTx of localTransactions) {
+        if (!transactions.some(tx => tx.id === localTx.hash)) {
+          const isOutgoing = localTx.from.toLowerCase() === normalizedAddress;
+          
+          transactions.push({
+            id: localTx.hash,
+            blockNumber: '0',
+            from: localTx.from,
+            to: localTx.to,
+            value: String(localTx.value || '0'),
+            gas: String(localTx.gas || '21000'),
+            gasPrice: String(localTx.gasPrice || '0'),
+            timestamp: localTx.timestamp,
+            status: localTx.status || 'confirmed',
+            type: isOutgoing ? 'Transfer' : 'Receive'
+          });
+        }
+      }
+      
+      // Sort by timestamp (newest first)
+      transactions.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
+      
+      return transactions;
     } catch (error) {
-      console.error('Error estimating gas:', error);
-      throw error;
+      console.error('Error fetching transactions:', error);
+      return [];
     }
   },
   
-  // Send ETH from one account to another
-  sendTransaction: async (from, to, amount, callback) => {
+  // Send ETH transaction
+  sendTransaction: async (to, amount, from = null) => {
     try {
-      const valueInWei = TransactionService.web3.utils.toWei(amount, 'ether');
+      if (!TransactionService.web3) {
+        await TransactionService.init();
+      }
       
-      // Get the transaction count (nonce)
-      const nonce = await TransactionService.web3.eth.getTransactionCount(from);
+      if (!from) {
+        from = await TransactionService.getDefaultAccount();
+      }
       
-      const gasPrice = await TransactionService.web3.eth.getGasPrice();
-      const gasLimit = await TransactionService.web3.eth.estimateGas({
-        from,
-        to,
-        value: valueInWei
-      });
+      if (!from) {
+        throw new Error('No sender account available');
+      }
       
-      // Prepare transaction object
+      if (!to || !TransactionService.web3.utils.isAddress(to)) {
+        throw new Error('Invalid recipient address');
+      }
+      
+      if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+        throw new Error('Invalid amount');
+      }
+      
+      // Convert ETH to Wei
+      const amountWei = TransactionService.web3.utils.toWei(String(amount), 'ether');
+      
+      // Create transaction object
       const txObject = {
-        from,
-        to,
-        value: valueInWei,
-        gas: gasLimit,
-        gasPrice,
-        nonce
+        from: from,
+        to: to,
+        value: amountWei,
+        gas: 21000
       };
       
-      // Send the transaction
-      const receipt = await TransactionService.web3.eth.sendTransaction(txObject);
+      console.log('Sending transaction:', txObject);
       
-      // Store in local storage for transaction history
-      TransactionService.saveTransaction({
+      // Send transaction
+      const receipt = await TransactionService.web3.eth.sendTransaction(txObject);
+      console.log('Transaction receipt:', receipt);
+      
+      // Save to local storage
+      const transaction = {
         hash: receipt.transactionHash,
-        from,
-        to,
-        value: amount,
+        from: from,
+        to: to,
+        value: String(amount),
+        gas: '21000',
+        gasPrice: '0',
         timestamp: Date.now(),
         status: receipt.status ? 'success' : 'failed',
-        type: 'send'
-      });
+        type: 'Transfer'
+      };
+      
+      TransactionService.saveLocalTransaction(transaction);
       
       return receipt;
     } catch (error) {
@@ -117,115 +280,113 @@ const TransactionService = {
     }
   },
   
-  // Save transaction to local storage for history
-  saveTransaction: (transaction) => {
+  // Get transactions from localStorage
+  getLocalTransactions: () => {
     try {
-      const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-      transactions.push(transaction);
+      const transactionsJson = localStorage.getItem('transactions');
+      return transactionsJson ? JSON.parse(transactionsJson) : [];
+    } catch (error) {
+      console.error('Error getting local transactions:', error);
+      return [];
+    }
+  },
+  
+  // Save transaction to localStorage
+  saveLocalTransaction: (transaction) => {
+    try {
+      const transactions = TransactionService.getLocalTransactions();
+      
+      // Add to beginning of array
+      transactions.unshift(transaction);
+      
+      // Save back to localStorage
       localStorage.setItem('transactions', JSON.stringify(transactions));
-    } catch (error) {
-      console.error('Error saving transaction to history:', error);
-    }
-  },
-  
-  // Get transaction history from local storage
-  getTransactionHistory: () => {
-    try {
-      return JSON.parse(localStorage.getItem('transactions') || '[]');
-    } catch (error) {
-      console.error('Error retrieving transaction history:', error);
-      return [];
-    }
-  },
-  
-  // Create a request for ETH (stores in local storage)
-  createRequest: async (from, to, amount, description) => {
-    try {
-      const request = {
-        id: `req_${Date.now()}`,
-        from,
-        to,
-        amount,
-        description,
-        status: 'pending',
-        timestamp: Date.now()
-      };
       
-      // Save to local storage
-      const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-      requests.push(request);
-      localStorage.setItem('requests', JSON.stringify(requests));
-      
-      return request;
+      console.log('Transaction saved to localStorage');
     } catch (error) {
-      console.error('Error creating request:', error);
-      throw error;
+      console.error('Error saving transaction:', error);
     }
   },
   
-  // Get all pending requests
-  getPendingRequests: (address) => {
+  // Convert Wei to ETH (safely handling BigInt)
+  weiToEth: (weiValue) => {
     try {
-      const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-      return requests.filter(req => 
-        (req.to === address || req.from === address) && 
-        req.status === 'pending'
-      );
-    } catch (error) {
-      console.error('Error retrieving pending requests:', error);
-      return [];
-    }
-  },
-  
-  // Fulfill a payment request
-  fulfillRequest: async (requestId, from) => {
-    try {
-      const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-      const requestIndex = requests.findIndex(req => req.id === requestId);
+      if (!weiValue) return '0';
       
-      if (requestIndex === -1) {
-        throw new Error('Request not found');
+      // Ensure we have a valid Web3 instance
+      if (!TransactionService.web3) {
+        return '0';
       }
       
-      const request = requests[requestIndex];
-      
-      // Send the transaction
-      const receipt = await TransactionService.sendTransaction(
-        from, 
-        request.from,  // The requester becomes the recipient
-        request.amount
-      );
-      
-      // Update request status
-      request.status = 'completed';
-      request.paymentTxHash = receipt.transactionHash;
-      requests[requestIndex] = request;
-      localStorage.setItem('requests', JSON.stringify(requests));
-      
-      return receipt;
+      // Always convert to string to handle BigInt values
+      const weiString = String(weiValue);
+      return TransactionService.web3.utils.fromWei(weiString, 'ether');
     } catch (error) {
-      console.error('Error fulfilling request:', error);
-      throw error;
+      console.error('Error converting Wei to ETH:', error);
+      return '0';
     }
-  }
-};
-
-// Instead of BigInt
-const calculateGasFee = (gas, gasPrice) => {
-  try {
-    // Create BN instances from Web3
-    const gasBN = Web3.utils.toBN(gas);
-    const gasPriceBN = Web3.utils.toBN(gasPrice);
-    
-    // Calculate gas fee
-    const gasFeeWei = gasBN.mul(gasPriceBN);
-    
-    // Convert to ETH
-    return Web3.utils.fromWei(gasFeeWei, 'ether');
-  } catch (error) {
-    console.error("Error calculating gas fee:", error);
-    // Fallback calculation
-    return (Number(gas) * Number(gasPrice) / 1e18).toFixed(6);
+  },
+  
+  // Calculate gas fee in ETH
+  calculateGasFee: (gas, gasPrice) => {
+    try {
+      if (!gas || !gasPrice) return '0';
+      
+      // Ensure we have a valid Web3 instance
+      if (!TransactionService.web3) {
+        return '0';
+      }
+      
+      // Always convert to string to handle large values
+      const gasString = String(gas);
+      const gasPriceString = String(gasPrice);
+      
+      try {
+        // Use Web3's fromWei directly instead of BigInt
+        if (TransactionService.web3.utils.fromWei) {
+          // For larger numbers, we can use string calculation through Web3
+          // First, calculate gas * gasPrice in wei
+          // Since we can't multiply strings, convert to reasonable numbers first
+          // Then convert the result to ether
+          
+          // Convert to safe numbers if possible
+          const gasNum = Number(gasString);
+          const gasPriceNum = Number(gasPriceString);
+          
+          // Check if conversion is safe (not too large)
+          if (!isNaN(gasNum) && !isNaN(gasPriceNum) && 
+              gasNum < 1e15 && gasPriceNum < 1e15) {
+            // Safe to multiply as numbers
+            const gasFeeWei = gasNum * gasPriceNum;
+            return TransactionService.web3.utils.fromWei(String(Math.floor(gasFeeWei)), 'ether');
+          } else {
+            // Numbers too large, use a more careful approach
+            // We'll divide by 1e18 manually for conversion to ether
+            // This is less accurate but should handle most cases
+            return (Number(gasString) * Number(gasPriceString) / 1e18).toFixed(18);
+          }
+        } else {
+          // If fromWei is not available, do manual calculation
+          return (Number(gasString) * Number(gasPriceString) / 1e18).toFixed(18);
+        }
+      } catch (calcError) {
+        console.error('Gas calculation error:', calcError);
+        
+        // Last resort fallback calculation
+        // Try to extract numeric parts if strings contain non-numeric characters
+        const extractNumber = (str) => {
+          const matches = str.match(/\d+/);
+          return matches ? Number(matches[0]) : 0;
+        };
+        
+        const gasNum = extractNumber(gasString);
+        const gasPriceNum = extractNumber(gasPriceString);
+        return (gasNum * gasPriceNum / 1e18).toFixed(18);
+      }
+    } catch (error) {
+      console.error('Error calculating gas fee:', error);
+      return '0';
+    }
   }
 };
 
