@@ -85,14 +85,6 @@ const Dashboard = () => {
     { protocol: 'Compound', amount: 0.1, apy: 2.8, value: 0 },
     { protocol: 'Uniswap', amount: 0.02, apy: 5.4, value: 0 }
   ]);
-  // Initialize spendingByCategory state with only categories, not mock data
-  const [spendingByCategory, setSpendingByCategory] = useState([
-    { category: 'Transfers', amount: 0, color: '#3498db' },
-    { category: 'DeFi', amount: 0, color: '#2ecc71' },
-    { category: 'NFTs', amount: 0, color: '#9b59b6' },
-    { category: 'Smart Contracts', amount: 0, color: '#f1c40f' },
-    { category: 'Gas Fees', amount: 0, color: '#e74c3c' },
-  ]);
 
   // Get user data for profile icon
   useEffect(() => {
@@ -468,84 +460,6 @@ const Dashboard = () => {
     };
   }, [fetchEthPriceData]); // Include fetchEthPriceData in the dependency array
 
-  // Update spending by category when transactions or gas fees change
-  useEffect(() => {
-    // Calculate total sent amount from transactions
-    let transferAmount = 0;
-    let nftAmount = 0;
-    let smartContractAmount = 0;
-    
-    if (transactions.length > 0) {
-      transactions.forEach(tx => {
-        try {
-          // Only count outgoing transactions for categorization
-          if (tx.from && account && tx.from.toLowerCase() === account.toLowerCase()) {
-            const value = parseFloat(weiToEth(tx.value) || '0');
-            
-            // Categorize transactions based on their properties
-            if (tx.input && tx.input !== '0x') {
-              // This is a contract interaction
-              if (tx.input.includes('0xa9059cbb') || tx.input.includes('0x23b872dd')) {
-                // Common ERC20 transfer methods - categorize as transfers
-                transferAmount += isNaN(value) ? 0 : value;
-              } else if (tx.input.includes('0x42842e0e') || tx.input.includes('0x23b872dd')) {
-                // Common NFT transfer methods - categorize as NFTs
-                nftAmount += isNaN(value) ? 0 : value;
-              } else {
-                // Other contract interactions
-                smartContractAmount += isNaN(value) ? 0 : value;
-              }
-            } else {
-              // Simple ETH transfers
-              transferAmount += isNaN(value) ? 0 : value;
-            }
-          }
-        } catch (error) {
-          console.error("Error processing transaction for spending category:", error, tx);
-          // Continue with next transaction
-        }
-      });
-    }
-    
-    // Update spending categories
-    setSpendingByCategory(prevCategories => {
-      const updatedCategories = [...prevCategories];
-      
-      // Update Transfers category
-      const transferIndex = updatedCategories.findIndex(cat => cat.category === 'Transfers');
-      if (transferIndex !== -1) {
-        updatedCategories[transferIndex].amount = parseFloat(transferAmount.toFixed(4));
-      }
-      
-      // Update DeFi category based on portfolio
-      const defiIndex = updatedCategories.findIndex(cat => cat.category === 'DeFi');
-      if (defiIndex !== -1) {
-        const defiTotal = defiPortfolio.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
-        updatedCategories[defiIndex].amount = parseFloat(defiTotal.toFixed(4));
-      }
-      
-      // Update NFTs category
-      const nftIndex = updatedCategories.findIndex(cat => cat.category === 'NFTs');
-      if (nftIndex !== -1) {
-        updatedCategories[nftIndex].amount = parseFloat(nftAmount.toFixed(4));
-      }
-      
-      // Update Smart Contracts category
-      const scIndex = updatedCategories.findIndex(cat => cat.category === 'Smart Contracts');
-      if (scIndex !== -1) {
-        updatedCategories[scIndex].amount = parseFloat(smartContractAmount.toFixed(4));
-      }
-      
-      // Update Gas Fees category
-      const gasIndex = updatedCategories.findIndex(cat => cat.category === 'Gas Fees');
-      if (gasIndex !== -1) {
-        updatedCategories[gasIndex].amount = parseFloat(totalGasUsed || 0);
-      }
-      
-      return updatedCategories;
-    });
-  }, [transactions, totalGasUsed, account, defiPortfolio, weiToEth]);
-
   // Handle retry connection
   const handleRetryConnection = () => {
     setLoading(true);
@@ -828,61 +742,6 @@ const Dashboard = () => {
       </div>
     );
   }, [loading, transactions, formatAddress]);
-
-  // Enhance the spending categories section
-  const renderSpendingCategories = () => {
-    // Calculate total spending for percentage calculation
-    const totalSpending = spendingByCategory.reduce((sum, category) => sum + category.amount, 0);
-    
-    // Filter out categories with zero amounts
-    const activeCategories = spendingByCategory.filter(category => category.amount > 0);
-    
-    if (activeCategories.length === 0) {
-      return (
-        <div className="empty-state">
-          <div className="empty-icon">📊</div>
-          <div className="empty-text">No spending data yet</div>
-          <div className="empty-subtext">
-            Make transactions to see your spending categories
-          </div>
-        </div>
-      );
-    }
-    
-    return (
-      <div className="categories-grid">
-        {activeCategories.map((category, index) => {
-          const percentage = totalSpending > 0 
-            ? (category.amount / totalSpending * 100).toFixed(1) 
-            : 0;
-            
-          return (
-            <div className="category-item" key={index}>
-              <div className="category-header" style={{ backgroundColor: category.color }}>
-                <span className="category-name">{category.category}</span>
-              </div>
-              <div className="category-amount">
-                <span>{category.amount.toFixed(4)} ETH</span>
-                <span className="category-usd">${(category.amount * ethPrice).toFixed(2)}</span>
-              </div>
-              <div className="category-bar">
-                <div 
-                  className="category-bar-fill" 
-                  style={{ 
-                    width: `${percentage}%`, 
-                    backgroundColor: category.color 
-                  }}
-                ></div>
-              </div>
-              <div className="category-percentage">
-                {percentage}% of total spend
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
 
   // Render ETH price chart
   const renderPriceChart = useCallback(() => {
@@ -1178,63 +1037,34 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          
-          {/* ETH Price Card */}
-          <div className="price-card">
-            <h2>ETH Price</h2>
-            <div className="price-data">
-              <div className="price-main">
-                <span className="price-value">${ethPrice.toLocaleString()}</span>
-                <span className={`price-change ${ethPriceChange >= 0 ? 'positive' : 'negative'}`}>
-                  {ethPriceChange >= 0 ? '+' : ''}{ethPriceChange}%
-                </span>
-              </div>
-              <div className="price-stats">
-                <div className="price-row">
-                  <span>Market Cap:</span>
-                  <span>${marketCap.toLocaleString()} B</span>
-                </div>
-                <div className="price-row">
-                  <span>24h Volume:</span>
-                  <span>${volume24h.toLocaleString()} B</span>
-                </div>
-                <div className="price-row">
-                  <span>Your Holdings:</span>
-                  <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
-                </div>
-              </div>
-              {/* Add chart */}
-              {renderPriceChart()}
+        </div>
+        
+        {/* ETH Price chart full width */}
+        <div className="price-card full-width">
+          <h2>ETH Price</h2>
+          <div className="price-data">
+            <div className="price-main">
+              <span className="price-value">${ethPrice.toLocaleString()}</span>
+              <span className={`price-change ${ethPriceChange >= 0 ? 'positive' : 'negative'}`}>
+                {ethPriceChange >= 0 ? '+' : ''}{ethPriceChange}%
+              </span>
             </div>
-          </div>
-          
-          {/* Transaction Stats Card */}
-          <div className="tx-stats-card">
-            <h2>Your Stats</h2>
-            <div className="tx-stats-data">
-              <div className="tx-stats-grid">
-                <div className="tx-stat-item">
-                  <div className="tx-stat-label">Sent</div>
-                  <div className="tx-stat-value expense">{transactionStats.sent} ETH</div>
-                  <div className="tx-stat-usd">${(parseFloat(transactionStats.sent) * ethPrice).toFixed(2)}</div>
-                </div>
-                <div className="tx-stat-item">
-                  <div className="tx-stat-label">Received</div>
-                  <div className="tx-stat-value income">{transactionStats.received} ETH</div>
-                  <div className="tx-stat-usd">${(parseFloat(transactionStats.received) * ethPrice).toFixed(2)}</div>
-                </div>
-                <div className="tx-stat-item">
-                  <div className="tx-stat-label">Gas Fees</div>
-                  <div className="tx-stat-value expense">{transactionStats.totalFees} ETH</div>
-                  <div className="tx-stat-usd">${(parseFloat(transactionStats.totalFees) * ethPrice).toFixed(2)}</div>
-                </div>
-                <div className="tx-stat-item">
-                  <div className="tx-stat-label">Avg. Transaction</div>
-                  <div className="tx-stat-value">{transactionStats.avgValue} ETH</div>
-                  <div className="tx-stat-usd">${(parseFloat(transactionStats.avgValue) * ethPrice).toFixed(2)}</div>
-                </div>
+            <div className="price-stats">
+              <div className="price-row">
+                <span>Market Cap:</span>
+                <span>${marketCap.toLocaleString()} B</span>
+              </div>
+              <div className="price-row">
+                <span>24h Volume:</span>
+                <span>${volume24h.toLocaleString()} B</span>
+              </div>
+              <div className="price-row">
+                <span>Your Holdings:</span>
+                <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
               </div>
             </div>
+            {/* Add chart */}
+            {renderPriceChart()}
           </div>
         </div>
         
@@ -1270,14 +1100,6 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-        
-        {/* Update spending categories section */}
-        <div className="spending-categories-section">
-          <h2>Spending Categories</h2>
-          <div className="categories-card">
-            {renderSpendingCategories()}
           </div>
         </div>
       </div>

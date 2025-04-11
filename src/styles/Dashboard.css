@@ -34,7 +34,7 @@ body, html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  overflow: hidden; /* Hide scrollbar on body/html */
+  overflow-y: auto; /* Enable scrolling on body/html */
 }
 
 /* Main dashboard container */
@@ -47,7 +47,7 @@ body, html {
   color: var(--text-primary, #333);
   transition: background-color 0.3s, color 0.3s;
   position: relative;
-  overflow: hidden; /* Hide scrollbar on dashboard container */
+  overflow-y: auto; /* Enable scrolling on dashboard container */
 }
 
 .dark-mode .dashboard {
@@ -61,7 +61,7 @@ body, html {
   padding: 1.5rem 2rem;
   width: 100%;
   box-sizing: border-box;
-  overflow-y: auto; /* Allow scrolling only on dashboard content */
+  overflow-y: auto; /* Allow scrolling on dashboard content */
   height: 100%;
 }
 
@@ -376,46 +376,51 @@ body, html {
   justify-content: center;
   flex-shrink: 0;
   font-size: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .stat-icon.incoming {
-  background-color: rgba(52, 152, 219, 0.2);
+  background-color: rgba(52, 152, 219, 0.3);
   color: #3498db;
 }
 
 .stat-icon.incoming::before {
   content: "↓";
   font-weight: bold;
+  font-size: 1.8rem;
 }
 
 .stat-icon.outgoing {
-  background-color: rgba(142, 68, 173, 0.2);
+  background-color: rgba(142, 68, 173, 0.3);
   color: #8e44ad;
 }
 
 .stat-icon.outgoing::before {
   content: "↑";
   font-weight: bold;
+  font-size: 1.8rem;
 }
 
 .stat-icon.gas {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: var(--warning);
+  background-color: rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
 }
 
 .stat-icon.gas::before {
   content: "⛽";
+  font-size: 1.4rem;
 }
 
 .stat-icon.transaction {
-  background-color: rgba(79, 70, 229, 0.2);
-  color: var(--primary);
+  background-color: rgba(79, 70, 229, 0.3);
+  color: #4f46e5;
 }
 
 .stat-icon.transaction::before {
   content: "↔";
   font-weight: bold;
+  font-size: 1.8rem;
 }
 
 .stat-data {
@@ -2231,6 +2236,9 @@ body, html {
   background: rgba(0, 0, 0, 0.1);
   padding: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-timeframe-selector {
@@ -2282,4 +2290,73 @@ body, html {
   height: 30px;
   border-width: 3px;
   margin-bottom: 1rem;
+}
+
+/* Full-width price card */
+.price-card.full-width {
+  grid-column: 1 / -1;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.price-card.full-width .price-chart-container {
+  height: 300px;
+}
+
+.price-card.full-width .price-chart {
+  height: 250px;
+}
+
+/* Price chart styling */
+.price-chart-container {
+  margin-top: 1.5rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove the charts-network-grid layout */
+/* Charts and Network grid layout - REMOVED */
+.charts-network-grid {
+  display: none;
+}
+
+/* Price card for the full width layout */
+.price-card {
+  background: var(--bg-content, white);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.price-chart {
+  flex: 1;
+  min-height: 300px;
+  position: relative;
+}
+
+/* Remove network card in grid styles */
+.charts-network-grid .network-card,
+.charts-network-grid .network-data {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .price-chart {
+    min-height: 250px;
+  }
 }
