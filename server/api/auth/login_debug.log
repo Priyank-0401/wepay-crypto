@@ -581,3 +581,21 @@
 2025-04-11 13:28:39 - Response to client: {"success":true,"message":"Login successful","user":{"id":"8","name":"Priyank","email":"priyank@gmail.com","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"97.9982"},"token":"cad68087c3f7bb5ff0c466b450c6074a"}
 2025-04-11 13:28:39 - Login process completed
 
+2025-04-12 06:24:42 - Login attempt started
+2025-04-12 06:24:42 - Received input: {"email":"priyank123@gmail.com","password":"hello123"}
+2025-04-12 06:24:42 - Querying for email: priyank123@gmail.com
+2025-04-12 06:24:42 - User found, verifying password
+2025-04-12 06:24:43 - Password verified successfully
+2025-04-12 06:24:43 - User data before sending response: {"id":"9","name":"Priyank","email":"priyank123@gmail.com","created_at":"2025-04-12 09:54:37","wallet_address":"0x8c3f5ca20b03611298336169aa5f5f8ff1291cff","wallet_balance":"101.0012","wallet_created_at":"2025-04-12 09:54:37"}
+2025-04-12 06:24:43 - Response to client: {"success":true,"message":"Login successful","user":{"id":"9","name":"Priyank","email":"priyank123@gmail.com","wallet_address":"0x8c3f5ca20b03611298336169aa5f5f8ff1291cff","wallet_balance":"101.0012"},"token":"9fb59838b7ae8f547d54b7acd3a88360"}
+2025-04-12 06:24:43 - Login process completed
+
+2025-04-12 06:25:15 - Login attempt started
+2025-04-12 06:25:15 - Received input: {"email":"priyank@gmail.com","password":"hello"}
+2025-04-12 06:25:15 - Querying for email: priyank@gmail.com
+2025-04-12 06:25:15 - User found, verifying password
+2025-04-12 06:25:15 - Password verified successfully
+2025-04-12 06:25:15 - User data before sending response: {"id":"8","name":"Priyank","email":"priyank@gmail.com","created_at":"2025-04-01 05:18:42","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"91.9967","wallet_created_at":"2025-04-01 05:18:42"}
+2025-04-12 06:25:15 - Response to client: {"success":true,"message":"Login successful","user":{"id":"8","name":"Priyank","email":"priyank@gmail.com","wallet_address":"0xb46d3260e8ea360e22df4e7372035dabcabb256f","wallet_balance":"91.9967"},"token":"a3793b619af70d3ac885aced1b35983e"}
+2025-04-12 06:25:15 - Login process completed
+

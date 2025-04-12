@@ -207,40 +207,30 @@ body, html {
 }
 
 /* Address display */
-.wallet-address, .wallet-network {
+.wallet-address {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
-.wallet-address span:first-child, .wallet-network span:first-child {
-  min-width: 80px;
-  color: var(--text-secondary, #666);
-  font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.dark-mode .wallet-address span:first-child, 
-.dark-mode .wallet-network span:first-child {
-  color: var(--text-secondary, #a0a0a0);
+.wallet-address span:first-child {
+  color: var(--text-secondary, #718096);
+  margin-right: 0.5rem;
+  white-space: nowrap;
 }
 
 .address-text {
-  background-color: var(--bg-main, #f5f7fa);
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.2);
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.8rem;
-  color: var(--text-primary, #333);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  min-width: 0;
-  border: 1px solid var(--border-color, #eaeaea);
   margin-right: 0.5rem;
+  font-size: 0.85rem;
+  word-break: break-all;
+  max-width: 100%;
+  display: inline-block;
 }
 
 .dark-mode .address-text {
@@ -1162,7 +1152,7 @@ body, html {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--primary); 
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
 }
 
@@ -2297,19 +2287,36 @@ body, html {
   grid-column: 1 / -1;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
+  height: auto;
 }
 
 .price-card.full-width .price-chart-container {
-  height: 300px;
+  height: 250px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .price-card.full-width .price-chart {
-  height: 250px;
+  height: 220px;
+}
+
+.price-data {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.price-chart {
+  flex: 1;
+  min-height: 220px;
+  max-height: 220px;
+  position: relative;
 }
 
 /* Price chart styling */
 .price-chart-container {
   margin-top: 1.5rem;
+  margin-bottom: 0;
   overflow: hidden;
   border-radius: 0.75rem;
   background: rgba(0, 0, 0, 0.1);
@@ -2320,8 +2327,13 @@ body, html {
   flex-direction: column;
 }
 
-/* Remove the charts-network-grid layout */
-/* Charts and Network grid layout - REMOVED */
+.price-chart {
+  flex: 1;
+  min-height: 220px;
+  max-height: 220px;
+  position: relative;
+}
+
 .charts-network-grid {
   display: none;
 }
@@ -2359,4 +2371,144 @@ body, html {
   .price-chart {
     min-height: 250px;
   }
+}
+
+.wallet-network {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wallet-network span:first-child {
+  min-width: 80px;
+  color: var(--text-secondary, #666);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.dark-mode .wallet-network span:first-child {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.gas-info {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+  text-align: center;
+  border-top: 1px rgba(255, 255, 255, 0.1);
+  padding-top: 0.75rem;
+}
+
+.dark-mode .gas-info {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+/* Gas Optimization Feature */
+.feature-tag {
+  background-color: var(--primary, #3498db);
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  margin-left: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.gas-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.gas-option {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.gas-option:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.gas-option.selected {
+  background-color: rgba(52, 152, 219, 0.2);
+  border-color: var(--primary, #3498db);
+  box-shadow: 0 0 0 1px var(--primary, #3498db);
+}
+
+.gas-option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.gas-option-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.gas-option-price {
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.gas-option-savings {
+  font-size: 0.75rem;
+  color: var(--success, #2ecc71);
+  margin-bottom: 0.25rem;
+}
+
+.gas-option-time {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #718096);
+}
+
+.optimization-badge {
+  background-color: var(--success, #2ecc71);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  margin-left: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.gas-savings-highlight {
+  margin-top: 1rem;
+  background-color: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.savings-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+}
+
+.savings-text {
+  flex: 1;
+}
+
+.savings-title {
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.savings-amount {
+  font-size: 0.8rem;
+  color: var(--success, #2ecc71);
 }

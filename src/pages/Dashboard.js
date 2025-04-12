@@ -17,6 +17,7 @@ import {
   TimeScale,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import GasOptimizationService from '../services/gasOptimizationService';
 
 // Helper function to format addresses - moved outside component
 const formatAddressUtil = (address) => {
@@ -48,12 +49,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [web3, setWeb3] = useState(null);
-  const [networkId, setNetworkId] = useState('');
   const [networkName, setNetworkName] = useState('');
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
-  const [blockNumber, setBlockNumber] = useState(0);
   const [totalGasUsed, setTotalGasUsed] = useState(0);
-  const [pendingTransactions, setPendingTransactions] = useState(0);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [debugMessage, setDebugMessage] = useState('Initializing...');
   const [sendFormOpen, setSendFormOpen] = useState(false);
@@ -85,6 +83,15 @@ const Dashboard = () => {
     { protocol: 'Compound', amount: 0.1, apy: 2.8, value: 0 },
     { protocol: 'Uniswap', amount: 0.02, apy: 5.4, value: 0 }
   ]);
+
+  // State for gas optimization
+  const [gasPriceRecommendations, setGasPriceRecommendations] = useState({
+    standard: { price: '0', savings: '0%', timeEstimate: '5-10 min' },
+    fast: { price: '0', savings: '0%', timeEstimate: '1-3 min' },
+    fastest: { price: '0', savings: '0%', timeEstimate: '<1 min' }
+  });
+  const [selectedGasOption, setSelectedGasOption] = useState('standard');
+  const [gasOptimizationReady, setGasOptimizationReady] = useState(false);
 
   // Get user data for profile icon
   useEffect(() => {
@@ -191,14 +198,11 @@ const Dashboard = () => {
     const mockAddr = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
     setAccount(mockAddr);
     setEthBalance("1.2345"); 
-    setGasPrice("20.00");
-    setNetworkId("1337");
+    // Don't override gasPrice with mock data to allow real-time values
     setNetworkName("Ganache Local");
     fetchTransactions(mockAddr);
-    setPendingTransactions(Math.floor(Math.random() * 5));
     const randomGasUsed = parseFloat((Math.random() * 0.01).toFixed(4));
     setTotalGasUsed(randomGasUsed);
-    setBlockNumber(12345);
     
     // Mock price and market data
     setEthPrice(2842.15);
@@ -224,6 +228,7 @@ const Dashboard = () => {
   }, [fetchTransactions]);
 
   // Define weiToEth with useCallback
+  // eslint-disable-next-line no-unused-vars
   const weiToEth = useCallback((wei) => {
     if (!web3 || !wei) return "0";
     return web3.utils.fromWei(wei.toString(), 'ether');
@@ -381,26 +386,21 @@ const Dashboard = () => {
             try {
               const balance = await TransactionService.getBalance(userAccount);
               setEthBalance(balance);
-          
-          // Get network info
+            
+              // Get network info
+              // eslint-disable-next-line no-unused-vars
               const netId = await TransactionService.web3.eth.net.getId();
-          setNetworkId(netId.toString());
-          
-          let network = 'Unknown';
-          if (netId === 5777 || netId === 1337) {
-            network = 'Ganache Local';
-          }
-          setNetworkName(network);
-          
+              setNetworkName('Ganache Local');
+              
               // Get current block number
+              // eslint-disable-next-line no-unused-vars
               const blockNumber = await TransactionService.web3.eth.getBlockNumber();
-              setBlockNumber(blockNumber);
               
               // Get gas price
               const gasPrice = await TransactionService.web3.eth.getGasPrice();
               const gasPriceGwei = TransactionService.web3.utils.fromWei(gasPrice, 'gwei');
-          setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
-          
+              setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
+            
               // Set connection status
               setConnectionStatus('Connected');
               
@@ -420,17 +420,17 @@ const Dashboard = () => {
             setError('Error fetching account');
             setConnectionAttempts(prev => prev + 1); // Increment connection attempts
           }
-          } else {
+        } else {
           console.error('Web3 not initialized in TransactionService');
           setError('Web3 not initialized');
           setConnectionAttempts(prev => prev + 1); // Increment connection attempts
-          }
+        }
       } catch (error) {
         console.error('Error initializing Web3:', error);
         setError(`Error connecting to Ganache: ${error.message}`);
         setConnectionAttempts(prev => prev + 1); // Increment connection attempts
-        } finally {
-          setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -459,6 +459,68 @@ const Dashboard = () => {
       clearInterval(priceInterval);
     };
   }, [fetchEthPriceData]); // Include fetchEthPriceData in the dependency array
+
+  // Add useEffect to fetch gas price regularly
+  useEffect(() => {
+    const fetchGasPrice = async () => {
+      try {
+        if (web3) {
+          const gasPrice = await web3.eth.getGasPrice();
+          const gasPriceGwei = web3.utils.fromWei(gasPrice, 'gwei');
+          setGasPrice(parseFloat(gasPriceGwei).toFixed(2));
+          console.log('Current gas price:', gasPriceGwei, 'Gwei');
+        }
+      } catch (error) {
+        console.error('Error fetching gas price:', error);
+      }
+    };
+    
+    // Fetch gas price immediately
+    fetchGasPrice();
+    
+    // Then fetch every 30 seconds
+    const interval = setInterval(fetchGasPrice, 30000);
+    
+    return () => clearInterval(interval);
+  }, [web3]);
+
+  // Initialize Gas Optimization Service
+  useEffect(() => {
+    const initGasOptimization = async () => {
+      try {
+        if (web3 && connectionStatus === 'Connected') {
+          console.log('Initializing Gas Optimization Service...');
+          const initialized = await GasOptimizationService.init(web3);
+          
+          if (initialized) {
+            // Get initial recommendations
+            const recommendations = await GasOptimizationService.getGasPriceRecommendations();
+            setGasPriceRecommendations(recommendations);
+            setGasOptimizationReady(true);
+            console.log('Gas Optimization Service ready');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to initialize Gas Optimization Service:', error);
+      }
+    };
+    
+    initGasOptimization();
+    
+    // Set up polling for gas price updates
+    const interval = setInterval(async () => {
+      if (gasOptimizationReady) {
+        try {
+          const recommendations = await GasOptimizationService.getGasPriceRecommendations();
+          setGasPriceRecommendations(recommendations);
+        } catch (error) {
+          console.error('Error updating gas price recommendations:', error);
+        }
+      }
+    }, 30000); // Update every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [web3, connectionStatus, gasOptimizationReady]);
 
   // Handle retry connection
   const handleRetryConnection = () => {
@@ -571,8 +633,33 @@ const Dashboard = () => {
       setTransactionStatus("pending");
       setTransactionError(null);
       
-      // Send transaction using the TransactionService
-      const receipt = await TransactionService.sendTransaction(recipientAddress, sendAmount, account);
+      // Get current gas price for the transaction from our optimization service
+      let gasData;
+      if (gasOptimizationReady) {
+        gasData = await GasOptimizationService.getOptimizedGasPrice(selectedGasOption);
+        console.log(`Using optimized gas price: ${gasData.priceGwei} Gwei (${selectedGasOption} option, ${gasData.savings}% savings)`);
+      } else {
+        // Fallback to standard method
+        const currentGasPrice = await TransactionService.web3.eth.getGasPrice();
+        console.log("Using standard gas price:", TransactionService.web3.utils.fromWei(currentGasPrice, 'gwei'), "Gwei");
+      }
+      
+      // Create the transaction object
+      const txObject = {
+        from: account,
+        to: recipientAddress,
+        value: TransactionService.web3.utils.toWei(sendAmount, 'ether'),
+        gas: 21000
+      };
+      
+      // Apply gas optimization if available
+      let receipt;
+      if (gasOptimizationReady) {
+        const optimizedTx = await GasOptimizationService.optimizeTransaction(txObject, selectedGasOption);
+        receipt = await TransactionService.web3.eth.sendTransaction(optimizedTx);
+      } else {
+        receipt = await TransactionService.sendTransaction(recipientAddress, sendAmount, account);
+      }
       
       console.log("Transaction sent:", receipt);
       setTransactionHash(receipt.transactionHash);
@@ -585,7 +672,7 @@ const Dashboard = () => {
       // Update in database if needed
       updateWalletBalance(account, newBalance);
       
-        // Refresh transactions
+      // Refresh transactions
       fetchTransactions(account);
       
       // Reset form
@@ -603,7 +690,7 @@ const Dashboard = () => {
       setTransactionStatus("failed");
       setTransactionError(error.message);
     }
-  }, [account, sendAmount, recipientAddress, fetchTransactions, updateWalletBalance]);
+  }, [account, sendAmount, recipientAddress, fetchTransactions, updateWalletBalance, gasOptimizationReady, selectedGasOption]);
 
   // Helper function to render just the transaction content without the View All link
   const renderRecentTransactionsContent = useCallback(() => {
@@ -733,7 +820,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               );
-    } catch (error) {
+            } catch (error) {
               console.error("Error rendering transaction:", error, tx);
               return null; // Skip this transaction if there's an error
             }
@@ -938,7 +1025,7 @@ const Dashboard = () => {
             <div className="wallet-details">
               <div className="wallet-address">
                 <span>Your Address:</span>
-                <span className="address-text">{shortenAddress(account)}</span>
+                <span className="address-text">{account}</span>
                 <button className="copy-btn" onClick={() => navigator.clipboard.writeText(account)}>
                   Copy
                 </button>
@@ -955,7 +1042,7 @@ const Dashboard = () => {
             </div>
           </div>
           
-          <div className="stats-card">
+          <div className="stats-card expanded">
             <h2>Blockchain Activity</h2>
             <div className="stats-grid">
               <div className="stat-item">
@@ -990,7 +1077,7 @@ const Dashboard = () => {
           </div>
           
           <div className="gas-tracker-card">
-            <h2>Gas Tracker</h2>
+            <h2>Gas Tracker <span className="optimization-badge">Optimized</span></h2>
             <div className="gas-data">
               <div className="gas-price-display">
                 <span className="gas-price-value">{gasPrice}</span>
@@ -999,70 +1086,61 @@ const Dashboard = () => {
               <div className="gas-price-label">Current Gas Price</div>
             </div>
             <div className="gas-estimate">
-              <div className="gas-row">
+              <div className="gas-row" title="21,000 gas units - standard amount for a basic ETH transfer on Ethereum">
                 <span>Regular Transfer:</span>
                 <span>{(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH</span>
               </div>
-              <div className="gas-row">
+              <div className="gas-row" title="65,000 gas units - typical amount for ERC-20 token transfers">
                 <span>Token Transfer:</span>
                 <span>{(parseFloat(gasPrice) * 65000 / 1000000000).toFixed(6)} ETH</span>
               </div>
-              <div className="gas-row">
+              <div className="gas-row" title="200,000 gas units - estimated amount for typical smart contract interactions">
                 <span>Smart Contract:</span>
                 <span>{(parseFloat(gasPrice) * 200000 / 1000000000).toFixed(6)} ETH</span>
+              </div>
+              
+              {gasOptimizationReady && (
+                <div className="gas-savings-highlight">
+                  <div className="savings-icon">💰</div>
+                  <div className="savings-text">
+                    <div className="savings-title">WePay Gas Optimizer</div>
+                    <div className="savings-amount">Save up to {gasPriceRecommendations.standard.savings} on gas fees</div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="gas-info">
+                <small>Gas calculations use standard Ethereum protocol values</small>
               </div>
             </div>
           </div>
           
-          <div className="network-card">
-            <h2>Network Status</h2>
-            <div className="network-data">
-              <div className="network-row">
-                <span>Current Block:</span>
-                <span>{blockNumber}</span>
-              </div>
-              <div className="network-row">
-                <span>Network ID:</span>
-                <span>{networkId}</span>
-              </div>
-              <div className="network-row">
-                <span>Pending Transactions:</span>
-                <span>{pendingTransactions}</span>
-              </div>
-              <div className="network-row">
-                <span>Connection:</span>
-                <span className={connectionStatus === 'Connected' ? 'status-connected' : 'status-error'}>
-                  {connectionStatus}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
         
         {/* ETH Price chart full width */}
         <div className="price-card full-width">
-          <h2>ETH Price</h2>
-          <div className="price-data">
-            <div className="price-main">
-              <span className="price-value">${ethPrice.toLocaleString()}</span>
-              <span className={`price-change ${ethPriceChange >= 0 ? 'positive' : 'negative'}`}>
-                {ethPriceChange >= 0 ? '+' : ''}{ethPriceChange}%
-              </span>
-            </div>
-            <div className="price-stats">
-              <div className="price-row">
-                <span>Market Cap:</span>
-                <span>${marketCap.toLocaleString()} B</span>
+            <h2>ETH Price</h2>
+            <div className="price-data">
+              <div className="price-main">
+                <span className="price-value">${ethPrice.toLocaleString()}</span>
+                <span className={`price-change ${ethPriceChange >= 0 ? 'positive' : 'negative'}`}>
+                  {ethPriceChange >= 0 ? '+' : ''}{ethPriceChange}%
+                </span>
               </div>
-              <div className="price-row">
-                <span>24h Volume:</span>
-                <span>${volume24h.toLocaleString()} B</span>
+              <div className="price-stats">
+                <div className="price-row">
+                  <span>Market Cap:</span>
+                  <span>${marketCap.toLocaleString()} B</span>
+                </div>
+                <div className="price-row">
+                  <span>24h Volume:</span>
+                  <span>${volume24h.toLocaleString()} B</span>
+                </div>
+                <div className="price-row">
+                  <span>Your Holdings:</span>
+                  <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
+                </div>
               </div>
-              <div className="price-row">
-                <span>Your Holdings:</span>
-                <span>${(parseFloat(ethBalance) * ethPrice).toLocaleString()}</span>
-              </div>
-            </div>
             {/* Add chart */}
             {renderPriceChart()}
           </div>
@@ -1169,9 +1247,55 @@ const Dashboard = () => {
                   <div className="form-group">
                     <label>Estimated Gas Fee</label>
                     <div className="gas-estimate-display">
-                      {gasPrice ? `~${(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH` : 'Calculating...'}
+                      {gasPrice ? `~${(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH (${gasPrice} Gwei × 21,000 units)` : 'Calculating...'}
+                    </div>
+                    <div className="gas-info">
+                      <small>Standard ETH transfer requires 21,000 gas units. Actual gas used may vary.</small>
                     </div>
                   </div>
+                  
+                  {gasOptimizationReady && (
+                    <div className="form-group">
+                      <label>Gas Optimization <span className="feature-tag">WePay Exclusive</span></label>
+                      <div className="gas-options">
+                        <div 
+                          className={`gas-option ${selectedGasOption === 'standard' ? 'selected' : ''}`}
+                          onClick={() => setSelectedGasOption('standard')}
+                        >
+                          <div className="gas-option-header">
+                            <span className="gas-option-name">Economy</span>
+                            <span className="gas-option-price">{gasPriceRecommendations.standard.price} Gwei</span>
+                          </div>
+                          <div className="gas-option-savings">{gasPriceRecommendations.standard.savings} savings</div>
+                          <div className="gas-option-time">{gasPriceRecommendations.standard.timeEstimate}</div>
+                        </div>
+                        
+                        <div 
+                          className={`gas-option ${selectedGasOption === 'fast' ? 'selected' : ''}`}
+                          onClick={() => setSelectedGasOption('fast')}
+                        >
+                          <div className="gas-option-header">
+                            <span className="gas-option-name">Standard</span>
+                            <span className="gas-option-price">{gasPriceRecommendations.fast.price} Gwei</span>
+                          </div>
+                          <div className="gas-option-savings">{gasPriceRecommendations.fast.savings} savings</div>
+                          <div className="gas-option-time">{gasPriceRecommendations.fast.timeEstimate}</div>
+                        </div>
+                        
+                        <div 
+                          className={`gas-option ${selectedGasOption === 'fastest' ? 'selected' : ''}`}
+                          onClick={() => setSelectedGasOption('fastest')}
+                        >
+                          <div className="gas-option-header">
+                            <span className="gas-option-name">Fast</span>
+                            <span className="gas-option-price">{gasPriceRecommendations.fastest.price} Gwei</span>
+                          </div>
+                          <div className="gas-option-savings">{gasPriceRecommendations.fastest.savings} savings</div>
+                          <div className="gas-option-time">{gasPriceRecommendations.fastest.timeEstimate}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   {transactionError && (
                     <div className="transaction-error">

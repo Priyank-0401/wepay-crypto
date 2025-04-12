@@ -244,12 +244,17 @@ const TransactionService = {
       // Convert ETH to Wei
       const amountWei = TransactionService.web3.utils.toWei(String(amount), 'ether');
       
+      // Get the current gas price
+      const gasPrice = await TransactionService.web3.eth.getGasPrice();
+      console.log('Current gas price:', TransactionService.web3.utils.fromWei(gasPrice, 'gwei'), 'Gwei');
+      
       // Create transaction object
       const txObject = {
         from: from,
         to: to,
         value: amountWei,
-        gas: 21000
+        gas: 21000,
+        gasPrice: gasPrice
       };
       
       console.log('Sending transaction:', txObject);
@@ -265,7 +270,7 @@ const TransactionService = {
         to: to,
         value: String(amount),
         gas: '21000',
-        gasPrice: '0',
+        gasPrice: String(gasPrice),
         timestamp: Date.now(),
         status: receipt.status ? 'success' : 'failed',
         type: 'Transfer'
