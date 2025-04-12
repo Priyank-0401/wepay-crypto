@@ -1,4 +1,164 @@
+.dark-mode .price-value {
+  color: var(--text-primary, #f0f0f0);
+}
+
+.price-change {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.price-change.positive {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success);
+}
+
+.price-change.negative {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger);
+}
+
+.price-stats {
+  margin-top: 1rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--border-color, #eaeaea);
+  font-size: 0.875rem;
+}
+
+.dark-mode .price-row {
+  border-color: var(--border-color, #2a2a40);
+}
+
+.price-row:last-child {
+  border-bottom: none;
+}
+
+.price-row span:first-child {
+  color: var(--text-secondary, #666);
+}
+
+.dark-mode .price-row span:first-child {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.price-row span:last-child {
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.dark-mode .price-row span:last-child {
+  color: var(--text-primary, #f0f0f0);
+}
+
+/* Transaction Stats Card */
+.tx-stats-card {
+  background: var(--bg-content, white);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .tx-stats-card {
+  background: var(--bg-content, #16213e);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tx-stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.tx-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.tx-stat-item {
+  background: var(--bg-main, #f5f7fa);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  transition: transform 0.2s;
+  border: 1px solid var(--border-color, #eaeaea);
+}
+
+.dark-mode .tx-stat-item {
+  background: rgba(255, 255, 255, 0.05);
 /*Dashboard.css*/
+  border-color: var(--border-color, #2a2a40);
+}
+
+.tx-stat-item:hover {
+  transform: translateY(-3px);
+}
+
+.tx-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 0.5rem;
+}
+
+.dark-mode .tx-stat-label {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+.tx-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #333);
+  margin-bottom: 0.25rem;
+}
+
+.dark-mode .tx-stat-value {
+  color: var(--text-primary, #f0f0f0);
+}
+
+.tx-stat-value.income {
+  color: var(--success);
+}
+
+.tx-stat-value.expense {
+  color: var(--danger);
+}
+
+.tx-stat-usd {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #666);
+}
+
+.dark-mode .tx-stat-usd {
+  color: var(--text-secondary, #a0a0a0);
+}
+
+/* DeFi Portfolio Section */
+.defi-portfolio-section {
+  position: relative;
+  margin-bottom: 2rem;
+  background: var(--bg-content, white);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  max-height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 
 
 :root {
@@ -201,11 +361,12 @@ body, html {
 
 /* ETH Balance display */
 .eth-balance {
-  font-size: 2.75rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--primary);
   text-align: center;
-  margin: 1.5rem 0;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
   letter-spacing: -0.025em;
   background: linear-gradient(to right, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
@@ -428,7 +589,7 @@ body, html {
 }
 
 .stat-value {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.25rem;
   overflow: hidden;
@@ -2206,6 +2367,15 @@ body, html {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
 }
+.defi-portfolio-section h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+}
+
+.defi-portfolio-section .view-all-btn {
+  position: absolute;
+}
 
 .category-item {
   background: var(--bg-main);
@@ -2758,4 +2928,691 @@ h2 .refresh-btn:hover {
 .dark-mode .gas-savings-highlight {
   background: rgba(46, 204, 113, 0.08);
   border-color: rgba(46, 204, 113, 0.15);
+}
+
+/* Improved wallet actions with larger buttons */
+.wallet-actions.improved {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.wallet-actions.improved .action-btn {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.wallet-actions.improved .action-btn svg {
+  margin-right: 0.25rem;
+}
+
+.wallet-actions.improved .send-btn {
+  background-color: #3a80e9;
+  color: white;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.wallet-actions.improved .receive-btn {
+  background-color: #34c759;
+  color: white;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.wallet-actions.improved .scan-btn {
+  background-color: #2c2f3b;
+  color: white;
+  grid-column: span 2;
+  grid-row: 2;
+  border: 1px solid #3a3f4d;
+}
+
+.wallet-actions.improved .action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* More visible stat values */
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Add some extra margin to the card content */
+.wallet-card {
+  padding-bottom: 1rem;
+}
+
+/* Make the eth balance more prominent */
+.eth-balance {
+  font-size: 1.8rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Updated wallet actions for full width buttons */
+.wallet-actions.improved.fullwidth {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 0 0.5rem 0.5rem;
+}
+
+.wallet-actions.improved.fullwidth .action-btn {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 3.5rem;
+}
+
+.wallet-actions.improved.fullwidth .action-btn svg {
+  margin-right: 0.25rem;
+  width: 22px;
+  height: 22px;
+}
+
+.wallet-actions.improved.fullwidth .send-btn {
+  background-color: #3a80e9;
+  color: white;
+  grid-column: 1;
+}
+
+.wallet-actions.improved.fullwidth .receive-btn {
+  background-color: #34c759;
+  color: white;
+  grid-column: 2;
+}
+
+.wallet-actions.improved.fullwidth .action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  filter: brightness(110%);
+}
+
+/* Adjust wallet card spacing */
+.wallet-card {
+  padding-bottom: 1.5rem;
+}
+
+/* Make the eth balance more prominent */
+.eth-balance {
+  font-size: 2rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Adjusted stat values size */
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Additional adjustment for expense/income values */
+.stat-value.income, .stat-value.expense {
+  font-weight: 700;
+}
+
+/* Further improved wallet card */
+.wallet-card {
+  padding-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Create more vertical space */
+.wallet-details {
+  margin-bottom: 1.5rem;
+}
+
+/* Make the ETH balance display more prominent */
+.eth-balance {
+  font-size: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 1rem 0 1.25rem;
+  background: linear-gradient(90deg, #3a80e9, #34c759);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+/* Enhanced wallet actions for full width buttons */
+.wallet-actions.improved.fullwidth {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: auto;
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.wallet-actions.improved.fullwidth .action-btn {
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  height: 3.75rem;
+  border: none;
+}
+
+.wallet-actions.improved.fullwidth .action-btn svg {
+  margin-right: 0.25rem;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.wallet-actions.improved.fullwidth .send-btn {
+  background: linear-gradient(135deg, #3a80e9, #2c5caa);
+  color: white;
+}
+
+.wallet-actions.improved.fullwidth .receive-btn {
+  background: linear-gradient(135deg, #34c759, #28a745);
+  color: white;
+}
+
+.wallet-actions.improved.fullwidth .action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  filter: brightness(110%);
+}
+
+/* Add this fix for the Blockchain Activity card stats values */
+.stats-card .stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  overflow: visible;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
+  max-width: 100%;
+}
+
+/* Ensure the stat-item has sufficient width */
+.stats-grid .stat-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--bg-content-light);
+  margin-bottom: 0.75rem;
+  transition: background-color 0.2s, transform 0.2s;
+  min-width: 110px;
+  flex: 1;
+}
+
+/* Original stat-value styling */
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Enhanced wallet card styling */
+.wallet-card {
+  background: linear-gradient(135deg, #171d2d 0%, #1f2b47 100%);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1;
+}
+
+/* Add decorative background elements */
+.wallet-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 70% 20%, rgba(79, 70, 229, 0.1) 0%, transparent 60%);
+  z-index: -1;
+}
+
+.wallet-card::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+  z-index: -1;
+}
+
+/* Balance wrapper and chart */
+.balance-wrapper {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 0.5rem;
+}
+
+.mini-balance-chart {
+  height: 40px;
+  margin: 0 auto 0.75rem;
+  position: relative;
+  width: 80%;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.chart-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 L20,28 L40,32 L60,25 L80,35 L100,20 L120,25 L140,15 L160,25 L180,10 L200,15' fill='none' stroke='%2310b981' stroke-width='2'/%3E%3C/svg%3E") no-repeat;
+  background-size: 100% 100%;
+}
+
+/* Enhanced ETH Balance display */
+.eth-balance {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  background: linear-gradient(to right, #10b981, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.fiat-equivalent {
+  font-size: 1rem;
+  color: var(--neutral-400);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Wallet metrics */
+.wallet-metrics {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  color: var(--neutral-400);
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.metric-value.positive {
+  color: var(--success);
+}
+
+.metric-value.negative {
+  color: var(--danger);
+}
+
+/* Enhanced wallet details */
+.wallet-details {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Enhanced buttons */
+.wallet-actions.improved.fullwidth .action-btn {
+  flex: 1;
+  padding: 0.9rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.wallet-actions.improved.fullwidth .send-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.wallet-actions.improved.fullwidth .receive-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+/* Enhanced Blockchain Activity Card */
+.stats-card {
+  background: linear-gradient(135deg, #171d2d 0%, #1b2336 100%);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  z-index: -1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stats-grid .stat-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  height: 100%;
+  min-width: 110px;
+}
+
+.stats-grid .stat-item:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.stat-icon.incoming {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-icon.outgoing {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.stat-icon.gas {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.stat-icon.transaction {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.stats-card .stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  overflow: visible;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
+  max-width: 100%;
+  color: #fff;
+}
+
+.stats-card .stat-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+/* Enhanced Gas Tracker Card */
+.gas-tracker-card {
+  background: linear-gradient(135deg, #171d2d 0%, #1c2438 100%);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1;
+}
+
+.gas-tracker-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 70% 30%, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+  z-index: -1;
+}
+
+.gas-data {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.gas-data::after {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+  top: -75px;
+  right: -75px;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.gas-data:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.gas-price-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--warning);
+  line-height: 1;
+  background: linear-gradient(to right, #f59e0b, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.gas-price-unit {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.gas-price-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.gas-estimate {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 1rem;
+}
+
+.gas-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.875rem;
+  position: relative;
+}
+
+.gas-row:last-child {
+  border-bottom: none;
+}
+
+.gas-row span:first-child {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.gas-row span:last-child {
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Enhanced Gas Optimizer section */
+.gas-savings-highlight {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.gas-savings-highlight::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  bottom: -50px;
+  right: -50px;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.gas-savings-highlight:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.savings-icon {
+  font-size: 1.25rem;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.savings-text {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.savings-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #10b981;
+  margin-bottom: 0.25rem;
+}
+
+.savings-amount {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.savings-source {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
 }
