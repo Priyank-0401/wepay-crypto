@@ -86,9 +86,9 @@ const Dashboard = () => {
 
   // State for gas optimization
   const [gasPriceRecommendations, setGasPriceRecommendations] = useState({
-    standard: { price: '0', savings: '0%', timeEstimate: '5-10 min' },
-    fast: { price: '0', savings: '0%', timeEstimate: '1-3 min' },
-    fastest: { price: '0', savings: '0%', timeEstimate: '<1 min' }
+    standard: { price: '0', savings: '0%', timeEstimate: '5-10 min', source: 'Standard Ethereum protocol' },
+    fast: { price: '0', savings: '0%', timeEstimate: '1-3 min', source: 'Standard Ethereum protocol' },
+    fastest: { price: '0', savings: '0%', timeEstimate: '<1 min', source: 'Standard Ethereum protocol' }
   });
   const [selectedGasOption, setSelectedGasOption] = useState('standard');
   const [gasOptimizationReady, setGasOptimizationReady] = useState(false);
@@ -1105,6 +1105,7 @@ const Dashboard = () => {
                   <div className="savings-text">
                     <div className="savings-title">WePay Gas Optimizer</div>
                     <div className="savings-amount">Save up to {gasPriceRecommendations.standard.savings} on gas fees</div>
+                    <div className="savings-source">Source: {gasPriceRecommendations.standard.source}</div>
                   </div>
                 </div>
               )}
@@ -1247,7 +1248,13 @@ const Dashboard = () => {
                   <div className="form-group">
                     <label>Estimated Gas Fee</label>
                     <div className="gas-estimate-display">
-                      {gasPrice ? `~${(parseFloat(gasPrice) * 21000 / 1000000000).toFixed(6)} ETH (${gasPrice} Gwei × 21,000 units)` : 'Calculating...'}
+                      {gasPrice ? 
+                        selectedGasOption === 'standard' ? 
+                          `~${(parseFloat(gasPriceRecommendations.standard.price) * 21000 / 1000000000).toFixed(6)} ETH (${gasPriceRecommendations.standard.price} Gwei × 21,000 units)` :
+                        selectedGasOption === 'fast' ?
+                          `~${(parseFloat(gasPriceRecommendations.fast.price) * 21000 / 1000000000).toFixed(6)} ETH (${gasPriceRecommendations.fast.price} Gwei × 21,000 units)` :
+                          `~${(parseFloat(gasPriceRecommendations.fastest.price) * 21000 / 1000000000).toFixed(6)} ETH (${gasPriceRecommendations.fastest.price} Gwei × 21,000 units)`
+                        : 'Calculating...'}
                     </div>
                     <div className="gas-info">
                       <small>Standard ETH transfer requires 21,000 gas units. Actual gas used may vary.</small>
@@ -1293,6 +1300,9 @@ const Dashboard = () => {
                           <div className="gas-option-savings">{gasPriceRecommendations.fastest.savings} savings</div>
                           <div className="gas-option-time">{gasPriceRecommendations.fastest.timeEstimate}</div>
                         </div>
+                      </div>
+                      <div className="gas-data-source">
+                        Data source: {gasPriceRecommendations.standard.source || 'Loading...'}
                       </div>
                     </div>
                   )}

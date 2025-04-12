@@ -91,23 +91,20 @@ const GasOptimizationService = {
       const currentGasPrice = await GasOptimizationService.web3.eth.getGasPrice();
       const gasPriceGwei = parseFloat(GasOptimizationService.web3.utils.fromWei(currentGasPrice, 'gwei'));
       
-      // In a real app, we would also fetch from gas price APIs like:
-      // - Etherscan Gas Tracker API
-      // - EtherGasStation API
-      // - Blocknative Gas Estimator
+      console.log('Fallback to local node gas price:', gasPriceGwei, 'Gwei');
       
-      // For now, simulate different price tiers based on local node price
+      // Create fallback gas price data with our optimization
       const gasPriceData = {
         timestamp: now,
-        standard: Math.max(gasPriceGwei * 0.8, 1).toFixed(2), // Our optimized price: 20% discount
+        standard: Math.max(gasPriceGwei * 0.9, 1).toFixed(2), // 10% optimization
         fast: gasPriceGwei.toFixed(2),                        // Current network price
         fastest: (gasPriceGwei * 1.2).toFixed(2),             // Premium price for urgent tx
         networkAverage: gasPriceGwei.toFixed(2),              // Current network average
         unit: 'gwei',
-        source: 'WePay Optimizer'
+        source: 'WePay Optimizer (Local Node)'
       };
       
-      // Update history (keep last 10 data points)
+      // Update history
       GasOptimizationService.gasPriceHistory.unshift(gasPriceData);
       if (GasOptimizationService.gasPriceHistory.length > 10) {
         GasOptimizationService.gasPriceHistory.pop();
@@ -154,9 +151,10 @@ const GasOptimizationService = {
       return {
         price: gasPriceWei,
         priceGwei: optimizedGasPrice,
-        savings: ((latestData.networkAverage - optimizedGasPrice) / latestData.networkAverage * 100).toFixed(2),
+        savings: ((parseFloat(latestData.networkAverage) - parseFloat(optimizedGasPrice)) / parseFloat(latestData.networkAverage) * 100).toFixed(2),
         urgency: urgency,
-        unit: 'wei'
+        unit: 'wei',
+        source: latestData.source
       };
     } catch (error) {
       console.error('Error getting optimized gas price:', error);
@@ -168,7 +166,8 @@ const GasOptimizationService = {
         priceGwei: GasOptimizationService.web3.utils.fromWei(currentGasPrice, 'gwei'),
         savings: '0',
         urgency: urgency,
-        unit: 'wei'
+        unit: 'wei',
+        source: 'Local Node Fallback'
       };
     }
   },
@@ -177,13 +176,22 @@ const GasOptimizationService = {
   optimizeTransaction: async (txObject, urgency = 'standard') => {
     try {
       // Get optimized gas price
-      const { price: gasPrice } = await GasOptimizationService.getOptimizedGasPrice(urgency);
+      const { price: gasPrice, source } = await GasOptimizationService.getOptimizedGasPrice(urgency);
+      console.log(`Using optimized gas price from ${source}`);
       
       // Clone the transaction object
       const optimizedTx = { ...txObject };
       
       // Set gas price using our optimized value
       optimizedTx.gasPrice = gasPrice;
+      
+      // Add metadata for batch processing if needed
+      optimizedTx.metadata = {
+        optimizedBy: 'WePay Gas Optimizer',
+        source: source,
+        originalGasPrice: txObject.gasPrice || 'unknown',
+        batchable: true // Flag for potential batching in the future
+      };
       
       // Optimize gas limit based on transaction type
       if (optimizedTx.to && !optimizedTx.data) {
@@ -214,9 +222,9 @@ const GasOptimizationService = {
     const latestData = GasOptimizationService.gasPriceHistory[0];
     if (!latestData) {
       return {
-        standard: { price: 20, savings: '0%' },
-        fast: { price: 25, savings: '0%' },
-        fastest: { price: 30, savings: '0%' }
+        standard: { price: 20, savings: '0%', timeEstimate: '5-10 min', source: 'Default' },
+        fast: { price: 25, savings: '0%', timeEstimate: '1-3 min', source: 'Default' },
+        fastest: { price: 30, savings: '0%', timeEstimate: '<1 min', source: 'Default' }
       };
     }
     
@@ -226,20 +234,28 @@ const GasOptimizationService = {
     return {
       standard: {
         price: latestData.standard,
-        savings: ((networkAvg - latestData.standard) / networkAvg * 100).toFixed(2) + '%',
-        timeEstimate: '5-10 min'
+        savings: ((networkAvg - parseFloat(latestData.standard)) / networkAvg * 100).toFixed(2) + '%',
+        timeEstimate: '5-10 min',
+        source: latestData.source
       },
       fast: {
         price: latestData.fast,
         savings: '0%', // This is our baseline (current market price)
-        timeEstimate: '1-3 min'
+        timeEstimate: '1-3 min',
+        source: latestData.source
       },
       fastest: {
         price: latestData.fastest,
-        savings: '-20%', // This is premium pricing (costs more than market)
-        timeEstimate: '<1 min'
+        savings: ((networkAvg - parseFloat(latestData.fastest)) / networkAvg * 100).toFixed(2) + '%', // Will be negative for fastest
+        timeEstimate: '<1 min',
+        source: latestData.source
       }
     };
+  },
+  
+  // Get gas price history for chart display
+  getGasPriceHistory: () => {
+    return GasOptimizationService.gasPriceHistory;
   }
 };
 
