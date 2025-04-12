@@ -22,6 +22,14 @@
   --neutral-900: #111827;
   --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
   --hover-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+  --bg-content-light: rgba(255, 255, 255, 0.05);
+  --bg-content-accent: rgba(46, 204, 113, 0.08);
+  --bg-option: rgba(255, 255, 255, 0.05);
+  --border-option: rgba(255, 255, 255, 0.1);
+  --bg-selected: rgba(45, 156, 219, 0.1);
+  --gas-option-bg: rgba(255, 255, 255, 0.05);
+  --gas-option-border: rgba(255, 255, 255, 0.1);
+  --gas-option-selected-bg: rgba(0, 162, 255, 0.05);
 }
 
 /* Base styling */
@@ -414,20 +422,102 @@ body, html {
 }
 
 .stat-data {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  min-width: 0;
-  overflow: hidden;
 }
 
 .stat-value {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--neutral-700);
-  line-height: 1.2;
-  white-space: nowrap;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #a3a3a3);
+  font-weight: 500;
+}
+
+.income {
+  color: #2ecc71;
+}
+
+.expense {
+  color: #e74c3c;
+}
+
+/* Gas savings highlight styling */
+.gas-savings-highlight {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  box-shadow: 0 2px 6px rgba(46, 204, 113, 0.1);
+}
+
+.dark-mode .gas-savings-highlight {
+  background: rgba(46, 204, 113, 0.08);
+  border-color: rgba(46, 204, 113, 0.15);
+}
+
+.savings-icon {
+  font-size: 1.25rem;
+  color: #2ecc71;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.savings-text {
+  flex: 1;
+}
+
+.savings-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary, #333);
   margin-bottom: 0.25rem;
+}
+
+.dark-mode .savings-title {
+  color: var(--text-primary, #f5f5f5);
+}
+
+.savings-amount {
+  font-weight: 700;
+  color: #2ecc71;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.savings-source {
+  font-size: 0.7rem;
+  color: var(--text-tertiary, #999);
+  font-style: italic;
+}
+
+.dark-mode .savings-source {
+  color: var(--text-tertiary, #aaa);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .dark-mode .stat-value {
@@ -502,9 +592,13 @@ body, html {
 }
 
 .gas-price-label {
-  margin-top: 0.5rem;
-  color: var(--text-secondary, #666);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  color: var(--text-tertiary, #a3a3a3);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .dark-mode .gas-price-label {
@@ -2393,224 +2487,275 @@ body, html {
 }
 
 .gas-info {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary, #666);
-  text-align: center;
-  border-top: 1px rgba(255, 255, 255, 0.1);
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #888);
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .dark-mode .gas-info {
-  color: var(--text-secondary, #a0a0a0);
+  color: var(--text-tertiary, #888);
+}
+
+.gas-market-note {
+  color: var(--primary);
+  background: rgba(79, 70, 229, 0.15);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
+  display: block;
+  width: 100%;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  text-align: center;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(79, 70, 229, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+  }
+}
+
+.dark-mode .gas-market-note {
+  background: rgba(79, 70, 229, 0.2);
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Gas Optimization Feature */
 .feature-tag {
-  background-color: var(--primary, #3498db);
+  background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
   font-size: 0.65rem;
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 1rem;
   margin-left: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .gas-options {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 }
 
 .gas-option {
-  flex: 1;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 1rem;
-  padding: 1rem 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--gas-option-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--gas-option-border, rgba(255, 255, 255, 0.1));
   cursor: pointer;
-  border: 2px solid transparent;
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .gas-option:hover {
-  background-color: rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .gas-option.selected {
-  background-color: rgba(52, 152, 219, 0.15);
-  border-color: var(--primary, #3498db);
-  box-shadow: 0 0 0 2px var(--primary, #3498db), 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.gas-option::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: transparent;
-  transition: all 0.2s ease;
-}
-
-.gas-option:nth-child(1)::before {
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
-}
-
-.gas-option:nth-child(2)::before {
-  background: linear-gradient(90deg, #3498db, #2980b9);
-}
-
-.gas-option:nth-child(3)::before {
-  background: linear-gradient(90deg, #f1c40f, #f39c12);
+  border-color: var(--primary);
+  background: var(--gas-option-selected-bg, rgba(0, 162, 255, 0.05));
+  box-shadow: 0 0 0 1px var(--primary), 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .gas-option-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .gas-option-name {
+  font-size: 0.875rem;
   font-weight: 600;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-}
-
-.gas-option:nth-child(1) .gas-option-name::before {
-  content: "⚡";
-  margin-right: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.gas-option:nth-child(2) .gas-option-name::before {
-  content: "⏱️";
-  margin-right: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.gas-option:nth-child(3) .gas-option-name::before {
-  content: "🚀";
-  margin-right: 0.4rem;
-  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .gas-option-price {
-  font-size: 0.95rem;
-  font-family: monospace;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.15);
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .gas-option-savings {
-  font-size: 0.85rem;
-  color: var(--success, #2ecc71);
-  margin-bottom: 0.5rem;
-  padding-left: 0.25rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
 }
 
-.gas-option:nth-child(3) .gas-option-savings {
-  color: #e74c3c;
+/* Positive savings (green) */
+.gas-option-savings:contains("+") {
+  color: var(--success, #2ecc71);
+}
+
+/* Negative savings (red) */
+.gas-option-savings:contains("-") {
+  color: var(--danger, #e74c3c);
 }
 
 .gas-option-time {
   font-size: 0.8rem;
-  color: var(--text-secondary, #718096);
-  padding-left: 0.25rem;
+  color: var(--text-tertiary, #a0a0a0);
+  margin-top: auto;
 }
 
-.feature-tag {
-  background-color: var(--primary, #3498db);
-  color: white;
-  font-size: 0.65rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 1rem;
-  margin-left: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  animation: pulse 2s infinite;
+/* Gas option type-specific styles */
+.gas-option.economy {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(46, 204, 113, 0.1) 100%);
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 5px rgba(52, 152, 219, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
-  }
+.gas-option.standard {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(52, 152, 219, 0.1) 100%);
 }
 
-.gas-savings-highlight {
-  margin-top: 1rem;
-  background-color: rgba(46, 204, 113, 0.15);
-  border: 1px solid rgba(46, 204, 113, 0.3);
-  border-radius: 0.75rem;
-  padding: 0.75rem;
-  display: flex;
-  align-items: center;
-}
-
-.savings-icon {
-  font-size: 1.5rem;
-  margin-right: 0.75rem;
-}
-
-.savings-text {
-  flex: 1;
-}
-
-.savings-title {
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-
-.savings-amount {
-  font-size: 0.8rem;
-  color: var(--success, #2ecc71);
-}
-
-.savings-source {
-  font-size: 0.75rem;
-  color: var(--text-secondary, #718096);
-  margin-top: 0.25rem;
+.gas-option.fast {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.05) 0%, rgba(155, 89, 182, 0.1) 100%);
 }
 
 .gas-data-source {
   font-size: 0.75rem;
+  color: var(--text-tertiary, #a3a3a3);
   text-align: right;
-  color: var(--text-secondary, #718096);
   margin-top: 0.75rem;
-  font-style: italic;
-  background: rgba(0, 0, 0, 0.1);
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
   display: inline-block;
-  float: right;
+  margin-left: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .gas-data-source {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.market-update {
+  font-weight: 500;
+  color: var(--primary);
+  background: rgba(79, 70, 229, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  margin-left: 0.5rem;
+  display: inline-block;
+}
+
+.dark-mode .market-update {
+  background: rgba(79, 70, 229, 0.15);
+  color: #a3bcff;
+}
+
+.price-update-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #a0a0a0);
+  margin-left: 1rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-block;
+  animation: fadeInOut 2s infinite;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.dark-mode .price-update-time {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-tertiary, #a0a0a0);
+}
+
+h2 .refresh-btn {
+  background: rgba(79, 70, 229, 0.1);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  color: var(--primary);
+  transition: all 0.2s;
+  vertical-align: middle;
+}
+
+h2 .refresh-btn:hover {
+  background: rgba(79, 70, 229, 0.2);
+  transform: rotate(30deg);
+}
+
+.dark-mode h2 .refresh-btn {
+  background: rgba(79, 70, 229, 0.2);
+  color: #a3bcff;
+}
+
+.dark-mode h2 .refresh-btn:hover {
+  background: rgba(79, 70, 229, 0.3);
+}
+
+.update-time {
+  font-size: 0.65rem;
+  color: var(--text-tertiary, #a0a0a0);
+  margin-left: 0.5rem;
+  opacity: 0.8;
 }
 
 .optimization-badge {
-  background-color: var(--success, #2ecc71);
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: white;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 1rem;
   margin-left: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  vertical-align: middle;
+  letter-spacing: 0.5px;
+  animation: pulse 2s infinite;
+}
+
+/* Update gas savings highlight appearance */
+.gas-savings-highlight {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  box-shadow: 0 2px 6px rgba(46, 204, 113, 0.1);
+}
+
+.dark-mode .gas-savings-highlight {
+  background: rgba(46, 204, 113, 0.08);
+  border-color: rgba(46, 204, 113, 0.15);
 }
