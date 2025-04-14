@@ -132,101 +132,99 @@ const Settings = () => {
 
   return (
     <div className="settings-page">
-      {/* Settings Header Section */}
-      <section className="settings-header-section">
-        <div className="settings-header-container">
-          <h1 className="settings-header-title">Account Settings</h1>
-          <p className="settings-header-description">
-            Manage your profile information, preferences, security settings, and connected wallets
-          </p>
+      {/* Simple Header like Dashboard */}
+      <div className="dashboard-header">
+        <h1>Settings</h1>
+        {/* Optional: User profile/controls */}
       </div>
-      </section>
-      
-      {/* Settings Content Section */}
-      <section className="settings-content-section">
-        <div className="settings-content-container">
-          {/* Settings Navigation */}
-          <nav className="settings-navigation">
-            <div className="settings-nav-header">
-              <h2 className="settings-nav-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-                Settings
-              </h2>
-            </div>
+
+      {/* Wrap existing content in page-content */} 
+      <div className="page-content">
+        {/* Settings Content Section */} 
+        <section className="settings-content-section">
+          <div className="settings-content-container">
+            {/* Settings Navigation */}
+            <nav className="settings-navigation">
+              <div className="settings-nav-header">
+                <h2 className="settings-nav-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  Settings
+                </h2>
+              </div>
+              
+              <div className="settings-nav-list">
+                <div className="settings-nav-item">
+                  <button 
+                    className={`settings-nav-link ${activeSection === 'profile' ? 'active' : ''}`}
+                    onClick={() => setActiveSection('profile')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Profile
+                  </button>
+                </div>
+                
+                <div className="settings-nav-item">
+                  <button 
+                    className={`settings-nav-link ${activeSection === 'security' ? 'active' : ''}`}
+                    onClick={() => setActiveSection('security')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Security
+                  </button>
+                </div>
+                
+                <div className="settings-nav-item">
+                  <button 
+                    className={`settings-nav-link ${activeSection === 'wallets' ? 'active' : ''}`}
+                    onClick={() => setActiveSection('wallets')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                      <path d="M16 12h4"></path>
+                      <circle cx="18" cy="12" r="1"></circle>
+                    </svg>
+                    Wallets
+                  </button>
+                </div>
+                
+                <div className="settings-nav-item">
+                  <button 
+                    className={`settings-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
+                    onClick={() => setActiveSection('notifications')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    Notifications
+                  </button>
+                </div>
+                
+                <div className="settings-nav-item">
+                  <button 
+                    className={`settings-nav-link ${activeSection === 'preferences' ? 'active' : ''}`}
+                    onClick={() => setActiveSection('preferences')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                    </svg>
+                    Preferences
+                  </button>
+                </div>
+              </div>
+            </nav>
             
-            <div className="settings-nav-list">
-              <div className="settings-nav-item">
-                <button 
-                  className={`settings-nav-link ${activeSection === 'profile' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('profile')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  Profile
-                </button>
-              </div>
-              
-              <div className="settings-nav-item">
-                <button 
-                  className={`settings-nav-link ${activeSection === 'security' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('security')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                  Security
-                </button>
-              </div>
-              
-              <div className="settings-nav-item">
-                <button 
-                  className={`settings-nav-link ${activeSection === 'wallets' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('wallets')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 12h4"></path>
-                    <circle cx="18" cy="12" r="1"></circle>
-                  </svg>
-                  Wallets
-                </button>
-              </div>
-              
-              <div className="settings-nav-item">
-                <button 
-                  className={`settings-nav-link ${activeSection === 'notifications' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('notifications')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                  </svg>
-                  Notifications
-                </button>
-              </div>
-              
-              <div className="settings-nav-item">
-                <button 
-                  className={`settings-nav-link ${activeSection === 'preferences' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('preferences')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                  </svg>
-                  Preferences
-                </button>
-              </div>
-            </div>
-          </nav>
-          
-          {/* Settings Main Content */}
-          <div className="settings-main-content">
+            {/* Settings Main Content */}
+            <div className="settings-main-content">
       {message.text && (
               <div className={`settings-alert ${message.type}`}>
                 <div className="settings-alert-icon">
@@ -449,9 +447,10 @@ const Settings = () => {
               </div>
             )}
           </div>
-      </div>
+        </div>
       </section>
     </div>
+  </div>
   );
 };
 

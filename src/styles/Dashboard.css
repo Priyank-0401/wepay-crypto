@@ -541,7 +541,7 @@ body, html {
 
 .stat-icon.incoming {
   background-color: rgba(52, 152, 219, 0.3);
-  color: #3498db;
+  color:rgb(255, 255, 255);
 }
 
 .stat-icon.incoming::before {
@@ -552,7 +552,7 @@ body, html {
 
 .stat-icon.outgoing {
   background-color: rgba(142, 68, 173, 0.3);
-  color: #8e44ad;
+  color:rgb(255, 255, 255);
 }
 
 .stat-icon.outgoing::before {
@@ -563,7 +563,7 @@ body, html {
 
 .stat-icon.gas {
   background-color: rgba(245, 158, 11, 0.3);
-  color: #f59e0b;
+  color:rgb(46, 11, 245);
 }
 
 .stat-icon.gas::before {
@@ -573,7 +573,7 @@ body, html {
 
 .stat-icon.transaction {
   background-color: rgba(79, 70, 229, 0.3);
-  color: #4f46e5;
+  color:rgb(255, 255, 255);
 }
 
 .stat-icon.transaction::before {

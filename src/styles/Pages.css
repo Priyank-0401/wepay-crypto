@@ -2,10 +2,71 @@
 
 .page-container {
   width: 100%;
-  padding: 1.5rem 2rem;
+  padding: 0; /* Remove default padding */
   box-sizing: border-box;
+  min-height: 100vh; /* Ensure it takes full height */
+  background-color: #13151f; /* Default page background (Help page, etc.) */
 }
 
+/* Match dashboard background for specific pages */
+.dashboard-page, 
+.transactions-page,
+.accounts-page,
+.budgets-page,
+/* .reports-page, */
+.settings-page {
+  background-color: #121624; /* EXACT Dashboard dark background */
+}
+
+.page-content {
+  padding: 1.5rem 2rem; /* Add padding to the content area instead */
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent; /* Default to transparent */
+}
+
+/* Ensure page-content inside specific pages is also transparent */
+.dashboard-page .page-content,
+.transactions-page .page-content,
+.accounts-page .page-content,
+.budgets-page .page-content,
+/* .reports-page .page-content, */
+.settings-page .page-content {
+  background-color: transparent;
+}
+
+/* Make page cards transparent ONLY on pages matching dashboard background */
+.dashboard-page .page-card,
+.transactions-page .page-card,
+.accounts-page .page-card,
+.budgets-page .page-card,
+/* .reports-page .page-card, */
+.settings-page .page-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0; /* Remove card padding */
+  margin-bottom: 1.5rem; /* Adjust spacing */
+}
+
+/* Original card styling for other pages or nested cards */
+.page-card {
+  background: var(--bg-content, #171d2d); /* Original card background */
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.page-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Remove header styles that conflict */
+/* Remove page-header styles as dashboard-header is used now 
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -34,39 +95,12 @@
   background: linear-gradient(to right, var(--primary), var(--primary-light));
   border-radius: 4px;
 }
+*/
 
+/* Keep page actions styling if needed separately */
 .page-actions {
   display: flex;
   gap: 0.75rem;
-}
-
-.page-card {
-  background: var(--bg-content, #171d2d);
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.04);
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.page-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.page-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.page-card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary, #f0f0f0);
-  margin: 0;
 }
 
 /* Form controls */
@@ -273,12 +307,6 @@
 @media (max-width: 768px) {
   .page-container {
     padding: 1rem;
-  }
-  
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
   }
   
   .page-actions {

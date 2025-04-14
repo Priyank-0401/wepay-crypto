@@ -137,121 +137,127 @@ const Transactions = () => {
   };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">Transaction History</h1>
+    <div className="page-container transactions-page">
+      {/* Simple Header like Dashboard */}
+      <div className="dashboard-header">
+        <h1>Transactions</h1>
+        {/* Optional: Add user profile/controls if needed, matching Dashboard */}
+        {/* 
+        <div className="user-profile">
+          <div className="profile-icon">P</div>
+        </div> 
+        */}
       </div>
-      
-      {error && (
-        <div className="error-message">
-          <p>{error}</p>
-        </div>
-      )}
-      
-      <div className="page-card">
-        <div className="page-card-header">
-          <h2 className="page-card-title">Transaction History</h2>
-        </div>
-        
-        <div className="filter-controls">
-          <div className="form-control">
-            <label htmlFor="type-filter">Filter by Type</label>
-            <select 
-              id="type-filter"
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              <option value="all">All Types</option>
-              <option value="Transfer">Sent</option>
-              <option value="Receive">Received</option>
-            </select>
-          </div>
-        </div>
-        
-        {loading ? (
-          <div className="loading-state">
-            <span className="spinner"></span> Loading transactions...
-          </div>
-        ) : filteredTransactions.length > 0 ? (
-          <div className="table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Type</th>
-                  <th>Address</th>
-                  <th>Amount</th>
-                  <th>Gas Fee</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTransactions.map((tx) => {
-                  const isOutgoing = tx.type === 'Transfer';
-                  // Show the recipient address for outgoing, sender for incoming
-                  const displayAddress = isOutgoing ? tx.to : tx.from;
-                  
-                  return (
-                    <tr key={tx.id}>
-                      <td>{formatDate(tx.timestamp)}</td>
-                      <td>
-                        <span className={`badge ${isOutgoing ? 'badge-info' : 'badge-success'}`}>
-                          {isOutgoing ? 'Sent' : 'Received'}
-                        </span>
-                      </td>
-                      <td style={{ fontFamily: 'monospace' }}>{formatAddress(displayAddress)}</td>
-                      <td>
-                        <span style={{ 
-                          color: isOutgoing ? 'var(--danger)' : 'var(--success)',
-                          fontWeight: '600'
-                        }}>
-                          {isOutgoing ? '-' : '+'}{TransactionService.weiToEth(tx.value)} ETH
-                        </span>
-                      </td>
-                      <td>{TransactionService.calculateGasFee(tx.gas, tx.gasPrice)} ETH</td>
-                      <td>
-                        <span className={`badge ${getBadgeClass(tx.status)}`}>
-                          {tx.status ? tx.status.charAt(0).toUpperCase() + tx.status.slice(1) : 'Unknown'}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="empty-state">
-            <p>No transactions found</p>
-            <p className="empty-state-sub">Transactions will appear here after you send or receive ETH</p>
+
+      <div className="page-content"> 
+        {error && (
+          <div className="error-message">
+            <p>{error}</p>
           </div>
         )}
-      </div>
-      
-      <div className="page-card">
-        <div className="page-card-header">
-          <h2 className="page-card-title">Transaction Statistics</h2>
+        
+        {/* Main Content Area (No longer wrapped in a card) */}
+        <div className="transactions-content-area"> 
+          {/* Removed redundant card header */}
+          {/* <div className="page-card-header">
+            <h2 className="page-card-title">Transaction History</h2>
+          </div> */}
+          
+          <div className="filter-controls">
+            <div className="form-control">
+              <label htmlFor="type-filter">Filter by Type</label>
+              <select 
+                id="type-filter"
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+              >
+                <option value="all">All Types</option>
+                <option value="Transfer">Sent</option>
+                <option value="Receive">Received</option>
+              </select>
+            </div>
+          </div>
+          
+          {loading ? (
+            <div className="loading-state">
+              <span className="spinner"></span> Loading transactions...
+            </div>
+          ) : filteredTransactions.length > 0 ? (
+            <div className="table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Address</th>
+                    <th>Amount</th>
+                    <th>Gas Fee</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredTransactions.map((tx) => {
+                    const isOutgoing = tx.type === 'Transfer';
+                    const displayAddress = isOutgoing ? tx.to : tx.from;
+                    
+                    return (
+                      <tr key={tx.id}>
+                        <td>{formatDate(tx.timestamp)}</td>
+                        <td>
+                          <span className={`badge ${isOutgoing ? 'badge-info' : 'badge-success'}`}>
+                            {isOutgoing ? 'Sent' : 'Received'}
+                          </span>
+                        </td>
+                        <td style={{ fontFamily: 'monospace' }}>{formatAddress(displayAddress)}</td>
+                        <td>
+                          <span style={{ 
+                            color: isOutgoing ? 'var(--danger)' : 'var(--success)',
+                            fontWeight: '600'
+                          }}>
+                            {isOutgoing ? '-' : '+'}{TransactionService.weiToEth(tx.value)} ETH
+                          </span>
+                        </td>
+                        <td>{TransactionService.calculateGasFee(tx.gas, tx.gasPrice)} ETH</td>
+                        <td>
+                          <span className={`badge ${getBadgeClass(tx.status)}`}>
+                            {tx.status ? tx.status.charAt(0).toUpperCase() + tx.status.slice(1) : 'Unknown'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>No transactions found</p>
+              <p className="empty-state-sub">Transactions will appear here after you send or receive ETH</p>
+            </div>
+          )}
         </div>
         
-        <div className="form-grid">
-          <div className="stat-card">
-            <div className="stat-title">Total Sent</div>
-            <div className="stat-value">{calculateTotalSent()} ETH</div>
+        {/* Statistics Card (Keep as a card) */}
+        <div className="page-card stats-summary-card">
+          <div className="page-card-header">
+            <h2 className="page-card-title">Transaction Statistics</h2>
           </div>
           
-          <div className="stat-card">
-            <div className="stat-title">Total Received</div>
-            <div className="stat-value">{calculateTotalReceived()} ETH</div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-title">Gas Fees Spent</div>
-            <div className="stat-value">{calculateTotalGasFees()} ETH</div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-title">Transaction Count</div>
-            <div className="stat-value">{transactions.length}</div>
+          <div className="form-grid stats-grid">
+            <div className="stat-card">
+              <div className="stat-title">Total Sent</div>
+              <div className="stat-value expense">-{calculateTotalSent()} ETH</div>
+            </div>
+            
+            <div className="stat-card">
+              <div className="stat-title">Total Received</div>
+              <div className="stat-value income">+{calculateTotalReceived()} ETH</div>
+            </div>
+            
+            <div className="stat-card">
+              <div className="stat-title">Gas Fees Spent</div>
+              <div className="stat-value">{calculateTotalGasFees()} ETH</div>
+            </div>
           </div>
         </div>
       </div>

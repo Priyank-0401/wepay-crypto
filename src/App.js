@@ -12,7 +12,6 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Accounts from './pages/Accounts';
 import Budgets from './pages/Budgets';
-import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
@@ -159,7 +158,6 @@ const App = () => {
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/budgets" element={<Budgets />} />
-                <Route path="/reports" element={<Reports />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/help" element={<Help />} />

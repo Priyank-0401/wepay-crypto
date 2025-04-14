@@ -82,11 +82,7 @@ const Dashboard = () => {
     totalFees: 0,
     avgValue: 0
   });
-  const [defiPortfolio, setDefiPortfolio] = useState([
-    { protocol: 'Aave', amount: 0.05, apy: 3.2, value: 0 },
-    { protocol: 'Compound', amount: 0.1, apy: 2.8, value: 0 },
-    { protocol: 'Uniswap', amount: 0.02, apy: 5.4, value: 0 }
-  ]);
+
 
   // State for gas optimization
   const [gasPriceRecommendations, setGasPriceRecommendations] = useState({
@@ -222,11 +218,13 @@ const Dashboard = () => {
       avgValue: 0.12
     });
     
+    /* REMOVED DEFI PORTFOLIO MOCK UPDATE
     // Update DeFi portfolio values based on ETH price
     setDefiPortfolio(prevState => prevState.map(item => ({
       ...item,
       value: (item.amount * 1566.12).toFixed(2)  // Updated to current market price
     })));
+    */
     
     console.log("Mock data loaded successfully");
   }, [fetchTransactions]);
@@ -324,11 +322,13 @@ const Dashboard = () => {
         const volumeInB = marketData.total_volume.usd / 1000000000;
         setVolume24h(parseFloat(volumeInB.toFixed(2)));
         
+        /* REMOVED DEFI PORTFOLIO UPDATE
         // Update DeFi portfolio values based on ETH price
         setDefiPortfolio(prevState => prevState.map(item => ({
           ...item,
           value: (item.amount * currentPrice).toFixed(2)
         })));
+        */
         
         // Update last price update timestamp and data source
         setLastPriceUpdate(new Date());
@@ -382,11 +382,13 @@ const Dashboard = () => {
           setMarketCap(altPriceData.marketCap || 188.25);
           setVolume24h(altPriceData.volume || 7.82);
           
+          /* REMOVED DEFI PORTFOLIO UPDATE
           // Update DeFi portfolio values based on current ETH price
           setDefiPortfolio(prevState => prevState.map(item => ({
             ...item,
             value: (item.amount * altPriceData.price).toFixed(2)
           })));
+          */
           
           // Update last price update timestamp
           setLastPriceUpdate(new Date());
@@ -440,11 +442,13 @@ const Dashboard = () => {
         
         setPriceHistory(mockHistory);
         
+        /* REMOVED DEFI PORTFOLIO UPDATE
         // Update DeFi portfolio values based on current ETH price
         setDefiPortfolio(prevState => prevState.map(item => ({
           ...item,
           value: (item.amount * 1566.12).toFixed(2)  // Current market price
         })));
+        */
         
         // Update last price update timestamp even for fallback data
         setLastPriceUpdate(new Date());
@@ -1574,6 +1578,7 @@ const Dashboard = () => {
           {renderRecentTransactionsContent()}
         </div>
         
+        {/* REMOVED DEFI PORTFOLIO SECTION
         <div className="defi-portfolio-section">
           <h2>DeFi Portfolio</h2>
           <button className="view-all-btn">Manage Assets</button>
@@ -1600,6 +1605,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
+        */}
       </div>
       
       {/* Send ETH Transaction Modal */}
