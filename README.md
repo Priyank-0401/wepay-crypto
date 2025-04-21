@@ -103,3 +103,97 @@ For any queries or support, feel free to reach out:
 ---
 
 🔹 **WePay – Secure, Scalable, and Seamless Blockchain Payments** 🔹  
+
+# WePay Crypto - Gas Optimization
+
+This project implements Ethereum smart contracts for gas optimization through transaction batching.
+
+## Setup & Testing
+
+### Prerequisites
+- Ganache (for local Ethereum blockchain)
+- Truffle (for deployment and testing)
+- Node.js & npm
+
+### Installation
+
+1. Install Truffle globally (if not installed):
+   ```
+   npm install -g truffle
+   ```
+
+2. Start Ganache:
+   - Use Ganache GUI or run `ganache-cli` in a terminal window
+   - Make sure it's running on port 7545 (default for Ganache GUI) or update the port in `truffle-config.js`
+
+### Deploy Contracts
+
+1. Compile the contracts:
+   ```
+   truffle compile
+   ```
+
+2. Deploy the contracts to Ganache:
+   ```
+   truffle migrate --reset
+   ```
+
+### Testing the Contracts
+
+1. Run the automated tests:
+   ```
+   truffle test
+   ```
+
+2. Run the interactive script:
+   ```
+   truffle exec scripts/interact.js
+   ```
+
+### Interactive Console
+
+You can interact with the contracts directly using the Truffle console:
+
+```
+truffle console
+```
+
+Then try these commands:
+
+```javascript
+// Get contract instances
+const optimizer = await WePayGasOptimizer.deployed()
+const optimizerV1 = await WePayGasOptimizerV1.deployed()
+
+// Get accounts
+const accounts = await web3.eth.getAccounts()
+const user = accounts[1]
+
+// Deposit 1 ETH
+await optimizer.deposit({ from: user, value: web3.utils.toWei('1', 'ether') })
+
+// Check balance
+const balance = await optimizer.balances(user)
+web3.utils.fromWei(balance, 'ether')
+
+// Submit a transaction
+await optimizer.submitTransaction(accounts[2], web3.utils.toWei('0.1', 'ether'), '0x', { from: user })
+
+// Submit multiple transactions to trigger batch execution
+for (let i = 0; i < 3; i++) {
+  await optimizer.submitTransaction(accounts[2], web3.utils.toWei('0.1', 'ether'), '0x', { from: user })
+}
+```
+
+## Contract Overview
+
+- `WePayGasOptimizer.sol`: Basic gas optimization through transaction batching
+- `WePayGasOptimizerV1.sol`: Enhanced implementation with security features (access control, reentrancy protection)
+
+## Features
+
+- Batch multiple transactions to save gas
+- Automatic batch execution when threshold is reached
+- MEV protection
+- Flash loan attack protection
+- Reentrancy protection
