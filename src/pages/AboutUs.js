@@ -28,146 +28,245 @@ const AboutUs = () => {
       {/* Main page content */}
       <div className="info-page-header">
         <h1 className="info-page-title">About WePay</h1>
-        <p className="info-page-subtitle">Our mission is to make Ethereum transactions accessible, secure, and simple for everyone.</p>
+        <p className="info-page-subtitle">Revolutionizing digital payments through blockchain technology.</p>
       </div>
 
       <div className="info-page-content">
         <section className="info-section">
-          <h2 className="info-section-title">Our Story</h2>
-          <p className="info-text">
-            WePay was founded in 2021 by a team of blockchain enthusiasts and fintech experts who recognized the need for a more user-friendly way to interact with Ethereum and other cryptocurrencies.
-          </p>
-          <p className="info-text">
-            Our founders were early adopters of blockchain technology who experienced firsthand the challenges that newcomers faced. They set out to create a platform that would eliminate these barriers and make cryptocurrency transactions as simple as traditional banking.
-          </p>
-          <p className="info-text">
-            From our humble beginnings as a small startup, we've grown into a leading platform trusted by thousands of users worldwide for their daily Ethereum transactions.
-          </p>
-        </section>
-        
-        <section className="info-section">
           <h2 className="info-section-title">Our Mission</h2>
-          <p className="info-text">
-            At WePay, we're on a mission to democratize access to blockchain technology by creating intuitive tools that anyone can use, regardless of their technical background.
-          </p>
-          
-          <div className="info-grid">
-            <div className="info-card">
-              <div className="info-card-icon">🌎</div>
-              <h3 className="info-card-title">Accessibility</h3>
-              <p className="info-card-text">
-                We believe that blockchain technology should be accessible to everyone, not just technical experts and early adopters.
+          <div className="mission-content">
+            <div className="mission-text">
+              <p className="info-text">
+                At WePay, our mission is to create a more accessible, secure, and efficient financial ecosystem by leveraging the power of blockchain technology. We believe that everyone deserves access to modern financial services, regardless of their location or background.
+              </p>
+              <p className="info-text">
+                We're building a platform that simplifies cryptocurrency transactions, making them as easy and familiar as traditional payment methods while maintaining the security and transparency that blockchain technology offers.
               </p>
             </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">🔒</div>
-              <h3 className="info-card-title">Security</h3>
-              <p className="info-card-text">
-                We're committed to implementing the highest security standards to protect our users' assets and information.
-              </p>
+            <div className="mission-image" style={{ backgroundColor: "#f2f2f2", height: "300px", width: "450px", borderRadius: "8px" }}></div>
+          </div>
+        </section>
+
+        <section className="info-section">
+          <h2 className="info-section-title">Our Story</h2>
+          <div className="story-timeline">
+            <div className="timeline-item">
+              <div className="timeline-year">2019</div>
+              <div className="timeline-content">
+                <h3>The Beginning</h3>
+                <p>
+                  WePay was founded by a group of fintech and blockchain enthusiasts who recognized the potential of cryptocurrency to transform the global payment landscape but were frustrated by its complexity for everyday users.
+                </p>
+              </div>
             </div>
             
-            <div className="info-card">
-              <div className="info-card-icon">💡</div>
-              <h3 className="info-card-title">Innovation</h3>
-              <p className="info-card-text">
-                We continuously push the boundaries of what's possible in blockchain user experience and functionality.
-              </p>
+            <div className="timeline-item">
+              <div className="timeline-year">2020</div>
+              <div className="timeline-content">
+                <h3>First Prototype</h3>
+                <p>
+                  After months of development, we launched our first prototype, allowing users to send and receive cryptocurrency payments with a simple, intuitive interface.
+                </p>
+              </div>
             </div>
             
-            <div className="info-card">
-              <div className="info-card-icon">👥</div>
-              <h3 className="info-card-title">Community</h3>
-              <p className="info-card-text">
-                We foster a strong community of users and developers who share our vision for the future of finance.
-              </p>
+            <div className="timeline-item">
+              <div className="timeline-year">2021</div>
+              <div className="timeline-content">
+                <h3>Seed Funding</h3>
+                <p>
+                  We secured $5 million in seed funding from leading venture capital firms specializing in blockchain technology and fintech innovations.
+                </p>
+              </div>
+            </div>
+            
+            <div className="timeline-item">
+              <div className="timeline-year">2022</div>
+              <div className="timeline-content">
+                <h3>Beta Launch</h3>
+                <p>
+                  Our beta platform was launched to 10,000 early adopters, who provided valuable feedback that helped shape the current version of WePay.
+                </p>
+              </div>
+            </div>
+            
+            <div className="timeline-item">
+              <div className="timeline-year">2023</div>
+              <div className="timeline-content">
+                <h3>Official Launch</h3>
+                <p>
+                  WePay officially launched to the public, offering seamless cryptocurrency payments, wallet services, and integration with traditional banking systems.
+                </p>
+              </div>
+            </div>
+            
+            <div className="timeline-item">
+              <div className="timeline-year">2024</div>
+              <div className="timeline-content">
+                <h3>Global Expansion</h3>
+                <p>
+                  We expanded our services to over 30 countries, making WePay accessible to millions of users worldwide.
+                </p>
+              </div>
+            </div>
+            
+            <div className="timeline-item">
+              <div className="timeline-year">2025</div>
+              <div className="timeline-content">
+                <h3>The Future</h3>
+                <p>
+                  We're continuing to innovate and expand, with plans to introduce new features and partnerships that will further bridge the gap between traditional finance and the world of cryptocurrency.
+                </p>
+              </div>
             </div>
           </div>
         </section>
-        
+
         <section className="info-section">
           <h2 className="info-section-title">Our Values</h2>
-          <p className="info-text">
-            These core values guide everything we do at WePay, from product development to customer support.
-          </p>
-          
-          <div className="info-grid">
-            <div className="info-card">
-              <div className="info-card-icon">⚖️</div>
-              <h3 className="info-card-title">Transparency</h3>
-              <p className="info-card-text">
-                We operate with complete transparency, ensuring that our users always know what's happening with their transactions and data.
+          <div className="values-grid">
+            <div className="value-card">
+              <h3 className="value-title">Accessibility</h3>
+              <p className="value-description">
+                We believe financial services should be accessible to everyone, regardless of their background or location.
               </p>
             </div>
             
-            <div className="info-card">
-              <div className="info-card-icon">🤝</div>
-              <h3 className="info-card-title">Trust</h3>
-              <p className="info-card-text">
-                We build trust through reliable service, clear communication, and always putting our users' interests first.
+            <div className="value-card">
+              <h3 className="value-title">Security</h3>
+              <p className="value-description">
+                We prioritize the security of our users' assets and data, implementing the highest standards of protection.
               </p>
             </div>
             
-            <div className="info-card">
-              <div className="info-card-icon">🚀</div>
-              <h3 className="info-card-title">Excellence</h3>
-              <p className="info-card-text">
-                We strive for excellence in everything we do, from the code we write to the customer service we provide.
+            <div className="value-card">
+              <h3 className="value-title">Transparency</h3>
+              <p className="value-description">
+                We operate with complete transparency, ensuring our users understand how our platform works and how their assets are managed.
               </p>
             </div>
             
-            <div className="info-card">
-              <div className="info-card-icon">🌱</div>
-              <h3 className="info-card-title">Sustainability</h3>
-              <p className="info-card-text">
-                We're committed to making blockchain technology more sustainable and reducing our environmental impact.
+            <div className="value-card">
+              <h3 className="value-title">Innovation</h3>
+              <p className="value-description">
+                We continuously innovate to improve our platform and stay at the forefront of blockchain technology.
+              </p>
+            </div>
+            
+            <div className="value-card">
+              <h3 className="value-title">Community</h3>
+              <p className="value-description">
+                We value our community of users and actively seek their input to shape the future of WePay.
+              </p>
+            </div>
+            
+            <div className="value-card">
+              <h3 className="value-title">Integrity</h3>
+              <p className="value-description">
+                We act with integrity in all our dealings, ensuring trust and reliability for our users.
               </p>
             </div>
           </div>
         </section>
-        
+
         <section className="info-section">
-          <h2 className="info-section-title">Our Achievements</h2>
-          <p className="info-text">
-            Since our founding, we've reached several significant milestones that showcase our growth and impact.
-          </p>
-          
-          <div className="info-grid" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
-            <div className="info-card">
-              <h3 className="info-card-title">100,000+ Users</h3>
-              <p className="info-card-text">
-                We've grown our user base to over 100,000 active users across 75+ countries.
+          <h2 className="info-section-title">Our Technology</h2>
+          <div className="tech-content">
+            <div className="tech-text">
+              <p className="info-text">
+                WePay is built on a robust blockchain infrastructure that ensures security, speed, and reliability for all transactions. Our technology combines the best aspects of decentralized finance with user-friendly interfaces to create a seamless payment experience.
+              </p>
+              <p className="info-text">
+                We utilize smart contracts for secure and transparent transactions, advanced encryption for data protection, and innovative consensus mechanisms for efficient validation of transactions.
+              </p>
+              <p className="info-text">
+                Our platform is designed to be scalable, capable of handling millions of transactions per second without compromising on security or user experience.
               </p>
             </div>
-            
-            <div className="info-card">
-              <h3 className="info-card-title">$500M+ Processed</h3>
-              <p className="info-card-text">
-                We've securely processed over half a billion dollars in Ethereum transactions.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <h3 className="info-card-title">Series B Funding</h3>
-              <p className="info-card-text">
-                We've secured $45M in Series B funding to accelerate our product development and global expansion.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <h3 className="info-card-title">Industry Recognition</h3>
-              <p className="info-card-text">
-                We've received multiple awards for innovation and user experience in the blockchain industry.
-              </p>
+            <div className="tech-features">
+              <div className="tech-feature">
+                <h3>Smart Contracts</h3>
+                <p>Self-executing contracts with the terms directly written into code.</p>
+              </div>
+              <div className="tech-feature">
+                <h3>Multi-chain Support</h3>
+                <p>Support for multiple blockchain networks to provide flexibility and interoperability.</p>
+              </div>
+              <div className="tech-feature">
+                <h3>Advanced Encryption</h3>
+                <p>State-of-the-art encryption to protect user data and transactions.</p>
+              </div>
+              <div className="tech-feature">
+                <h3>Decentralized Identity</h3>
+                <p>Self-sovereign identity solutions for secure and private authentication.</p>
+              </div>
             </div>
           </div>
         </section>
+
+        <section className="info-section">
+          <h2 className="info-section-title">Impact</h2>
+          <div className="impact-stats">
+            <div className="stat-card">
+              <div className="stat-number">3M+</div>
+              <div className="stat-label">Users Worldwide</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">$500M+</div>
+              <div className="stat-label">Transactions Processed</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">30+</div>
+              <div className="stat-label">Countries Served</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">100+</div>
+              <div className="stat-label">Business Partners</div>
+            </div>
+          </div>
+          <div className="impact-stories">
+            <h3>Success Stories</h3>
+            <div className="story-cards">
+              <div className="story-card">
+                <h4>"WePay transformed how I manage my international business."</h4>
+                <p>- Sarah T., Small Business Owner</p>
+              </div>
+              <div className="story-card">
+                <h4>"The security and ease of use make WePay my go-to payment platform."</h4>
+                <p>- Michael R., Freelancer</p>
+              </div>
+              <div className="story-card">
+                <h4>"WePay has made cryptocurrency accessible to our entire community."</h4>
+                <p>- Community Bank of Westfield</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="info-section">
+          <h2 className="info-section-title">Investors & Partners</h2>
+          <p className="info-text">
+            We're proud to be backed by leading investors in the blockchain and fintech space and to partner with organizations that share our vision for the future of digital payments.
+          </p>
+          <div className="partners-grid">
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+          </div>
+        </section>
         
-        <div className="cta-section" style={{ padding: "3rem", textAlign: "center", marginTop: "3rem" }}>
-          <h2>Join us on our journey</h2>
-          <p>Create an account today and experience the future of Ethereum transactions.</p>
-          <Link to="/signup" className="btn btn-primary" style={{ marginTop: "1.5rem" }}>Get Started Now</Link>
+        <div className="cta-section" style={{ padding: "3rem", textAlign: "center", marginTop: "3rem", backgroundColor: "#f8f9fa", borderRadius: "12px" }}>
+          <h2>Join Our Journey</h2>
+          <p>Be part of the future of digital payments and help us make financial services more accessible to everyone.</p>
+          <div className="cta-buttons" style={{ marginTop: "1.5rem" }}>
+            <Link to="/signup" className="btn btn-primary" style={{ marginRight: "1rem" }}>Create Account</Link>
+            <Link to="/careers" className="btn btn-secondary">Join Our Team</Link>
+          </div>
         </div>
       </div>
       
