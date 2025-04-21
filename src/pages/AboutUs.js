@@ -18,7 +18,6 @@ const AboutUs = () => {
         <div className="nav-links">
           <Link to="/about-us">About Us</Link>
           <Link to="/team">Team</Link>
-          <Link to="/careers">Careers</Link>
         </div>
         <div className="auth-buttons">
           <Link to="/login" className="login-btn">Log In</Link>
@@ -29,7 +28,7 @@ const AboutUs = () => {
       {/* Main page content */}
       <div className="info-page-header">
         <h1 className="info-page-title">About WePay</h1>
-        <p className="info-page-subtitle">Revolutionizing digital payments through blockchain technology.</p>
+        <p className="info-page-subtitle">A blockchain-powered payment platform designed for secure and tamper-proof financial transactions.</p>
       </div>
 
       <div className="info-page-content">
@@ -38,10 +37,10 @@ const AboutUs = () => {
           <div className="mission-content">
             <div className="mission-text">
               <p className="info-text">
-                At WePay, our mission is to create a more accessible, secure, and efficient financial ecosystem by leveraging the power of blockchain technology. We believe that everyone deserves access to modern financial services, regardless of their location or background.
+                At WePay, our mission is to revolutionize digital payments through blockchain technology, creating a secure, transparent, and efficient financial ecosystem for everyone. We believe in the power of decentralized systems to eliminate fraud and third-party interference in financial transactions.
               </p>
               <p className="info-text">
-                We're building a platform that simplifies cryptocurrency transactions, making them as easy and familiar as traditional payment methods while maintaining the security and transparency that blockchain technology offers.
+                We're building a scalable platform that can handle thousands of concurrent users today, with a vision to process millions of microtransactions annually in the future, all while maintaining the highest levels of security and user privacy.
               </p>
             </div>
             <div className="mission-image" style={{ backgroundColor: "#f2f2f2", height: "300px", width: "450px", borderRadius: "8px" }}></div>
@@ -52,71 +51,61 @@ const AboutUs = () => {
           <h2 className="info-section-title">Our Story</h2>
           <div className="story-timeline">
             <div className="timeline-item">
-              <div className="timeline-year">2019</div>
+              <div className="timeline-year">2024</div>
               <div className="timeline-content">
                 <h3>The Beginning</h3>
                 <p>
-                  WePay was founded by a group of fintech and blockchain enthusiasts who recognized the potential of cryptocurrency to transform the global payment landscape but were frustrated by its complexity for everyday users.
+                  WePay was conceived by Priyank Pahwa, a blockchain developer with a vision to create a secure and efficient financial transaction platform leveraging blockchain technology.
                 </p>
               </div>
             </div>
             
             <div className="timeline-item">
-              <div className="timeline-year">2020</div>
+              <div className="timeline-year">Jan 2025</div>
               <div className="timeline-content">
-                <h3>First Prototype</h3>
+                <h3>Development Started</h3>
                 <p>
-                  After months of development, we launched our first prototype, allowing users to send and receive cryptocurrency payments with a simple, intuitive interface.
+                  Development of WePay began, focusing on creating smart contracts in Solidity that could ensure fraud-proof transactions without third-party interference.
                 </p>
               </div>
             </div>
             
             <div className="timeline-item">
-              <div className="timeline-year">2021</div>
+              <div className="timeline-year">Feb 2025</div>
               <div className="timeline-content">
-                <h3>Seed Funding</h3>
+                <h3>Frontend Development</h3>
                 <p>
-                  We secured $5 million in seed funding from leading venture capital firms specializing in blockchain technology and fintech innovations.
+                  We designed a user-friendly frontend with React.js to enhance accessibility and ease of use for all users, regardless of their technical background.
                 </p>
               </div>
             </div>
             
             <div className="timeline-item">
-              <div className="timeline-year">2022</div>
+              <div className="timeline-year">Mar 2025</div>
               <div className="timeline-content">
-                <h3>Beta Launch</h3>
+                <h3>Backend Architecture</h3>
                 <p>
-                  Our beta platform was launched to 10,000 early adopters, who provided valuable feedback that helped shape the current version of WePay.
+                  Our team architected a scalable backend capable of handling thousands of transactions per month, with plans to scale to millions of microtransactions annually.
                 </p>
               </div>
             </div>
             
             <div className="timeline-item">
-              <div className="timeline-year">2023</div>
+              <div className="timeline-year">Apr 2025</div>
               <div className="timeline-content">
-                <h3>Official Launch</h3>
+                <h3>Wallet Integration</h3>
                 <p>
-                  WePay officially launched to the public, offering seamless cryptocurrency payments, wallet services, and integration with traditional banking systems.
+                  We integrated wallet management features, laying the groundwork for future multi-currency transaction support and cross-border capabilities.
                 </p>
               </div>
             </div>
             
             <div className="timeline-item">
-              <div className="timeline-year">2024</div>
-              <div className="timeline-content">
-                <h3>Global Expansion</h3>
-                <p>
-                  We expanded our services to over 30 countries, making WePay accessible to millions of users worldwide.
-                </p>
-              </div>
-            </div>
-            
-            <div className="timeline-item">
-              <div className="timeline-year">2025</div>
+              <div className="timeline-year">2025+</div>
               <div className="timeline-content">
                 <h3>The Future</h3>
                 <p>
-                  We're continuing to innovate and expand, with plans to introduce new features and partnerships that will further bridge the gap between traditional finance and the world of cryptocurrency.
+                  We're working on scaling the platform to support 1,000+ concurrent users and businesses globally, with a focus on facilitating seamless cross-border transactions with minimal fees.
                 </p>
               </div>
             </div>
@@ -127,44 +116,44 @@ const AboutUs = () => {
           <h2 className="info-section-title">Our Values</h2>
           <div className="values-grid">
             <div className="value-card">
-              <h3 className="value-title">Accessibility</h3>
-              <p className="value-description">
-                We believe financial services should be accessible to everyone, regardless of their background or location.
-              </p>
-            </div>
-            
-            <div className="value-card">
               <h3 className="value-title">Security</h3>
               <p className="value-description">
-                We prioritize the security of our users' assets and data, implementing the highest standards of protection.
+                We prioritize the security of financial transactions through blockchain technology, ensuring tamper-proof and fraud-resistant operations.
               </p>
             </div>
             
             <div className="value-card">
               <h3 className="value-title">Transparency</h3>
               <p className="value-description">
-                We operate with complete transparency, ensuring our users understand how our platform works and how their assets are managed.
+                We believe in complete transparency in financial transactions, leveraging blockchain's immutable ledger to provide verifiable records.
+              </p>
+            </div>
+            
+            <div className="value-card">
+              <h3 className="value-title">Efficiency</h3>
+              <p className="value-description">
+                Our platform is designed to process transactions efficiently, reducing costs and time compared to traditional financial systems.
+              </p>
+            </div>
+            
+            <div className="value-card">
+              <h3 className="value-title">Accessibility</h3>
+              <p className="value-description">
+                We strive to make blockchain technology accessible to everyone through intuitive interfaces and user-friendly experiences.
               </p>
             </div>
             
             <div className="value-card">
               <h3 className="value-title">Innovation</h3>
               <p className="value-description">
-                We continuously innovate to improve our platform and stay at the forefront of blockchain technology.
+                We continuously innovate to improve our platform and stay at the forefront of blockchain and financial technology.
               </p>
             </div>
             
             <div className="value-card">
-              <h3 className="value-title">Community</h3>
+              <h3 className="value-title">Scalability</h3>
               <p className="value-description">
-                We value our community of users and actively seek their input to shape the future of WePay.
-              </p>
-            </div>
-            
-            <div className="value-card">
-              <h3 className="value-title">Integrity</h3>
-              <p className="value-description">
-                We act with integrity in all our dealings, ensuring trust and reliability for our users.
+                We're building systems that can scale from thousands to millions of users and transactions without compromising performance.
               </p>
             </div>
           </div>
@@ -175,103 +164,75 @@ const AboutUs = () => {
           <div className="tech-content">
             <div className="tech-text">
               <p className="info-text">
-                WePay is built on a robust blockchain infrastructure that ensures security, speed, and reliability for all transactions. Our technology combines the best aspects of decentralized finance with user-friendly interfaces to create a seamless payment experience.
+                WePay is built on robust blockchain infrastructure using Solidity smart contracts that ensure security, speed, and reliability for all transactions. Our technology combines decentralized finance principles with user-friendly interfaces to create a seamless payment experience.
               </p>
               <p className="info-text">
-                We utilize smart contracts for secure and transparent transactions, advanced encryption for data protection, and innovative consensus mechanisms for efficient validation of transactions.
+                We've engineered smart contracts to ensure fraud-proof transactions and eliminate third-party interference, while our React.js frontend enhances accessibility and ease of use for all users.
               </p>
               <p className="info-text">
-                Our platform is designed to be scalable, capable of handling millions of transactions per second without compromising on security or user experience.
+                Our platform is designed to be scalable, capable of handling thousands of transactions today with a clear path to processing millions of microtransactions in the future.
               </p>
             </div>
             <div className="tech-features">
               <div className="tech-feature">
                 <h3>Smart Contracts</h3>
-                <p>Self-executing contracts with the terms directly written into code.</p>
+                <p>Secure, fraud-resistant contracts written in Solidity to automate and protect transactions.</p>
               </div>
               <div className="tech-feature">
-                <h3>Multi-chain Support</h3>
-                <p>Support for multiple blockchain networks to provide flexibility and interoperability.</p>
+                <h3>React.js Frontend</h3>
+                <p>User-friendly interface designed for accessibility and ease of use for all users.</p>
               </div>
               <div className="tech-feature">
-                <h3>Advanced Encryption</h3>
-                <p>State-of-the-art encryption to protect user data and transactions.</p>
+                <h3>Scalable Backend</h3>
+                <p>Architecture capable of handling growing transaction volumes efficiently and securely.</p>
               </div>
               <div className="tech-feature">
-                <h3>Decentralized Identity</h3>
-                <p>Self-sovereign identity solutions for secure and private authentication.</p>
+                <h3>Wallet Management</h3>
+                <p>Integrated wallet features with plans for multi-currency and cross-border support.</p>
               </div>
             </div>
           </div>
         </section>
 
         <section className="info-section">
-          <h2 className="info-section-title">Impact</h2>
-          <div className="impact-stats">
-            <div className="stat-card">
-              <div className="stat-number">3M+</div>
-              <div className="stat-label">Users Worldwide</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">$500M+</div>
-              <div className="stat-label">Transactions Processed</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">30+</div>
-              <div className="stat-label">Countries Served</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">100+</div>
-              <div className="stat-label">Business Partners</div>
-            </div>
-          </div>
-          <div className="impact-stories">
-            <h3>Success Stories</h3>
-            <div className="story-cards">
-              <div className="story-card">
-                <h4>"WePay transformed how I manage my international business."</h4>
-                <p>- Sarah T., Small Business Owner</p>
+          <h2 className="info-section-title">Future Vision</h2>
+          <div className="vision-content">
+            <p className="info-text">
+              Our vision for WePay extends beyond its current capabilities. We're working towards:
+            </p>
+            <div className="vision-points">
+              <div className="vision-point">
+                <h3>Global Reach</h3>
+                <p>Scaling the platform to support 1,000+ concurrent users and businesses globally.</p>
               </div>
-              <div className="story-card">
-                <h4>"The security and ease of use make WePay my go-to payment platform."</h4>
-                <p>- Michael R., Freelancer</p>
+              <div className="vision-point">
+                <h3>Cross-Border Transactions</h3>
+                <p>Facilitating seamless international payments with minimal fees using blockchain technology.</p>
               </div>
-              <div className="story-card">
-                <h4>"WePay has made cryptocurrency accessible to our entire community."</h4>
-                <p>- Community Bank of Westfield</p>
+              <div className="vision-point">
+                <h3>Multi-Currency Support</h3>
+                <p>Expanding our wallet management features to support transactions in multiple cryptocurrencies.</p>
+              </div>
+              <div className="vision-point">
+                <h3>Enterprise Integration</h3>
+                <p>Creating APIs and tools for businesses to easily integrate WePay into their financial systems.</p>
               </div>
             </div>
           </div>
         </section>
 
         <section className="info-section">
-          <h2 className="info-section-title">Investors & Partners</h2>
+          <h2 className="info-section-title">Join Our Journey</h2>
           <p className="info-text">
-            We're proud to be backed by leading investors in the blockchain and fintech space and to partner with organizations that share our vision for the future of digital payments.
+            We're building the future of digital payments, and we invite you to be part of this revolutionary journey. Whether you're an individual looking for secure transactions or a business seeking efficient payment solutions, WePay is designed with you in mind.
           </p>
-          <div className="partners-grid">
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
-            <div className="partner-logo" style={{ backgroundColor: "#f2f2f2", height: "100px", width: "200px", borderRadius: "8px" }}></div>
+          <div className="cta-container">
+            <Link to="/signup" className="cta-button">Create Your Account</Link>
+            <Link to="/team" className="secondary-button">Meet Our Team</Link>
           </div>
         </section>
-        
-        <div className="cta-section" style={{ padding: "3rem", textAlign: "center", marginTop: "3rem", backgroundColor: "#f8f9fa", borderRadius: "12px" }}>
-          <h2>Join Our Journey</h2>
-          <p>Be part of the future of digital payments and help us make financial services more accessible to everyone.</p>
-          <div className="cta-buttons" style={{ marginTop: "1.5rem" }}>
-            <Link to="/signup" className="btn btn-primary" style={{ marginRight: "1rem" }}>Create Account</Link>
-            <Link to="/careers" className="btn btn-secondary">Join Our Team</Link>
-          </div>
-        </div>
       </div>
-      
-      {/* Footer */}
+
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-logo">
@@ -279,33 +240,21 @@ const AboutUs = () => {
               <img src={logoImage} alt="WePay Logo" className="footer-logo-img" />
               <span className="logo-text">WePay</span>
             </Link>
+            <p>Secure blockchain transactions for everyone</p>
           </div>
           <div className="footer-links">
-            <div className="footer-column">
-              <h4>Product</h4>
-              <ul>
-                <li><Link to="/features">Features</Link></li>
-                <li><Link to="/security">Security</Link></li>
-                <li><Link to="/advantages">Advantages</Link></li>
-                <li><Link to="/roadmap">Roadmap</Link></li>
-              </ul>
-            </div>
             <div className="footer-column">
               <h4>Company</h4>
               <ul>
                 <li><Link to="/about-us">About Us</Link></li>
-                <li><Link to="/team">Team</Link></li>
-                <li><Link to="/careers">Careers</Link></li>
-                <li><Link to="/press">Press</Link></li>
+                <li><Link to="/team">Our Team</Link></li>
               </ul>
             </div>
             <div className="footer-column">
               <h4>Resources</h4>
               <ul>
-                <li><Link to="/documentation">Documentation</Link></li>
-                <li><Link to="/api">API</Link></li>
-                <li><Link to="/blog">Blog</Link></li>
-                <li><Link to="/community">Community</Link></li>
+                <li><Link to="/features">Features</Link></li>
+                <li><Link to="/security">Security</Link></li>
               </ul>
             </div>
             <div className="footer-column">
@@ -313,20 +262,13 @@ const AboutUs = () => {
               <ul>
                 <li><Link to="/terms-of-service">Terms of Service</Link></li>
                 <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-                <li><Link to="/compliance">Compliance</Link></li>
-                <li><Link to="/cookie-policy">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="social-icons">
-            <a href="#twitter" className="social-icon">Twitter</a>
-            <a href="#telegram" className="social-icon">Telegram</a>
-            <a href="#discord" className="social-icon">Discord</a>
-            <a href="#github" className="social-icon">GitHub</a>
-          </div>
-          <p className="copyright">© 2025 WePay. All rights reserved.</p>
+          <p>&copy; 2025 WePay. All rights reserved.</p>
+          <p>Created by Priyank Pahwa</p>
         </div>
       </footer>
     </div>

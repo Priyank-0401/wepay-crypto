@@ -34,8 +34,8 @@ const LandingPage = () => {
       <main>
         <section className="hero-section">
           <div className="hero-content">
-            <h1>SECURE ETHEREUM TRANSACTIONS FOR THE MODERN WORLD</h1>
-            <p>Fast, secure, and transparent transactions on the Ethereum blockchain with minimal fees. Send and receive digital assets instantly across the globe.</p>
+            <h1>SECURE BLOCKCHAIN TRANSACTIONS FOR THE MODERN WORLD</h1>
+            <p>Fast, secure, and tamper-proof transactions on the blockchain with minimal fees. Send and receive digital assets instantly across the globe.</p>
             <div className="cta-buttons">
               <Link to="/signup" className="get-started-btn">Get Started</Link>
               <a href="#learn-more" className="learn-more-btn">Learn More</a>
@@ -73,7 +73,7 @@ const LandingPage = () => {
 
         <section className="features-nav">
           <div className="feature-tags">
-            <span>ETHEREUM</span>
+            <span>BLOCKCHAIN</span>
             <span>FAST TRANSACTIONS</span>
             <span>SECURE</span>
             <span>LOW FEES</span>
@@ -83,27 +83,27 @@ const LandingPage = () => {
         </section>
 
         <section className="app-features" id="features">
-          <h2>CUTTING-EDGE ETHEREUM TRANSACTION PLATFORM</h2>
+          <h2>CUTTING-EDGE BLOCKCHAIN TRANSACTION PLATFORM</h2>
           <div className="feature-cards">
             <div className="feature-card">
               <div className="feature-icon">🔒</div>
-              <h3>Military-Grade Security</h3>
-              <p>End-to-end encryption and multi-signature authentication for your assets</p>
+              <h3>Fraud-Proof Security</h3>
+              <p>Smart contracts ensure secure and tamper-proof transactions without third-party interference</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">⚡</div>
               <h3>Lightning-Fast Transfers</h3>
-              <p>Optimized transactions with confirmations in seconds, not minutes</p>
+              <p>Optimized transactions with confirmations in seconds for efficient financial operations</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">💰</div>
               <h3>Low Fees</h3>
-              <p>Enjoy low platform fees - you only pay standard Ethereum gas fees</p>
+              <p>Enjoy minimal transaction fees with our optimized blockchain implementation</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">🔍</div>
               <h3>Complete Transparency</h3>
-              <p>View the entire transaction history on the Ethereum blockchain</p>
+              <p>View the entire transaction history on the immutable blockchain ledger</p>
             </div>
           </div>
         </section>
@@ -120,13 +120,13 @@ const LandingPage = () => {
             <div className="step">
               <div className="step-number">2</div>
               <h3>Connect Wallet</h3>
-              <p>Link your existing Ethereum wallet or create a new one through our platform</p>
+              <p>Link your existing digital wallet or create a new one through our platform</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
               <div className="step-number">3</div>
               <h3>Send & Receive</h3>
-              <p>Instantly transfer ETH to any wallet address or username on our platform</p>
+              <p>Instantly transfer funds to any wallet address or username on our platform</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
@@ -138,11 +138,11 @@ const LandingPage = () => {
         </section>
 
         <section className="supported-currencies">
-          <h2>POWERED BY ETHEREUM</h2>
+          <h2>POWERED BY BLOCKCHAIN TECHNOLOGY</h2>
           <div className="currency">
-            <div className="ethereum-logo"></div>
-            <div className="currency-name">Ethereum</div>
-            <p className="currency-desc">The world's programmable blockchain that powers our secure and transparent transaction platform.</p>
+            <div className="blockchain-logo"></div>
+            <div className="currency-name">Solidity Smart Contracts</div>
+            <p className="currency-desc">Built with advanced smart contracts that ensure secure, transparent, and efficient financial transactions.</p>
           </div>
         </section>
 
@@ -151,23 +151,23 @@ const LandingPage = () => {
           <div className="security-features">
             <div className="security-feature">
               <div className="security-icon">🛡️</div>
-              <h3>Smart Contract Audits</h3>
-              <p>Thoroughly audited smart contracts ensuring your assets remain secure</p>
+              <h3>Smart Contract Security</h3>
+              <p>Thoroughly engineered smart contracts ensuring your assets remain secure and transactions tamper-proof</p>
             </div>
             <div className="security-feature">
               <div className="security-icon">🔒</div>
-              <h3>Two-Factor Authentication</h3>
+              <h3>Multi-Factor Authentication</h3>
               <p>Additional layer of security for all account actions and transactions</p>
             </div>
             <div className="security-feature">
               <div className="security-icon">👁️</div>
               <h3>Real-time Monitoring</h3>
-              <p>24/7 automated systems checking for suspicious activity</p>
+              <p>Automated systems checking for suspicious activity and ensuring transaction integrity</p>
             </div>
             <div className="security-feature">
               <div className="security-icon">🔄</div>
-              <h3>Regular Security Audits</h3>
-              <p>Quarterly security assessments by leading cybersecurity firms</p>
+              <h3>Blockchain Verification</h3>
+              <p>All transactions are verified and recorded on the blockchain for complete transparency</p>
             </div>
           </div>
         </section>
@@ -178,8 +178,8 @@ const LandingPage = () => {
             
             <div className="advantage-card">
               <div className="advantage-icon">🚀</div>
-              <h3>Superior Performance</h3>
-              <p>Our optimized integration with the Ethereum blockchain ensures faster transaction processing than conventional platforms.</p>
+              <h3>Scalable Performance</h3>
+              <p>Our platform is designed to handle thousands of transactions per month today, with plans to scale to millions of microtransactions in the future.</p>
             </div>
             <div className="advantage-card">
               <div className="advantage-icon">🔐</div>
@@ -194,43 +194,43 @@ const LandingPage = () => {
             <div className="advantage-card">
               <div className="advantage-icon">📊</div>
               <h3>Advanced Analytics</h3>
-              <p>Track your transaction history with detailed analytics and visualizations not available on standard Ethereum wallets.</p>
+              <p>Track your transaction history with detailed analytics and visualizations to better manage your finances.</p>
             </div>
             <div className="advantage-card">
               <div className="advantage-icon">🤝</div>
               <h3>User-Friendly Experience</h3>
-              <p>Simplified interface that makes Ethereum transactions accessible to everyone, not just crypto experts.</p>
+              <p>Simplified interface designed with React.js that makes blockchain transactions accessible to everyone, not just tech experts.</p>
             </div>
           </div>
         </section>
 
         <section className="testimonials">
-          <h2>TRUSTED BY ETHEREUM USERS</h2>
+          <h2>TRUSTED BY USERS</h2>
           <div className="testimonial-grid">
             <div className="testimonial-card">
               <div className="testimonial-content">
-                "WePay has revolutionized how I transfer ETH. The speed and security are unmatched, and I love that it's completely free."
+                "WePay has revolutionized how I handle digital transactions. The security and speed are impressive, and I love the user-friendly interface."
               </div>
-              <div className="testimonial-author">Alex Chen, DeFi Developer</div>
+              <div className="testimonial-author">Alex Chen, Tech Enthusiast</div>
             </div>
             <div className="testimonial-card">
               <div className="testimonial-content">
-                "Being able to send ETH without any platform fees is incredible. I've saved significantly on transaction costs."
+                "Being able to send transactions with minimal fees is incredible. The platform is intuitive and the blockchain integration provides peace of mind."
               </div>
-              <div className="testimonial-author">Maria Rodriguez, Blockchain Enthusiast</div>
+              <div className="testimonial-author">Maria Rodriguez, Small Business Owner</div>
             </div>
             <div className="testimonial-card">
               <div className="testimonial-content">
-                "Their user interface makes Ethereum transactions simple even for beginners. The analytics features are a game-changer."
+                "Their user interface makes blockchain transactions simple even for beginners. The analytics features are extremely helpful for tracking my finances."
               </div>
-              <div className="testimonial-author">John Wilson, ETH Investor</div>
+              <div className="testimonial-author">John Wilson, Freelancer</div>
             </div>
           </div>
         </section>
         
         <section className="cta-section">
           <h2>START TRANSACTING WITH CONFIDENCE</h2>
-          <p>Join thousands of users who trust WePay for their Ethereum transactions</p>
+          <p>Join the growing community of users who trust WePay for their secure blockchain transactions</p>
           <Link to="/signup" className="cta-btn">CREATE YOUR FREE ACCOUNT NOW</Link>
         </section>
       </main>
@@ -242,33 +242,21 @@ const LandingPage = () => {
               <img src={logoImage} alt="WePay Logo" className="footer-logo-img" />
               <span className="logo-text">WePay</span>
             </Link>
+            <p>Secure blockchain transactions for everyone</p>
           </div>
           <div className="footer-links">
-            <div className="footer-column">
-              <h4>Product</h4>
-              <ul>
-                <li><Link to="/features">Features</Link></li>
-                <li><Link to="/security">Security</Link></li>
-                <li><Link to="/advantages">Advantages</Link></li>
-                <li><Link to="/roadmap">Roadmap</Link></li>
-              </ul>
-            </div>
             <div className="footer-column">
               <h4>Company</h4>
               <ul>
                 <li><Link to="/about-us">About Us</Link></li>
-                <li><Link to="/team">Team</Link></li>
-                <li><Link to="/careers">Careers</Link></li>
-                <li><Link to="/press">Press</Link></li>
+                <li><Link to="/team">Our Team</Link></li>
               </ul>
             </div>
             <div className="footer-column">
               <h4>Resources</h4>
               <ul>
-                <li><Link to="/documentation">Documentation</Link></li>
-                <li><Link to="/api">API</Link></li>
-                <li><Link to="/blog">Blog</Link></li>
-                <li><Link to="/community">Community</Link></li>
+                <li><Link to="/features">Features</Link></li>
+                <li><Link to="/security">Security</Link></li>
               </ul>
             </div>
             <div className="footer-column">
@@ -276,20 +264,13 @@ const LandingPage = () => {
               <ul>
                 <li><Link to="/terms-of-service">Terms of Service</Link></li>
                 <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-                <li><Link to="/compliance">Compliance</Link></li>
-                <li><Link to="/cookie-policy">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="social-icons">
-            <a href="#twitter" className="social-icon">Twitter</a>
-            <a href="#telegram" className="social-icon">Telegram</a>
-            <a href="#discord" className="social-icon">Discord</a>
-            <a href="#github" className="social-icon">GitHub</a>
-          </div>
-          <p className="copyright">© 2025 WePay. All rights reserved.</p>
+          <p>&copy; 2025 WePay. All rights reserved.</p>
+          <p>Created by Priyank Pahwa</p>
         </div>
       </footer>
     </div>
