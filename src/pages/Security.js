@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Pages.css';
-import '../styles/Features.css';
+import '../styles/Security.css';
 import logoImage from '../assets/images/logo.png';
 
-const Features = () => {
+const Security = () => {
   return (
     <div className="info-page">
       {/* Header section with navigation */}
@@ -28,153 +28,178 @@ const Features = () => {
 
       {/* Main page content */}
       <div className="info-page-header">
-        <h1 className="info-page-title">Powerful Ethereum Transaction Features</h1>
-        <p className="info-page-subtitle">Discover the innovative features that make WePay the leading platform for Ethereum transactions.</p>
+        <h1 className="info-page-title">Security Infrastructure</h1>
+        <p className="info-page-subtitle">Our commitment to protecting your transactions and data with industry-leading security measures.</p>
       </div>
 
       <div className="info-page-content">
         <section className="info-section">
-          <h2 className="info-section-title">Key Features</h2>
+          <h2 className="info-section-title">Enterprise-Grade Security</h2>
           <p className="info-text">
-            WePay provides a comprehensive suite of features designed to make Ethereum transactions simple, secure, and efficient for both beginners and experienced users.
+            At WePay, security is our top priority. We employ multiple layers of protection to ensure your assets and personal information remain safe at all times.
           </p>
           
           <div className="info-grid">
             <div className="info-card">
-              <div className="info-card-icon">🔄</div>
-              <h3 className="info-card-title">Seamless Transactions</h3>
+              <div className="info-card-icon">🔒</div>
+              <h3 className="info-card-title">End-to-End Encryption</h3>
               <p className="info-card-text">
-                Send and receive Ethereum with just a few clicks. Our intuitive interface makes transactions faster and simpler than ever before.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">📊</div>
-              <h3 className="info-card-title">Real-time Analytics</h3>
-              <p className="info-card-text">
-                Track your transaction history, monitor gas fees, and analyze your portfolio with our powerful analytics dashboard.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">🔐</div>
-              <h3 className="info-card-title">Enhanced Security</h3>
-              <p className="info-card-text">
-                Rest easy knowing your transactions are protected by military-grade encryption and multi-factor authentication.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">⚡</div>
-              <h3 className="info-card-title">Lightning Fast</h3>
-              <p className="info-card-text">
-                Experience the fastest transaction speeds with our optimized gas fee estimator and network prioritization.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">📱</div>
-              <h3 className="info-card-title">Mobile Ready</h3>
-              <p className="info-card-text">
-                Access your wallet and make transactions on the go with our responsive mobile interface.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">🔄</div>
-              <h3 className="info-card-title">Automatic Backups</h3>
-              <p className="info-card-text">
-                Never worry about losing access to your funds with our secure automatic backup system.
-              </p>
-            </div>
-          </div>
-        </section>
-        
-        <section className="info-section">
-          <h2 className="info-section-title">Advanced Capabilities</h2>
-          <p className="info-text">
-            Beyond basic transactions, WePay offers advanced features for power users and businesses who need more control over their Ethereum operations.
-          </p>
-          
-          <div className="info-grid">
-            <div className="info-card">
-              <div className="info-card-icon">📃</div>
-              <h3 className="info-card-title">Smart Contract Integration</h3>
-              <p className="info-card-text">
-                Deploy and interact with smart contracts directly through our intuitive interface, without writing a single line of code.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">⏱️</div>
-              <h3 className="info-card-title">Scheduled Transactions</h3>
-              <p className="info-card-text">
-                Plan ahead by scheduling transactions for future dates and times, perfect for recurring payments.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">📈</div>
-              <h3 className="info-card-title">Market Insights</h3>
-              <p className="info-card-text">
-                Make informed decisions with real-time market data, price alerts, and trend analysis integrated directly into your dashboard.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">🔗</div>
-              <h3 className="info-card-title">Multi-chain Support</h3>
-              <p className="info-card-text">
-                Expand beyond Ethereum with support for multiple blockchain networks and cross-chain transactions.
-              </p>
-            </div>
-          </div>
-        </section>
-        
-        <section className="info-section">
-          <h2 className="info-section-title">Enterprise Solutions</h2>
-          <p className="info-text">
-            WePay offers specialized features for businesses and enterprise clients who require robust solutions for their blockchain operations.
-          </p>
-          
-          <div className="info-grid">
-            <div className="info-card">
-              <div className="info-card-icon">👥</div>
-              <h3 className="info-card-title">Team Management</h3>
-              <p className="info-card-text">
-                Set up multiple user accounts with customizable permissions and approval workflows for your organization.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">📊</div>
-              <h3 className="info-card-title">Advanced Reporting</h3>
-              <p className="info-card-text">
-                Generate comprehensive reports for accounting, taxation, and compliance purposes with just a few clicks.
-              </p>
-            </div>
-            
-            <div className="info-card">
-              <div className="info-card-icon">🔌</div>
-              <h3 className="info-card-title">API Integration</h3>
-              <p className="info-card-text">
-                Integrate WePay's powerful features directly into your existing software and systems with our robust API.
+                All data transmitted through our platform is protected with military-grade encryption, ensuring your information can't be intercepted or read by unauthorized parties.
               </p>
             </div>
             
             <div className="info-card">
               <div className="info-card-icon">🛡️</div>
-              <h3 className="info-card-title">Custom Security Policies</h3>
+              <h3 className="info-card-title">Multi-Factor Authentication</h3>
               <p className="info-card-text">
-                Implement custom security policies tailored to your organization's specific requirements and risk profile.
+                Add an extra layer of protection to your account with our MFA options, including SMS verification, authenticator apps, and hardware security keys.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">👁️</div>
+              <h3 className="info-card-title">24/7 Monitoring</h3>
+              <p className="info-card-text">
+                Our security team monitors our systems around the clock for suspicious activities, preventing potential threats before they affect your account.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🔍</div>
+              <h3 className="info-card-title">Regular Security Audits</h3>
+              <p className="info-card-text">
+                We conduct frequent internal and third-party security audits to identify and address potential vulnerabilities in our systems.
+              </p>
+            </div>
+          </div>
+        </section>
+        
+        <section className="info-section">
+          <h2 className="info-section-title">Smart Contract Security</h2>
+          <p className="info-text">
+            As a blockchain-based platform, we take extraordinary measures to ensure our smart contracts are secure and reliable.
+          </p>
+          
+          <div className="info-grid">
+            <div className="info-card">
+              <div className="info-card-icon">📃</div>
+              <h3 className="info-card-title">Rigorous Code Reviews</h3>
+              <p className="info-card-text">
+                All smart contracts undergo extensive peer reviews by our security engineers before deployment to ensure they function exactly as intended.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🔬</div>
+              <h3 className="info-card-title">Third-Party Audits</h3>
+              <p className="info-card-text">
+                Our smart contracts are audited by leading blockchain security firms to verify their integrity and identify potential vulnerabilities.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🧪</div>
+              <h3 className="info-card-title">Comprehensive Testing</h3>
+              <p className="info-card-text">
+                We employ extensive testing protocols, including unit tests, integration tests, and simulation testing to ensure our smart contracts perform correctly under all conditions.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🔐</div>
+              <h3 className="info-card-title">Multi-Signature Controls</h3>
+              <p className="info-card-text">
+                Critical operations require multiple approvals through our multi-signature system, preventing unauthorized changes to smart contracts.
+              </p>
+            </div>
+          </div>
+        </section>
+        
+        <section className="info-section">
+          <h2 className="info-section-title">Data Protection</h2>
+          <p className="info-text">
+            We implement strict data protection measures to safeguard your personal information and transaction history.
+          </p>
+          
+          <div className="info-grid">
+            <div className="info-card">
+              <div className="info-card-icon">🔒</div>
+              <h3 className="info-card-title">Secure Data Storage</h3>
+              <p className="info-card-text">
+                All sensitive data is stored using industry-standard encryption protocols, with multiple layers of access controls.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🗄️</div>
+              <h3 className="info-card-title">Regular Backups</h3>
+              <p className="info-card-text">
+                We maintain regular, encrypted backups of all data to ensure continuity and prevent loss in case of system failures.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🚫</div>
+              <h3 className="info-card-title">Minimal Data Collection</h3>
+              <p className="info-card-text">
+                We adhere to the principle of data minimization, collecting only the information necessary to provide our services.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">📊</div>
+              <h3 className="info-card-title">Anonymized Analytics</h3>
+              <p className="info-card-text">
+                Any data used for platform improvement is anonymized and aggregated to protect your privacy.
+              </p>
+            </div>
+          </div>
+        </section>
+        
+        <section className="info-section">
+          <h2 className="info-section-title">User Security Features</h2>
+          <p className="info-text">
+            We provide you with powerful tools to maintain control over your account security.
+          </p>
+          
+          <div className="info-grid">
+            <div className="info-card">
+              <div className="info-card-icon">🔑</div>
+              <h3 className="info-card-title">Advanced Password Requirements</h3>
+              <p className="info-card-text">
+                We enforce strong password policies and regularly prompt for password updates to maintain account security.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">📱</div>
+              <h3 className="info-card-title">Device Management</h3>
+              <p className="info-card-text">
+                View and manage all devices that have accessed your account, with the ability to revoke access from any device instantly.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">🔔</div>
+              <h3 className="info-card-title">Activity Notifications</h3>
+              <p className="info-card-text">
+                Receive real-time alerts for account logins, transactions, and security-relevant changes to your account.
+              </p>
+            </div>
+            
+            <div className="info-card">
+              <div className="info-card-icon">⏱️</div>
+              <h3 className="info-card-title">Session Timeouts</h3>
+              <p className="info-card-text">
+                Automatic session timeouts after periods of inactivity protect your account when you're away from your device.
               </p>
             </div>
           </div>
         </section>
         
         <div className="cta-section" style={{ padding: "3rem", textAlign: "center", marginTop: "3rem" }}>
-          <h2>Ready to experience these features?</h2>
-          <p>Create your free account today and start making secure Ethereum transactions in minutes.</p>
+          <h2>Ready to experience secure blockchain transactions?</h2>
+          <p>Create your free account today and enjoy peace of mind with our comprehensive security infrastructure.</p>
           <Link to="/signup" className="btn btn-primary" style={{ marginTop: "1.5rem" }}>Get Started Now</Link>
         </div>
       </div>
@@ -241,4 +266,4 @@ const Features = () => {
   );
 };
 
-export default Features; 
+export default Security; 

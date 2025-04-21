@@ -1,0 +1,280 @@
+.careers-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.careers-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.careers-header h1 {
+  font-size: 2.5rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.careers-header p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.careers-why-join {
+  margin-bottom: 80px;
+}
+
+.careers-why-join h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.benefit-card {
+  background-color: #f5f5f7;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.benefit-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 15px;
+}
+
+.benefit-description {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.careers-culture {
+  margin-bottom: 80px;
+}
+
+.careers-culture h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.culture-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.culture-image {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.culture-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.careers-open-positions {
+  margin-bottom: 60px;
+}
+
+.careers-open-positions h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.careers-open-positions p {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.positions-filter {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.filter-button {
+  padding: 8px 20px;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #e0e0e0;
+}
+
+.filter-button.active {
+  background-color: #1a1a2e;
+  color: white;
+}
+
+.job-listings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.job-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 25px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.job-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.job-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.job-meta {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.job-description {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.apply-button {
+  display: inline-block;
+  padding: 10px 25px;
+  background-color: #1a1a2e;
+  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.apply-button:hover {
+  background-color: #16162b;
+}
+
+.careers-application-process {
+  background-color: #f8f9fa;
+  padding: 60px 40px;
+  border-radius: 8px;
+  margin-bottom: 60px;
+}
+
+.careers-application-process h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.process-step {
+  text-align: center;
+}
+
+.step-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background-color: #1a1a2e;
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 20px;
+}
+
+.step-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.step-description {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+@media (max-width: 992px) {
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .process-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .culture-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .positions-filter {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .process-steps {
+    grid-template-columns: 1fr;
+  }
+} 

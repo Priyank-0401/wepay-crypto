@@ -1,0 +1,135 @@
+/* Roadmap Page Specific Styles */
+
+.roadmap-container {
+  position: relative;
+  margin: 3rem 0;
+}
+
+.roadmap-timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.roadmap-timeline:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background-color: #e9ecef;
+  transform: translateX(-50%);
+}
+
+.roadmap-item {
+  position: relative;
+  margin-bottom: 4rem;
+  width: 45%;
+}
+
+.roadmap-item:nth-child(odd) {
+  left: 0;
+  padding-right: 3rem;
+  text-align: right;
+}
+
+.roadmap-item:nth-child(even) {
+  left: 55%;
+  padding-left: 3rem;
+}
+
+.roadmap-dot {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #0a85d1;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 3px rgba(10, 133, 209, 0.2);
+}
+
+.roadmap-item:nth-child(odd) .roadmap-dot {
+  right: -10px;
+}
+
+.roadmap-item:nth-child(even) .roadmap-dot {
+  left: -10px;
+}
+
+.roadmap-date {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #e9f7fe;
+  color: #0a85d1;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.roadmap-content {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.roadmap-status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-in-progress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-upcoming {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.roadmap-register {
+  text-align: center;
+  margin-top: 4rem;
+  padding: 2.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .roadmap-timeline:before {
+    left: 30px;
+  }
+  
+  .roadmap-item {
+    width: auto;
+    left: 0;
+    padding-left: 4rem;
+    padding-right: 1rem;
+    text-align: left;
+  }
+  
+  .roadmap-item:nth-child(odd) {
+    padding-right: 1rem;
+    text-align: left;
+  }
+  
+  .roadmap-item:nth-child(even) {
+    left: 0;
+  }
+  
+  .roadmap-item:nth-child(odd) .roadmap-dot,
+  .roadmap-item:nth-child(even) .roadmap-dot {
+    left: 20px;
+  }
+} 

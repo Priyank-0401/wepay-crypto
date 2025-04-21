@@ -1,0 +1,271 @@
+.documentation-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.documentation-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.documentation-header h1 {
+  font-size: 2.5rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.documentation-header p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.documentation-search {
+  max-width: 600px;
+  margin: 0 auto 60px;
+}
+
+.search-box {
+  display: flex;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.search-input {
+  flex: 1;
+  padding: 15px;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+}
+
+.search-button {
+  padding: 15px 20px;
+  background-color: #1a1a2e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #16162b;
+}
+
+.documentation-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 40px;
+}
+
+.documentation-sidebar {
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px);
+  overflow-y: auto;
+  background-color: #f5f5f7;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.documentation-sidebar h3 {
+  font-size: 1.2rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.docs-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.docs-nav-category {
+  margin-bottom: 20px;
+}
+
+.docs-nav-category > span {
+  display: block;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.docs-nav-category > ul {
+  padding-left: 15px;
+}
+
+.docs-nav li {
+  margin-bottom: 10px;
+}
+
+.docs-nav a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+  display: block;
+  padding: 5px 0;
+}
+
+.docs-nav a:hover {
+  color: #1a1a2e;
+}
+
+.docs-nav a.active {
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.documentation-content {
+  min-height: 800px;
+}
+
+.docs-section {
+  margin-bottom: 60px;
+}
+
+.docs-section h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.docs-section h3 {
+  font-size: 1.4rem;
+  color: #1a1a2e;
+  margin: 30px 0 15px;
+}
+
+.docs-section h4 {
+  font-size: 1.2rem;
+  color: #1a1a2e;
+  margin: 25px 0 15px;
+}
+
+.docs-section p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.docs-section ul, .docs-section ol {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.docs-section li {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.docs-section code {
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #e83e8c;
+}
+
+.docs-section pre {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.docs-section pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.docs-section .note {
+  background-color: #e6f7ff;
+  border-left: 4px solid #1890ff;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.docs-section .warning {
+  background-color: #fff9e6;
+  border-left: 4px solid #faad14;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.docs-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.docs-section th, .docs-section td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.docs-section th {
+  background-color: #f5f5f7;
+  font-weight: 600;
+}
+
+.docs-pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.docs-pagination a {
+  display: inline-flex;
+  align-items: center;
+  color: #1a1a2e;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.docs-pagination a:hover {
+  color: #16162b;
+  text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+  .documentation-layout {
+    grid-template-columns: 220px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .documentation-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .documentation-sidebar {
+    position: static;
+    height: auto;
+    margin-bottom: 40px;
+  }
+} 

@@ -1,0 +1,187 @@
+.team-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.team-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.team-header h1 {
+  font-size: 2.5rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.team-header p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.team-leadership {
+  margin-bottom: 80px;
+}
+
+.team-leadership h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.team-member {
+  text-align: center;
+}
+
+.member-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.member-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 5px;
+}
+
+.member-title {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.member-bio {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.team-departments {
+  margin-bottom: 60px;
+}
+
+.team-departments h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.department {
+  background-color: #f5f5f7;
+  padding: 40px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.department h3 {
+  font-size: 1.4rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.department-members {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.department-member {
+  text-align: center;
+}
+
+.department-member img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.department-member h4 {
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  margin-bottom: 5px;
+}
+
+.department-member p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.join-team {
+  text-align: center;
+  padding: 60px 0;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.join-team h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.join-team p {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  line-height: 1.6;
+}
+
+.join-team-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #1a1a2e;
+  color: white;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.join-team-button:hover {
+  background-color: #16162b;
+}
+
+@media (max-width: 992px) {
+  .leadership-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .department-members {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .leadership-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .department-members {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .department-members {
+    grid-template-columns: 1fr;
+  }
+} 
