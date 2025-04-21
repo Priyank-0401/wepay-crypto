@@ -17,6 +17,24 @@ import Settings from './pages/Settings';
 import Help from './pages/Help';
 import QuickTransfer from './pages/QuickTransfer';
 
+// Footer pages (new)
+import Features from './pages/Features';
+import Security from './pages/Security';
+import Advantages from './pages/Advantages';
+import Roadmap from './pages/Roadmap';
+import AboutUs from './pages/AboutUs';
+import Team from './pages/Team';
+import Careers from './pages/Careers';
+import Press from './pages/Press';
+import Documentation from './pages/Documentation';
+import Api from './pages/Api';
+import Blog from './pages/Blog';
+import Community from './pages/Community';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Compliance from './pages/Compliance';
+import CookiePolicy from './pages/CookiePolicy';
+
 // Components
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -150,6 +168,31 @@ const App = () => {
             <Route path="/signup" element={
               isAuthenticated ? <Navigate to={getLastVisitedPath()} /> : <Signup onSignup={signup} />
             } />
+            
+            {/* Public footer pages */}
+            {/* Product section */}
+            <Route path="/features" element={<Features />} />
+            <Route path="/security" element={<Security />} />
+            <Route path="/advantages" element={<Advantages />} />
+            <Route path="/roadmap" element={<Roadmap />} />
+            
+            {/* Company section */}
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/press" element={<Press />} />
+            
+            {/* Resources section */}
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="/api" element={<Api />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/community" element={<Community />} />
+            
+            {/* Legal section */}
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/compliance" element={<Compliance />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
             
             {/* Protected routes - wrapped in Layout component for authenticated users */}
             <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>

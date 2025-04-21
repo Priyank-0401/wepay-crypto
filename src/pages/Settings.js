@@ -260,43 +260,43 @@ const Settings = () => {
                   </h2>
                 </div>
                 <div className="settings-section-content">
-        <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit}>
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="name">Full Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter your full name"
                         className="settings-form-input"
-              />
-            </div>
+                      />
+                    </div>
             
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
                         className="settings-form-input"
-              />
+                      />
                       <p className="settings-info-text">Your email is used for notifications and account recovery.</p>
-            </div>
+                    </div>
             
                     <div className="settings-form-group">
                       <label className="settings-form-label" htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Enter your username"
+                      <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        placeholder="Enter your username"
                         className="settings-form-input"
                       />
                       <p className="settings-info-text">Your username is visible to other users in the ecosystem.</p>
@@ -321,7 +321,6 @@ const Settings = () => {
                       <button 
                         type="button" 
                         className="settings-action-btn danger"
-                        onClick={() => setMessage({ type: 'warning', text: 'This feature is not yet implemented.' })}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
@@ -332,18 +331,15 @@ const Settings = () => {
                       </button>
                       <button 
                         type="button" 
-                        className="settings-action-btn primary" 
+                        className="settings-action-btn"
                         disabled={true}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                        </svg>
                         Disabled Button
                       </button>
                     </div>
                   </form>
-            </div>
-          </div>
+                </div>
+              </div>
             )}
           
             {activeSection === 'security' && (

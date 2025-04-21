@@ -51,7 +51,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 5%;
+  padding: 1rem 5%;
   background-color: var(--bg-content);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
   position: sticky;
@@ -65,35 +65,38 @@ body, html {
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Logo styling for landing page - consistent with other pages */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.header-logo-img {
+  height: 28px; /* Match the size in auth pages */
+  width: auto;
+  margin-right: 8px;
+}
+
+.logo-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--primary);
   position: relative;
+  flex-shrink: 0;
 }
 
 .logo a {
   color: var(--primary);
   text-decoration: none;
-}
-
-.logo::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 3px;
-  bottom: -6px;
-  left: 0;
-  background: var(--primary);
-  border-radius: 10px;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover::after {
-  transform: scaleX(1);
 }
 
 .nav-links {
@@ -1150,6 +1153,13 @@ body, html {
   color: var(--primary);
   margin-bottom: 1.5rem;
   flex-basis: 100%;
+}
+
+/* Add specific styling for footer logo image */
+.footer-logo-img {
+  height: 24px;
+  width: auto;
+  margin-right: 8px;
 }
 
 .footer-links {

@@ -7,6 +7,7 @@ const Navbar = ({ onLogout }) => {
   // Add state variables
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInitial, setUserInitial] = useState('U');
+  const [isHovered, setIsHovered] = useState(false);
   
   // Get user data from localStorage on component mount
   useEffect(() => {
@@ -76,7 +77,31 @@ const Navbar = ({ onLogout }) => {
       
       <div className="navbar-right">
         <div className="navbar-user">
-          <div className="user-avatar" onClick={toggleDropdown}>{userInitial}</div>
+          <div 
+            onClick={toggleDropdown}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+              width: '34px',
+              height: '34px',
+              background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontSize: '14px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: isHovered ? '0 3px 8px rgba(0, 0, 0, 0.3)' : '0 2px 5px rgba(0, 0, 0, 0.2)',
+              transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+              borderColor: isHovered ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)'
+            }}
+          >
+            {userInitial}
+          </div>
           {dropdownOpen && (
             <div className="user-dropdown">
               <Link to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>

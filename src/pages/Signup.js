@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
+import logoImage from '../assets/images/logo.png';
 
 const SignupPage = () => {
   const [name, setName] = useState('');
@@ -77,7 +78,10 @@ const SignupPage = () => {
   return (
     <div className={`auth-page ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
-        <Link to="/" className="logo">WePay</Link>
+        <Link to="/" className="logo-link">
+          <img src={logoImage} alt="WePay Logo" className="auth-logo-img" />
+          <span className="logo-text">WePay</span>
+        </Link>
         <div className="auth-buttons">
           <button className="dark-mode-toggle" onClick={toggleDarkMode}>
             <span className="icon">{darkMode ? '☀️' : '🌙'}</span>

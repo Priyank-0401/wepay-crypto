@@ -37,6 +37,29 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.sidebar-header .logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 12px 15px;
+}
+
+.sidebar-header .logo-link:hover {
+  background-color: transparent;
+}
+
+.sidebar-logo-img {
+  height: 28px;
+  width: auto;
+  margin-right: 8px;
+}
+
+.sidebar-header .logo-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #3498db;
+  letter-spacing: 0.02em;
+}
 
 .sidebar-section {
   display: flex;

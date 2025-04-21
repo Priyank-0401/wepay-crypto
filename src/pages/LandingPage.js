@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Landing.css';
+import logoImage from '../assets/images/logo.png';
 
 const LandingPage = () => {
   // Force dark mode
@@ -13,7 +14,10 @@ const LandingPage = () => {
     <div className="landing-page dark-mode">
       <header className="header">
         <div className="logo">
-          <a href="src\pages\LandingPage.js"> WePay</a>
+          <Link to="/" className="logo-link">
+            <img src={logoImage} alt="WePay Logo" className="header-logo-img" />
+            <span className="logo-text">WePay</span>
+          </Link>
         </div>
         <nav className="nav-links">
           <a href="#features">Features</a>
@@ -233,42 +237,47 @@ const LandingPage = () => {
 
       <footer className="footer">
         <div className="footer-container">
-          <div className="footer-logo">WePay</div>
+          <div className="footer-logo">
+            <Link to="/" className="logo-link">
+              <img src={logoImage} alt="WePay Logo" className="footer-logo-img" />
+              <span className="logo-text">WePay</span>
+            </Link>
+          </div>
           <div className="footer-links">
             <div className="footer-column">
               <h4>Product</h4>
               <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#security">Security</a></li>
-                <li><a href="#advantages">Advantages</a></li>
-                <li><a href="#roadmap">Roadmap</a></li>
+                <li><Link to="/features">Features</Link></li>
+                <li><Link to="/security">Security</Link></li>
+                <li><Link to="/advantages">Advantages</Link></li>
+                <li><Link to="/roadmap">Roadmap</Link></li>
               </ul>
             </div>
             <div className="footer-column">
               <h4>Company</h4>
               <ul>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#team">Team</a></li>
-                <li><a href="#careers">Careers</a></li>
-                <li><a href="#press">Press</a></li>
+                <li><Link to="/about-us">About Us</Link></li>
+                <li><Link to="/team">Team</Link></li>
+                <li><Link to="/careers">Careers</Link></li>
+                <li><Link to="/press">Press</Link></li>
               </ul>
             </div>
             <div className="footer-column">
               <h4>Resources</h4>
               <ul>
-                <li><a href="#documentation">Documentation</a></li>
-                <li><a href="#api">API</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#community">Community</a></li>
+                <li><Link to="/documentation">Documentation</Link></li>
+                <li><Link to="/api">API</Link></li>
+                <li><Link to="/blog">Blog</Link></li>
+                <li><Link to="/community">Community</Link></li>
               </ul>
             </div>
             <div className="footer-column">
               <h4>Legal</h4>
               <ul>
-                <li><a href="#terms">Terms of Service</a></li>
-                <li><a href="#privacy">Privacy Policy</a></li>
-                <li><a href="#compliance">Compliance</a></li>
-                <li><a href="#cookies">Cookie Policy</a></li>
+                <li><Link to="/terms-of-service">Terms of Service</Link></li>
+                <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                <li><Link to="/compliance">Compliance</Link></li>
+                <li><Link to="/cookie-policy">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>

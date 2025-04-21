@@ -103,6 +103,26 @@ body, html {
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Logo styling for auth pages */
+.auth-page .logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.auth-logo-img {
+  height: 28px; /* Control the logo size */
+  width: auto;
+  margin-right: 8px;
+}
+
+.auth-page .logo-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+
 .auth-page .logo {
   font-size: 1.5rem;
   font-weight: 700;

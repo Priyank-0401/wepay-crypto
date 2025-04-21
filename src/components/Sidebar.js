@@ -2,14 +2,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import '../styles/Sidebar.css';
+import logoImage from '../assets/images/logo.png';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
     <div className="sidebar dark-mode">
       <div className="sidebar-header">
-        <div className="logo">
+        <Link to="/dashboard" className="logo-link">
+          <img src={logoImage} alt="WePay Logo" className="sidebar-logo-img" />
           <span className="logo-text">WePay</span>
-        </div>
+        </Link>
       </div>
       
       <div className="sidebar-section">

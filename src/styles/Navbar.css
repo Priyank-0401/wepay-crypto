@@ -115,24 +115,28 @@
   position: relative;
 }
 
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background-color: #FF6B35;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  font-size: 16px;
+/* Make rule more specific and force with !important */
+.navbar .navbar-right .navbar-user .user-avatar {
+  width: 30px !important;
+  height: 30px !important;
+  background-image: linear-gradient(135deg, #3498db, #2c3e50) !important; /* Blue gradient */
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 13px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 
-.user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+.navbar .navbar-right .navbar-user .user-avatar:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .user-dropdown {
@@ -196,4 +200,55 @@
 /* Remove dark mode toggle button styles */
 .dark-mode-toggle, .dark-mode-toggle-floating {
   display: none !important; /* Hide dark mode toggle */
+}
+
+/* New profile icon class */
+.user-profile-icon {
+  width: 34px;
+  height: 34px;
+  background-image: linear-gradient(135deg, #3498db, #2c3e50); /* Matching blue gradient */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Adding border to match */
+}
+
+.user-profile-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Add styling for the actual profile icon class being used */
+.profile-icon {
+  width: 34px;
+  height: 34px;
+  background-image: linear-gradient(135deg, #3498db, #2c3e50) !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.profile-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Parent container styles if needed */
+.user-profile {
+  position: relative;
 }
