@@ -37,7 +37,7 @@ interface IWePayGasOptimizer {
     
     // Events
     event TransactionSubmitted(address indexed user, address indexed to, uint256 value, uint256 transactionId);
-    event TransactionExecuted(address indexed user, address indexed to, uint256 value, uint256 transactionId, uint256 gasSaved);
+    event TransactionExecuted(address indexed user, address indexed to, uint256 value, uint256 transactionId);
     event BatchExecuted(uint256 batchSize, uint256 totalGasSaved);
     event FundsDeposited(address indexed user, uint256 amount);
     event FundsWithdrawn(address indexed user, uint256 amount);

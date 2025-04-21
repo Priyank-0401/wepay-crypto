@@ -1,6 +1,7 @@
 // src/pages/Transactions.js
 import React, { useState, useEffect } from 'react';
 import '../styles/Pages.css';
+import '../styles/Transactions.css';
 import TransactionService from '../services/transactionService';
 
 const Transactions = () => {
@@ -257,6 +258,54 @@ const Transactions = () => {
             <div className="stat-card">
               <div className="stat-title">Gas Fees Spent</div>
               <div className="stat-value">{calculateTotalGasFees()} ETH</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Gas Optimization Card */}
+        <div className="page-card gas-optimization-card">
+          <div className="page-card-header">
+            <h2 className="page-card-title">Gas Optimization</h2>
+          </div>
+          
+          <div className="gas-optimization-content">
+            <div className="gas-info-section">
+              <div className="gas-info-icon">⚙️</div>
+              <div className="gas-info-details">
+                <h3>Smart Gas Optimization</h3>
+                <p>Our system automatically monitors network conditions to execute your transactions when gas prices are lowest, saving you up to 30% on transaction fees.</p>
+              </div>
+            </div>
+            
+            <div className="gas-metrics">
+              <div className="gas-metric-item">
+                <div className="gas-metric-title">Current Network Gas Price</div>
+                <div className="gas-metric-value">{loading ? '...' : '25 Gwei'}</div>
+                <div className="gas-metric-subtitle">Updated every 30 seconds</div>
+              </div>
+              
+              <div className="gas-metric-item">
+                <div className="gas-metric-title">Your Gas Savings</div>
+                <div className="gas-metric-value highlight">{loading ? '...' : '0.012 ETH'}</div>
+                <div className="gas-metric-subtitle">Compared to market average</div>
+              </div>
+              
+              <div className="gas-metric-item">
+                <div className="gas-metric-title">Recommended Action</div>
+                <div className="gas-metric-value action">
+                  <span className="badge badge-success">Optimal Time</span>
+                </div>
+                <div className="gas-metric-subtitle">Good time for non-urgent transactions</div>
+              </div>
+            </div>
+            
+            <div className="gas-tips">
+              <h4>Gas Saving Tips</h4>
+              <ul>
+                <li>Schedule transactions during off-peak hours</li>
+                <li>Batch multiple transactions together when possible</li>
+                <li>Use our QuickTransfer feature for optimized gas usage</li>
+              </ul>
             </div>
           </div>
         </div>

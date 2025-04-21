@@ -106,6 +106,14 @@ const Features = () => {
             </div>
             
             <div className="info-card">
+              <div className="info-card-icon">⚙️</div>
+              <h3 className="info-card-title">Gas Optimization</h3>
+              <p className="info-card-text">
+                Our advanced gas optimization algorithms analyze network conditions in real-time to ensure your transactions are processed efficiently with minimal fees, saving you up to 30% on transaction costs.
+              </p>
+            </div>
+            
+            <div className="info-card">
               <div className="info-card-icon">⏱️</div>
               <h3 className="info-card-title">Scheduled Transactions</h3>
               <p className="info-card-text">
