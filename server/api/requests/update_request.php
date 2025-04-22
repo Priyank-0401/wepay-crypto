@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Connect to database
-require_once '../../config/database.php';
+require_once '../../config/db_connect.php';
 
 try {
-    $db = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $db = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     http_response_code(500);

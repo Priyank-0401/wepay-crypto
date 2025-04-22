@@ -18,6 +18,7 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import GasOptimizationService from '../services/gasOptimizationService';
+import { API_ENDPOINTS } from '../config/api';
 
 // Helper function to format addresses - moved outside component
 const formatAddressUtil = (address) => {
@@ -1371,13 +1372,11 @@ const Dashboard = () => {
         throw new Error("Amount must be greater than zero.");
       }
 
-      // Make API call to backend
-      const response = await fetch('http://localhost/wepay-crypto/server/api/requests/create_request.php', {
+      // Make API call to backend using config
+      const response = await fetch(API_ENDPOINTS.CREATE_REQUEST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add authorization header if needed, e.g.:
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
         },
         body: JSON.stringify({
           requester_address: account, // The person making the request (current user)
@@ -1386,6 +1385,14 @@ const Dashboard = () => {
           note: requestNote
         })
       });
+      
+      // Check for non-JSON response
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const textResponse = await response.text();
+        console.error('Non-JSON response received:', textResponse);
+        throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 100)}...`);
+      }
 
       const result = await response.json();
 
@@ -1431,7 +1438,7 @@ const Dashboard = () => {
     
     try {
       console.log(`Fetching ETH requests for address: ${account}`);
-      const response = await fetch(`http://localhost/wepay-crypto/server/api/requests/get_requests.php?to_address=${account}`, {
+      const response = await fetch(`${API_ENDPOINTS.GET_REQUESTS}?to_address=${account}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -1493,7 +1500,7 @@ const Dashboard = () => {
     
     try {
       // Update request status to processing
-      const updateResponse = await fetch('http://localhost/wepay-crypto/server/api/requests/update_request.php', {
+      const updateResponse = await fetch(API_ENDPOINTS.UPDATE_REQUEST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1522,7 +1529,7 @@ const Dashboard = () => {
   // Decline a request
   const handleDeclineRequest = async (requestId) => {
     try {
-      const response = await fetch('http://localhost/wepay-crypto/server/api/requests/update_request.php', {
+      const response = await fetch(API_ENDPOINTS.UPDATE_REQUEST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
