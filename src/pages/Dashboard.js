@@ -72,6 +72,12 @@ const Dashboard = () => {
   const [requestError, setRequestError] = useState(null);
   const [pendingRequests, setPendingRequests] = useState([]); // Simple state to hold requests for now
   
+  // ETH Request Notifications State
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const notificationsRef = useRef(null);
+  
   // State variables for additional dashboard data
   const [ethPrice, setEthPrice] = useState(0);
   const [ethPriceChange, setEthPriceChange] = useState(0);
@@ -1419,6 +1425,132 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch ETH requests sent to the current user
+  const fetchReceivedRequests = useCallback(async () => {
+    if (!account) return;
+    
+    try {
+      console.log(`Fetching ETH requests for address: ${account}`);
+      const response = await fetch(`http://localhost/wepay-crypto/server/api/requests/get_requests.php?to_address=${account}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || `HTTP error! status: ${response.status}`);
+      }
+      
+      console.log("Received ETH requests:", result.requests);
+      if (result.requests && Array.isArray(result.requests)) {
+        setReceivedRequests(result.requests);
+        // Count only pending requests for notification badge
+        const pendingCount = result.requests.filter(req => req.status === 'pending').length;
+        setNotificationCount(pendingCount);
+      }
+    } catch (err) {
+      console.error("Error fetching received requests:", err);
+    }
+  }, [account]);
+  
+  // Handle clicking outside to close notifications panel
+  useEffect(() => {
+    const handleClickOutsideNotifications = (event) => {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target) && notificationsOpen) {
+        setNotificationsOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutsideNotifications);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideNotifications);
+    };
+  }, [notificationsOpen]);
+  
+  // Fetch received requests when account changes or periodically
+  useEffect(() => {
+    if (account) {
+      fetchReceivedRequests();
+      
+      // Set up interval to periodically check for new requests
+      const requestsInterval = setInterval(() => {
+        fetchReceivedRequests();
+      }, 30000); // Check every 30 seconds
+      
+      return () => clearInterval(requestsInterval);
+    }
+  }, [account, fetchReceivedRequests]);
+  
+  // Handle sending ETH in response to a request
+  const handleSendRequestedEth = async (request) => {
+    // Pre-fill the send form with the request details
+    setRecipientAddress(request.from_address);
+    setSendAmount(request.amount);
+    setSendFormOpen(true);
+    
+    try {
+      // Update request status to processing
+      const updateResponse = await fetch('http://localhost/wepay-crypto/server/api/requests/update_request.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          request_id: request.id,
+          status: 'processing'
+        })
+      });
+      
+      const updateResult = await updateResponse.json();
+      
+      if (!updateResponse.ok) {
+        console.error("Failed to update request status:", updateResult.message);
+      }
+      
+      // Update local state
+      setReceivedRequests(prev => 
+        prev.map(req => req.id === request.id ? {...req, status: 'processing'} : req)
+      );
+    } catch (err) {
+      console.error("Error updating request status:", err);
+    }
+  };
+  
+  // Decline a request
+  const handleDeclineRequest = async (requestId) => {
+    try {
+      const response = await fetch('http://localhost/wepay-crypto/server/api/requests/update_request.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          request_id: requestId,
+          status: 'declined'
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || `HTTP error! status: ${response.status}`);
+      }
+      
+      // Update local state
+      setReceivedRequests(prev => 
+        prev.map(req => req.id === requestId ? {...req, status: 'declined'} : req)
+      );
+      
+      // Update notification count
+      setNotificationCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Error declining request:", err);
+    }
+  };
+
   // Show a loading state
   if (loading) {
     return (
@@ -1448,21 +1580,109 @@ const Dashboard = () => {
       {/* Dashboard header with title and profile icon */}
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <div className="user-profile" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          <div className="profile-icon">
-            {userInitial || "P"}
+        <div className="dashboard-header-controls">
+          {/* Notifications icon */}
+          <div className="notifications-control" ref={notificationsRef}>
+            <button 
+              className="notifications-btn" 
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              title="ETH Requests"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              {notificationCount > 0 && (
+                <span className="notification-badge">{notificationCount}</span>
+              )}
+            </button>
+            
+            {notificationsOpen && (
+              <div className="notifications-panel">
+                <div className="notifications-header">
+                  <h3>ETH Requests</h3>
+                  <button className="refresh-btn" onClick={fetchReceivedRequests} title="Refresh requests">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 4v6h-6"></path>
+                      <path d="M1 20v-6h6"></path>
+                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                      <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                  </button>
+                </div>
+                <div className="notifications-content">
+                  {receivedRequests.length === 0 ? (
+                    <div className="no-notifications">
+                      <p>No ETH requests received</p>
+                    </div>
+                  ) : (
+                    <div className="notification-list">
+                      {receivedRequests.map(request => (
+                        <div key={request.id} className={`notification-item ${request.status}`}>
+                          <div className="notification-details">
+                            <div className="notification-primary">
+                              <span className="notification-type">ETH Request</span>
+                              <span className="notification-amount">{request.amount} ETH</span>
+                            </div>
+                            <div className="notification-secondary">
+                              <span className="notification-from">From: {formatAddressUtil(request.from_address)}</span>
+                              {request.note && (
+                                <span className="notification-note">"{request.note}"</span>
+                              )}
+                            </div>
+                            <div className="notification-time">
+                              {new Date(request.created_at).toLocaleString()}
+                            </div>
+                          </div>
+                          {request.status === 'pending' && (
+                            <div className="notification-actions">
+                              <button 
+                                className="action-btn send-btn" 
+                                onClick={() => handleSendRequestedEth(request)}
+                              >
+                                Send ETH
+                              </button>
+                              <button 
+                                className="action-btn decline-btn" 
+                                onClick={() => handleDeclineRequest(request.id)}
+                              >
+                                Decline
+                              </button>
+                            </div>
+                          )}
+                          {request.status === 'processing' && (
+                            <div className="notification-status">Processing...</div>
+                          )}
+                          {request.status === 'completed' && (
+                            <div className="notification-status completed">Sent ✓</div>
+                          )}
+                          {request.status === 'declined' && (
+                            <div className="notification-status declined">Declined</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          {dropdownOpen && (
-            <div className="user-dropdown">
-              <a href="/profile">Profile</a>
-              <a href="/settings">Settings</a>
-              <button onClick={() => {
-                localStorage.removeItem('user');
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-              }}>Logout</button>
+          <div className="user-profile" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <div className="profile-icon">
+              {userInitial || "P"}
             </div>
-          )}
+            {dropdownOpen && (
+              <div className="user-dropdown">
+                <a href="/profile">Profile</a>
+                <a href="/settings">Settings</a>
+                <button onClick={() => {
+                  localStorage.removeItem('user');
+                  localStorage.removeItem('token');
+                  window.location.href = '/login';
+                }}>Logout</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
