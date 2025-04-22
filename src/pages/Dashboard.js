@@ -63,6 +63,15 @@ const Dashboard = () => {
   const [transactionError, setTransactionError] = useState(null);
   const [userInitial, setUserInitial] = useState('');
   
+  // Request Money State
+  const [requestFormOpen, setRequestFormOpen] = useState(false);
+  const [requestAddress, setRequestAddress] = useState(''); // Address to request *from*
+  const [requestAmount, setRequestAmount] = useState('');
+  const [requestNote, setRequestNote] = useState('');
+  const [requestStatus, setRequestStatus] = useState(null); // e.g., 'pending', 'submitted', 'error'
+  const [requestError, setRequestError] = useState(null);
+  const [pendingRequests, setPendingRequests] = useState([]); // Simple state to hold requests for now
+  
   // State variables for additional dashboard data
   const [ethPrice, setEthPrice] = useState(0);
   const [ethPriceChange, setEthPriceChange] = useState(0);
@@ -1331,6 +1340,85 @@ const Dashboard = () => {
     return () => clearInterval(refreshGasPricesInterval);
   }, [sendFormOpen, fetchRealTimeGasPrice, gasOptimizationReady, calculateOptimizedGasPrices, gasPrice]);
 
+  // Add handleRequestSubmit function
+  const handleRequestSubmit = async () => { // Make async
+    setRequestStatus('pending');
+    setRequestError(null);
+    console.log("Submitting request:", { 
+      requester_address: account, // Current user's address
+      request_from_address: requestAddress, 
+      amount: requestAmount, 
+      note: requestNote 
+    });
+
+    try {
+      if (!account || !requestAddress || !requestAmount) {
+        throw new Error("Your address, recipient address, and amount are required.");
+      }
+      
+      // Basic address validation (can be improved)
+      if (!requestAddress.startsWith('0x') || requestAddress.length !== 42) { 
+          throw new Error("Invalid request address format.");
+      }
+
+      if (parseFloat(requestAmount) <= 0) {
+        throw new Error("Amount must be greater than zero.");
+      }
+
+      // Make API call to backend
+      const response = await fetch('http://localhost/wepay-crypto/server/api/requests/create_request.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authorization header if needed, e.g.:
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
+        },
+        body: JSON.stringify({
+          requester_address: account, // The person making the request (current user)
+          request_from_address: requestAddress, // The person the request is sent to
+          amount: requestAmount,
+          note: requestNote
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || `HTTP error! status: ${response.status}`);
+      }
+
+      console.log("Request submitted successfully via API:", result);
+      setRequestStatus('submitted'); 
+      
+      // Add the newly created request to the local state for immediate UI update
+      // (Ideally, the backend would return the created request object)
+      const newRequest = {
+          id: Date.now(), // Use a temporary ID or get from backend response
+          from: requestAddress, // The address we requested *from*
+          to: account, // The address that made the request
+          amount: requestAmount,
+          note: requestNote,
+          status: 'pending' // Initial status
+      };
+      setPendingRequests(prev => [...prev, newRequest]); 
+
+      // Clear form after a delay to show success message
+      setTimeout(() => {
+        setRequestAddress('');
+        setRequestAmount('');
+        setRequestNote('');
+        // Optionally close modal after success
+        // setRequestFormOpen(false); 
+        // setRequestStatus(null); // Reset status if closing
+      }, 1500); 
+
+    } catch (err) {
+      console.error("Request submission failed:", err);
+      setRequestError(err.message || "Failed to submit request.");
+      setRequestStatus('error');
+    }
+  };
+
   // Show a loading state
   if (loading) {
     return (
@@ -1441,6 +1529,13 @@ const Dashboard = () => {
                   <polyline points="17 6 23 6 23 12"></polyline>
                 </svg>
                 Receive
+              </button>
+              {/* Add Request ETH Button here */}
+              <button className="action-btn request-btn" onClick={() => setRequestFormOpen(true)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /> { /* Simple request/import icon */}
+                </svg>
+                Request ETH
               </button>
             </div>
           </div>
@@ -1577,6 +1672,35 @@ const Dashboard = () => {
           )}
           {renderRecentTransactionsContent()}
         </div>
+
+        {/* Pending Requests Section */}
+        {pendingRequests.length > 0 && (
+          <div className="pending-requests-section dashboard-card">
+            <h2>Pending Money Requests</h2>
+            <div className="dashboard-card-body">
+              <div className="request-list"> {/* Similar structure to transaction-list */}
+                {pendingRequests.map((request) => (
+                  <div key={request.id} className="request-item">
+                    <div className="request-icon pending">⏳</div> {/* Icon for pending */}
+                    <div className="request-details">
+                      <div className="request-type">
+                        Request to {shortenAddress(request.from)}
+                      </div>
+                      <div className="request-note">
+                        {request.note || 'No note provided'}
+                      </div>
+                    </div>
+                    <div className="request-amount">
+                      <div className="amount">{request.amount} ETH</div>
+                       <div className="request-status">{request.status}</div>
+                    </div>
+                     {/* TODO: Add buttons for recipient to Accept/Reject? */}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* REMOVED DEFI PORTFOLIO SECTION
         <div className="defi-portfolio-section">
@@ -1808,6 +1932,104 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Request ETH Modal */}
+      {requestFormOpen && (
+        <div className="modal-overlay">
+          <div className="transaction-modal request-modal"> {/* Added request-modal class */}
+            <div className="modal-header">
+              <h3>Request ETH</h3>
+              <button className="close-btn" onClick={() => {
+                setRequestFormOpen(false);
+                setRequestStatus(null);
+                setRequestError(null);
+              }}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              {requestStatus === "submitted" ? (
+                <div className="transaction-success"> {/* Reusing success style */}
+                  <div className="success-icon">✓</div>
+                  <h4>Request Submitted!</h4>
+                  <p>Your request for {requestAmount} ETH from {shortenAddress(requestAddress)} has been created.</p>
+                  {/* Maybe add a button to view requests? */}
+                </div>
+              ) : (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleRequestSubmit();
+                }}>
+                  <div className="form-group">
+                    <label>Request From Address</label>
+                    <input
+                      type="text"
+                      placeholder="0x... address of the person you are requesting from"
+                      value={requestAddress}
+                      onChange={(e) => setRequestAddress(e.target.value)}
+                      disabled={requestStatus === "pending"}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Amount (ETH)</label>
+                    <input
+                      type="number"
+                      step="0.0001"
+                      min="0.0001" // Should request a positive amount
+                      placeholder="0.0"
+                      value={requestAmount}
+                      onChange={(e) => setRequestAmount(e.target.value)}
+                      disabled={requestStatus === "pending"}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Note (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., For dinner last night"
+                      value={requestNote}
+                      onChange={(e) => setRequestNote(e.target.value)}
+                      disabled={requestStatus === "pending"}
+                    />
+                  </div>
+                  
+                  {requestError && (
+                    <div className="transaction-error"> {/* Reusing error style */}
+                      {requestError}
+                    </div>
+                  )}
+                  
+                  <div className="form-actions">
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={() => setRequestFormOpen(false)}
+                      disabled={requestStatus === "pending"}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="send-btn" /* Reusing send button style */
+                      disabled={requestStatus === "pending"}
+                    >
+                      {requestStatus === "pending" ? (
+                        <><span className="spinner-sm"></span> Submitting...</>
+                      ) : (
+                        'Submit Request'
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
